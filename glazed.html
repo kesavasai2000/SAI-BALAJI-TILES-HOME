@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ceramic Tiles - Tiles Shop</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="header">
+        <h1 class="title">SAI BALAJI TILES HOME</h1>
+        <button class="toggle-btn" onclick="toggleMenu()">☰</button>
+    </header>
+    <nav class="navbar">
+        <ul class="nav-menu">
+            <li><a href="index.html#home">Home</a></li>
+            <li><a href="index.html#catalog">Catalog</a></li>
+            <li><a href="cart.html">Cart</a></li>
+        </ul>
+    </nav>
+
+    <section class="tile-detail">
+        <div class="carousel">
+            <button class="prev" onclick="prevImage()">❮</button>
+            <img id="main-image" src="images/tiles1.jpg" alt="glazed tile">
+            <button class="next" onclick="nextImage()">❯</button>
+        </div>
+        <button class="add-to-cart" onclick="addToCart()">Add to Cart</button>
+    </section>
+
+    <footer>
+        <p>© 2025 Tiles Shop. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        const tiles = [
+            { src: 'images/tiles1.jpg', name: 'glazed Tile 1' },
+            { src: 'images/tiles2.jpg', name: 'glazed Tile 2' },
+            { src: 'images/tiles3.jpg', name: 'glazed Tile 3' }
+        ];
+        let currentIndex = 0;
+        let currentTile = tiles[0];
+
+        function showImage(index) {
+            const mainImage = document.getElementById('main-image');
+            mainImage.src = tiles[index].src;
+            mainImage.alt = tiles[index].name;
+            currentTile = tiles[index];
+        }
+
+        function nextImage() {
+            currentIndex = (currentIndex + 1) % tiles.length;
+            showImage(currentIndex);
+        }
+
+        function prevImage() {
+            currentIndex = (currentIndex - 1 + tiles.length) % tiles.length;
+            showImage(currentIndex);
+        }
+
+        function addToCart() {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            cart.push(currentTile);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            alert(`${currentTile.name} added to cart!`);
+        }
+
+        // Initialize with first image
+        showImage(currentIndex);
+
+        let menuVisible = false;
+        function toggleMenu() {
+            const navbar = document.querySelector('.navbar');
+            menuVisible = !menuVisible;
+            navbar.classList.toggle('active', menuVisible);
+        }
+        document.addEventListener('click', function(event) {
+            const navbar = document.querySelector('.navbar');
+            const toggleBtn = document.querySelector('.toggle-btn');
+            if (menuVisible && !navbar.contains(event.target) && event.target !== toggleBtn) {
+                navbar.classList.remove('active');
+                menuVisible = false;
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart - Tiles Shop</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Header Section -->
+    <header class="header">
+        <h1 class="title">SAI BALAJI TILES HOME</h1>
+        <button class="toggle-btn" onclick="toggleMenu()">☰</button>
+    </header>
+
+    <!-- Navigation Bar (Vertical, hidden by default) -->
+    <nav class="navbar">
+        <ul class="nav-menu">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="index.html#catalog">Catalog</a></li>
+            <li><a href="index.html#view-in-room">View in Room</a></li>
+            <li><a href="index.html#about">About</a></li>
+            <li><a href="index.html#contact">Contact</a></li>
+            <li><a href="cart.html">Cart (<span id="cart-count">0</span>)</a></li>
+        </ul>
+    </nav>
+
+    <!-- Cart Section -->
+    <section class="cart">
+        <h2>Your Cart</h2>
+        <div id="cart-items"></div>
+        <button class="checkout-btn">Checkout</button>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2025 Tiles Shop. All Rights Reserved.</p>
+    </footer>
+
+    <!-- Toggle Menu Script -->
+    <script>
+        let menuVisible = false;
+
+        function toggleMenu() {
+            const navbar = document.querySelector(".navbar");
+            menuVisible = !menuVisible;
+            navbar.classList.toggle("active", menuVisible);
+        }
+
+        document.addEventListener("click", function(event) {
+            const navbar = document.querySelector(".navbar");
+            const toggleBtn = document.querySelector(".toggle-btn");
+            if (menuVisible && !navbar.contains(event.target) && event.target !== toggleBtn) {
+                navbar.classList.remove("active");
+                menuVisible = false;
+            }
+        });
+    </script>
+
+    <!-- Cart Script -->
+    <script>
+        const cart = JSON.parse(localStorage.getItem("cart")) || [];
+        const cartItems = document.getElementById("cart-items");
+
+        function updateCart() {
+            cartItems.innerHTML = "";
+            cart.forEach((item, index) => {
+                const div = document.createElement("div");
+                div.className = "cart-item";
+                div.innerHTML = `
+                    <img src="${item.image}" alt="${item.name}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 5px; margin-right: 10px;">
+                    <span>${item.name}</span>
+                    <button class="remove-btn" onclick="removeFromCart(${index})">Remove</button>
+                `;
+                cartItems.appendChild(div);
+            });
+            updateCartCount();
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            localStorage.setItem("cart", JSON.stringify(cart));
+            updateCart();
+        }
+
+        function updateCartCount() {
+            const cart = JSON.parse(localStorage.getItem("cart")) || [];
+            document.getElementById("cart-count").textContent = cart.length;
+        }
+
+        updateCart();
+    </script>
+</body>
+</html>

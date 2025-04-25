@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ceramic Tiles - Tiles Shop</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Header Section -->
+    <header class="header">
+        <h1 class="title">SAI BALAJI TILES HOME</h1>
+        <button class="toggle-btn" onclick="toggleMenu()">☰</button>
+    </header>
+
+    <!-- Navigation Bar (Vertical, hidden by default) -->
+    <nav class="navbar">
+        <ul class="nav-menu">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="index.html#catalog">Catalog</a></li>
+            <li><a href="index.html#view-in-room">View in Room</a></li>
+            <li><a href="index.html#about">About</a></li>
+            <li><a href="index.html#contact">Contact</a></li>
+            <li><a href="cart.html">Cart</a></li>
+        </ul>
+    </nav>
+
+    <!-- Ceramic Tiles Section with Centered Image -->
+    <section class="ceramic-tiles">
+        <div class="main-image">
+            <img src="images/tiles2.jpg" alt="Main Ceramic Tile">
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2025 Tiles Shop. All Rights Reserved.</p>
+    </footer>
+
+    <!-- Toggle Menu Script -->
+    <script>
+        let menuVisible = false;
+
+        function toggleMenu() {
+            const navbar = document.querySelector(".navbar");
+            menuVisible = !menuVisible;
+            navbar.classList.toggle("active", menuVisible);
+        }
+
+        document.addEventListener("click", function(event) {
+            const navbar = document.querySelector(".navbar");
+            const toggleBtn = document.querySelector(".toggle-btn");
+            if (menuVisible && !navbar.contains(event.target) && event.target !== toggleBtn) {
+                navbar.classList.remove("active");
+                menuVisible = false;
+            }
+        });
+    </script>
+</body>
+</html>

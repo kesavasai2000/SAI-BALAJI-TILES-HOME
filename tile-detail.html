@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tile Detail - Tiles Shop</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Header Section -->
+    <header class="header">
+        <h1 class="title">SAI BALAJI TILES HOME</h1>
+        <button class="toggle-btn" onclick="toggleMenu()">☰</button>
+    </header>
+
+    <!-- Navigation Bar (Vertical, hidden by default) -->
+    <nav class="navbar">
+        <ul class="nav-menu">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="index.html#catalog">Catalog</a></li>
+            <li><a href="index.html#view-in-room">View in Room</a></li>
+            <li><a href="index.html#about">About</a></li>
+            <li><a href="index.html#contact">Contact</a></li>
+            <li><a href="cart.html">Cart (<span id="cart-count">0</span>)</a></li>
+        </ul>
+    </nav>
+
+    <!-- Tile Detail Section -->
+    <section class="tile-detail">
+        <h2 id="detail-title"></h2>
+        <div class="main-image">
+            <img id="detail-image" src="" alt="Tile Image">
+        </div>
+        <div class="related-images">
+            <h3>Related Images</h3>
+            <div id="related-images-list" class="related-images-list"></div>
+        </div>
+        <button class="add-to-cart" onclick="addToCart()">Add to Cart</button>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2025 Tiles Shop. All Rights Reserved.</p>
+    </footer>
+
+    <!-- Toggle Menu Script -->
+    <script>
+        let menuVisible = false;
+
+        function toggleMenu() {
+            const navbar = document.querySelector(".navbar");
+            menuVisible = !menuVisible;
+            navbar.classList.toggle("active", menuVisible);
+        }
+
+        document.addEventListener("click", function(event) {
+            const navbar = document.querySelector(".navbar");
+            const toggleBtn = document.querySelector(".toggle-btn");
+            if (menuVisible && !navbar.contains(event.target) && event.target !== toggleBtn) {
+                navbar.classList.remove("active");
+                menuVisible = false;
+            }
+        });
+    </script>
+
+    <!-- Tile Detail Script -->
+    <script>
+        const tiles = {
+            polished: {
+                title: "Polished Vitrified Tiles",
+                main: "images/tiles1.jpg",
+                related: ["images/tiles1-related1.jpg", "images/tiles1-related2.jpg", "images/tiles1-related3.jpg"]
+            },
+            ceramic: {
+                title: "Ceramic Tiles",
+                main: "images/tiles2.jpg",
+                related: ["images/tiles2-related1.jpg", "images/tiles2-related2.jpg", "images/tiles2-related3.jpg"]
+            },
+            glazed: {
+                title: "Glazed Vitrified Tiles",
+                main: "images/tiles3.jpg",
+                related: ["images/tiles3-related1.jpg", "images/tiles3-related2.jpg", "images/tiles3-related3.jpg"]
+            }
+        };
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const tileId = urlParams.get('id');
+        const selectedTile = tiles[tileId];
+
+        if (selectedTile) {
+            document.getElementById("detail-title").textContent = selectedTile.title;
+            document.getElementById("detail-image").src = selectedTile.main;
+            const relatedImagesList = document.getElementById("related-images-list");
+            selectedTile.related.forEach(src => {
+                const img = document.createElement("img");
+                img.src = src;
+                img.alt = "Related Image";
+                relatedImagesList.appendChild(img);
+            });
+        } else {
+            document.getElementById("detail-title").textContent = "Tile not found";
+        }
+
+        function addToCart() {
+            let cart = JSON.parse(localStorage.getItem("cart")) || [];
+            cart.push({ name: selectedTile.title, image: selectedTile.main });
+            localStorage.setItem("cart", JSON.stringify(cart));
+            alert(`${selectedTile.title} added to cart!`);
+            updateCartCount();
+        }
+
+        function updateCartCount() {
+            const cart = JSON.parse(localStorage.getItem("cart")) || [];
+            document.getElementById("cart-count").textContent = cart.length;
+        }
+        updateCartCount();
+    </script>
+</body>
+</html>

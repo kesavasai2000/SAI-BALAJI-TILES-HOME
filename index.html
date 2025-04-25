@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tiles Shop</title>
+    <link rel="stylesheet" href="style.css">
+    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+</head>
+<body class="splash-active">
+    <!-- Splash Screen -->
+    <div id="splash-screen">
+        <img src="images/logo1.jpg" alt="Logo" class="logo">
+        <h1 class="title">SAI BALAJI TILES HOME</h1>
+    </div>
+
+    <!-- Main Content (hidden initially) -->
+    <div id="main-content" style="display: none;">
+        <!-- Header Section -->
+        <header id="home" class="header">
+            <h1 class="title">SAI BALAJI TILES HOME</h1>
+            
+            <button class="toggle-btn" onclick="toggleMenu()">☰</button>
+        </header>
+
+        <!-- Navigation Bar (Vertical, hidden by default) -->
+        <nav class="navbar">
+            <ul class="nav-menu">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#catalog">Catalog</a></li>
+                <li><a href="#view-in-room">View in Room</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+                <li><a href="cart.html">Cart</a></li>
+            </ul>
+        </nav>
+
+        <!-- Hero Section with Background Image -->
+        <section class="hero">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1>Discover Premium Tiles</h1>
+                    <p>Explore our collection with AR support.</p>
+                </div>
+                <a href="#catalog" class="btn">Browse Tiles</a>
+            </div>
+        </section>
+
+        <!-- Catalog Section -->
+        <section id="catalog" class="catalog">
+            <h2>Our Tile Collection</h2>
+            <div class="filter-options">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="polished">Polished</button>
+                <button class="filter-btn" data-filter="ceramic">Ceramic</button>
+                <button class="filter-btn" data-filter="glazed">Glazed</button>
+            </div>
+            <div class="tile-container">
+                <div class="tile polished">
+                    <a href="tile-detail.html?id=polished">
+                        <img src="images/tiles1.jpg" alt="Polished Vitrified Tiles">
+                        <p>Polished Vitrified Tiles</p>
+                    </a>
+                </div>
+                <div class="tile ceramic">
+                    <a href="tile-detail.html?id=ceramic">
+                        <img src="images/tiles2.jpg" alt="Ceramic Tiles">
+                        <p>Ceramic Tiles</p>
+                    </a>
+                </div>
+                <div class="tile glazed">
+                    <a href="tile-detail.html?id=glazed">
+                        <img src="images/tiles3.jpg" alt="Glazed Vitrified Tiles">
+                        <p>Glazed Vitrified Tiles</p>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- View in Room (AR) Section -->
+        <section id="view-in-room" class="view-in-room">
+            <h2>View in Your Room</h2>
+            <p>Use our Augmented Reality feature to visualize tiles.</p>
+            <model-viewer 
+                src="tile_model.glb" 
+                alt="Tile Model"
+                ar 
+                ar-modes="webxr scene-viewer quick-look" 
+                camera-controls 
+                shadow-intensity="1" 
+                auto-rotate
+                style="width: 100%; max-width: 400px; height: auto; aspect-ratio: 1;">
+            </model-viewer>
+            <button class="btn" onclick="launchAR()">Try AR Mode</button>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="about">
+            <h2>About Us</h2>
+            <p>Phone: 7680943539</p>
+            <p>Email: kesavasai432@gmail.com</p>
+            <p>We provide high-quality tiles for your perfect home.</p>
+        </section>
+
+        <!-- Footer -->
+        <footer>
+            <p>© 2025 Tiles Shop. All Rights Reserved.</p>
+        </footer>
+    </div>
+
+    <!-- JavaScript for AR Button -->
+    <script>
+        function launchAR() {
+            const modelViewer = document.querySelector("model-viewer");
+            if (modelViewer) {
+                modelViewer.activateAR();
+            } else {
+                alert("AR feature is not available on this device.");
+            }
+        }
+    </script>
+
+    <!-- Splash Screen Script -->
+    <script>
+        setTimeout(function() {
+            const splash = document.getElementById("splash-screen");
+            const mainContent = document.getElementById("main-content");
+            splash.classList.add("hide");
+            splash.addEventListener("transitionend", function() {
+                splash.style.display = "none";
+                mainContent.style.display = "block";
+                document.body.classList.remove("splash-active");
+            });
+        }, 3000);
+    </script>
+
+    <!-- Toggle Menu Script -->
+    <script>
+        let menuVisible = false;
+
+        function toggleMenu() {
+            const navbar = document.querySelector(".navbar");
+            menuVisible = !menuVisible;
+            navbar.classList.toggle("active", menuVisible);
+        }
+
+        document.addEventListener("click", function(event) {
+            const navbar = document.querySelector(".navbar");
+            const toggleBtn = document.querySelector(".toggle-btn");
+            if (menuVisible && !navbar.contains(event.target) && event.target !== toggleBtn) {
+                navbar.classList.remove("active");
+                menuVisible = false;
+            }
+        });
+    </script>
+
+    <!-- Filter Script -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const filterButtons = document.querySelectorAll(".filter-btn");
+            const tiles = document.querySelectorAll(".tile");
+
+            filterButtons.forEach(button => {
+                button.addEventListener("click", function() {
+                    filterButtons.forEach(btn => btn.classList.remove("active"));
+                    this.classList.add("active");
+                    const filter = this.getAttribute("data-filter");
+                    tiles.forEach(tile => {
+                        if (filter === "all" || tile.classList.contains(filter)) {
+                            tile.style.display = "block";
+                        } else {
+                            tile.style.display = "none";
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>
