@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Markerless AR Tile Visualization</title>
+</head>
+<body>
+    <!-- Include A-Frame and AR.js libraries -->
+    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+    <script src="https://unpkg.com/aframe-extras@7.0.0/dist/aframe-extras.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+
+    <!-- A-Frame scene with WebXR for markerless AR -->
+    <a-scene
+        vr-mode-ui="enabled: false"
+        arjs="sourceType: webcam; debugUIEnabled: false;"
+        renderer="logarithmicDepthBuffer: true;"
+        webxr="optionalFeatures: hit-test, plane-detection"
+    >
+        <!-- Entity to hold the tile image, initially hidden -->
+        <a-image
+            id="tile"
+            src="tile.jpg"
+            width="1"
+            height="1"
+            visible="false"
+        ></a-image>
+
+        <!-- Camera with raycaster for surface detection -->
+        <a-entity
+            camera
+            position="0 1.6 0"
+            raycaster="objects: .clickable"
+            cursor="rayOrigin: mouse"
+        ></a-entity>
+    </a-scene>
+
+    <!-- JavaScript to handle wall detection and tile placement -->
+    <script>
+        AFRAME.registerComponent('place-tile', {
+            init: function () {
+                const scene = document.querySelector('a-scene');
+                const tile = document.querySelector('#tile');
+
+                // Listen for WebXR session start
+                scene.addEventListener('enter-vr', () => {
+                    if (scene.is('ar-mode')) {
+                        // Request hit-test for surface detection
+                        scene.renderer.xr.addEventListener('sessionstart', () => {
+                            const session = scene.renderer.xr.getSession();
+                            session.requestReferenceSpace('viewer').then((viewerSpace) => {
+                                session.requestHitTestSource({ space: viewerSpace }).then((hitTestSource) => {
+                                    scene.renderer.xr.addEventListener('select', () => {
+                                        // Perform hit-test to detect wall
+                                        session.requestAnimationFrame((t, frame) => {
+                                            const results = frame.getHitTestResults(hitTestSource);
+                                            if (results.length > 0) {
+                                                const hit = results[0];
+                                                const pose = hit.getPose(scene.renderer.xr.getReferenceSpace());
+                                                if (pose) {
+                                                    // Position and orient tile on detected surface
+                                                    tile.setAttribute('position', `${pose.transform.position.x} ${pose.transform.position.y} ${pose.transform.position.z}`);
+                                                    tile.setAttribute('rotation', '0 0 0'); // Adjust rotation as needed
+                                                    tile.setAttribute('visible', 'true');
+                                                }
+                                            }
+                                        });
+                                    });
+                                });
+                            });
+                        });
+                    }
+                });
+            }
+        });
+
+        // Add place-tile component to scene
+        document.querySelector('a-scene').setAttribute('place-tile', '');
+    </script>
+
+    <!-- Instructions for the user -->
+    <div style="position: absolute; top: 10px; left: 10px; color: white; background: rgba(0, 0, 0, 0.7); padding: 10px;">
+        Point your camera at a flat wall and tap to place the tile!
+    </div>
+</body>
+</html>

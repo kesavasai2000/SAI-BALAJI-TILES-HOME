@@ -4,83 +4,79 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tile Detail - Tiles Shop</title>
-    <link rel="stylesheet" href="style.css">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
-<body>
-    <!-- Header Section -->
-    <header class="header">
-        <h1 class="title">SAI BALAJI TILES HOME</h1>
-        <button class="toggle-btn" onclick="toggleMenu()">☰</button>
+<body class="bg-gradient-to-br from-gray-900 via-indigo-900 to-blue-900 text-gray-100 font-poppins">
+    <!-- Header -->
+    <header class="fixed w-full bg-white/20 backdrop-blur-md shadow-2xl flex justify-between items-center p-4 z-40 border-b border-indigo-500/30">
+        <h1 class="text-2xl font-bold text-indigo-300">SAI BALAJI TILES HOME</h1>
+        <button id="toggle-btn" class="text-2xl text-indigo-300 hover:text-indigo-200 transition focus:outline-none" onclick="toggleMenu()">☰</button>
     </header>
 
-    <!-- Navigation Bar (Vertical, hidden by default) -->
-    <nav class="navbar">
-        <ul class="nav-menu">
-            <li><a href="index.html">Home</a></li>
-            <li><a href="index.html#catalog">Catalog</a></li>
-            <li><a href="index.html#view-in-room">View in Room</a></li>
-            <li><a href="index.html#about">About</a></li>
-            <li><a href="index.html#contact">Contact</a></li>
-            <li><a href="cart.html">Cart (<span id="cart-count">0</span>)</a></li>
+    <!-- Navigation -->
+    <nav class="navbar fixed top-0 right-0 w-64 h-screen bg-white/20 backdrop-blur-md shadow-lg transform translate-x-full transition-transform duration-300 z-30 border-l border-indigo-500/30">
+        <ul class="nav-menu mt-20 space-y-4 p-4">
+            <li><a href="index.html" class="text-indigo-300 hover:text-indigo-200 transition-colors duration-300">Home</a></li>
+            <li><a href="index.html#catalog" class="text-indigo-300 hover:text-indigo-200 transition-colors duration-300">Catalog</a></li>
+            <li><a href="index.html#view-in-room" class="text-indigo-300 hover:text-indigo-200 transition-colors duration-300">View in Room</a></li>
+            <li><a href="index.html#about" class="text-indigo-300 hover:text-indigo-200 transition-colors duration-300">About</a></li>
+            <li><a href="index.html#contact" class="text-indigo-300 hover:text-indigo-200 transition-colors duration-300">Contact</a></li>
+            <li><a href="cart.html" class="text-indigo-300 hover:text-indigo-200 transition-colors duration-300">Cart (<span id="cart-count">0</span>)</a></li>
         </ul>
     </nav>
 
-    <!-- Tile Detail Section -->
-    <section class="tile-detail">
-        <h2 id="detail-title"></h2>
-        <div class="main-image">
-            <img id="detail-image" src="" alt="Tile Image">
+    <!-- Tile Detail -->
+    <section class="tile-detail py-16 bg-gray-800/50 backdrop-blur-sm">
+        <div class="container mx-auto px-4 text-center">
+            <h2 id="detail-title" class="text-3xl md:text-4xl font-bold mb-6 text-indigo-200"></h2>
+            <div class="main-image mb-8">
+                <img id="detail-image" src="" alt="Tile Image" class="w-full max-w-2xl mx-auto rounded-lg shadow-xl hover:shadow-2xl transition-shadow duration-300">
+            </div>
+            <div class="related-images mb-8">
+                <h3 class="text-2xl md:text-3xl font-bold mb-4 text-indigo-200">Related Images</h3>
+                <div id="related-images-list" class="related-images-list flex justify-center gap-4 flex-wrap"></div>
+            </div>
+            <button class="add-to-cart bg-indigo-600/80 backdrop-blur-sm text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-transform transform hover:scale-105 hover:shadow-lg" onclick="addToCart()">Add to Cart</button>
         </div>
-        <div class="related-images">
-            <h3>Related Images</h3>
-            <div id="related-images-list" class="related-images-list"></div>
-        </div>
-        <button class="add-to-cart" onclick="addToCart()">Add to Cart</button>
     </section>
 
     <!-- Footer -->
-    <footer>
+    <footer class="bg-gray-900 text-white text-center py-4 border-t border-indigo-500/30">
         <p>© 2025 Tiles Shop. All Rights Reserved.</p>
     </footer>
 
-    <!-- Toggle Menu Script -->
+    <!-- Scripts -->
     <script>
+        // Toggle Menu
         let menuVisible = false;
-
         function toggleMenu() {
             const navbar = document.querySelector(".navbar");
             menuVisible = !menuVisible;
-            navbar.classList.toggle("active", menuVisible);
+            navbar.classList.toggle("translate-x-0", menuVisible);
+            navbar.classList.toggle("translate-x-full", !menuVisible);
+            document.querySelector("#toggle-btn").classList.toggle("text-indigo-500", menuVisible);
         }
-
-        document.addEventListener("click", function(event) {
+        document.addEventListener("click", (e) => {
             const navbar = document.querySelector(".navbar");
-            const toggleBtn = document.querySelector(".toggle-btn");
-            if (menuVisible && !navbar.contains(event.target) && event.target !== toggleBtn) {
-                navbar.classList.remove("active");
+            const toggleBtn = document.getElementById("toggle-btn");
+            if (menuVisible && !navbar.contains(e.target) && e.target !== toggleBtn) {
+                navbar.classList.remove("translate-x-0");
+                navbar.classList.add("translate-x-full");
+                toggleBtn.classList.remove("text-indigo-500");
                 menuVisible = false;
             }
         });
-    </script>
 
-    <!-- Tile Detail Script -->
-    <script>
+        // Tile Details
         const tiles = {
-            polished: {
-                title: "Polished Vitrified Tiles",
-                main: "images/tiles1.jpg",
-                related: ["images/tiles1-related1.jpg", "images/tiles1-related2.jpg", "images/tiles1-related3.jpg"]
+            polished: { title: "Polished Vitrified Tiles", main: "images/tiles1.jpg", related: ["images/tiles1-tile1.jpg", "images/tiles1-tile2.jpg", "images/tiles1-bag3.jpg"] },
+            ceramic: { 
+                title: "Ceramic Tiles", 
+                main: "images/tiles2.jpg", 
+                related: ["images/tiles2-tile1.jpg", "images/tiles2-tile2.jpg", "images/tiles2-bag3.jpg", "images/tiles2-related2.jpg"]
             },
-            ceramic: {
-                title: "Ceramic Tiles",
-                main: "images/tiles2.jpg",
-                related: ["images/tiles2-related1.jpg", "images/tiles2-related2.jpg", "images/tiles2-related3.jpg"]
-            },
-            glazed: {
-                title: "Glazed Vitrified Tiles",
-                main: "images/tiles3.jpg",
-                related: ["images/tiles3-related1.jpg", "images/tiles3-related2.jpg", "images/tiles3-related3.jpg"]
-            }
+            glazed: { title: "Glazed Vitrified Tiles", main: "images/tiles3.jpg", related: ["images/tiles3-related1.jpg", "images/tiles3-related2.jpg", "images/tiles3-related3.jpg"] }
         };
 
         const urlParams = new URLSearchParams(window.location.search);
@@ -95,6 +91,7 @@
                 const img = document.createElement("img");
                 img.src = src;
                 img.alt = "Related Image";
+                img.className = "w-32 h-32 object-cover rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300";
                 relatedImagesList.appendChild(img);
             });
         } else {
