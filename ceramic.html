@@ -5,20 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ceramic Tiles - Tiles Shop</title>
     <link rel="stylesheet" href="style.css">
+    <!-- If you want this page to look like others, you'd add Tailwind here instead/additionally -->
+    <!-- <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"> -->
+    <!-- <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"> -->
+
 </head>
 <body>
     <!-- Header Section -->
     <header class="header">
+        <!-- This header uses classes from the original style.css, not Tailwind by default now -->
         <h1 class="title">SAI BALAJI TILES HOME</h1>
         <button class="toggle-btn" onclick="toggleMenu()">☰</button>
     </header>
 
     <!-- Navigation Bar (Vertical, hidden by default) -->
     <nav class="navbar">
+        <!-- This nav uses classes from the original style.css -->
         <ul class="nav-menu">
             <li><a href="index.html">Home</a></li>
             <li><a href="index.html#catalog">Catalog</a></li>
-            <li><a href="index.html#view-in-room">View in Room</a></li>
+            <!-- Update links to match new structure if this page is kept -->
             <li><a href="index.html#about">About</a></li>
             <li><a href="index.html#contact">Contact</a></li>
             <li><a href="cart.html">Cart</a></li>
@@ -27,6 +33,7 @@
 
     <!-- Ceramic Tiles Section with Centered Image -->
     <section class="ceramic-tiles">
+        <!-- This section uses classes from the original style.css -->
         <div class="main-image">
             <img src="images/tiles2.jpg" alt="Main Ceramic Tile">
         </div>
@@ -37,19 +44,19 @@
         <p>© 2025 Tiles Shop. All Rights Reserved.</p>
     </footer>
 
-    <!-- Toggle Menu Script -->
+    <!-- Toggle Menu Script (ensure it targets correct classes if style.css changes them) -->
     <script>
         let menuVisible = false;
 
         function toggleMenu() {
-            const navbar = document.querySelector(".navbar");
+            const navbar = document.querySelector(".navbar"); // Targets class from original style.css
             menuVisible = !menuVisible;
-            navbar.classList.toggle("active", menuVisible);
+            navbar.classList.toggle("active", menuVisible); // 'active' class from original style.css
         }
 
         document.addEventListener("click", function(event) {
             const navbar = document.querySelector(".navbar");
-            const toggleBtn = document.querySelector(".toggle-btn");
+            const toggleBtn = document.querySelector(".toggle-btn"); // Targets class from original style.css
             if (menuVisible && !navbar.contains(event.target) && event.target !== toggleBtn) {
                 navbar.classList.remove("active");
                 menuVisible = false;
