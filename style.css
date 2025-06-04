@@ -1,4 +1,4 @@
-/* Global smooth scrolling */
 html {
-    scroll-behavior: smooth;
+    scroll-behavior: smooth; /* Already there, but good to confirm */
 }
+/* You might move the shared <style> block from HTML to here eventually */
