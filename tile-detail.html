@@ -8,20 +8,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <style>
-        .thumbnail-active {
-            border-color: #22d3ee; /* Tailwind's cyan-400 */
-            box-shadow: 0 0 0 2px #22d3ee;
-        }
-        .modal-overlay {
-            transition: opacity 0.3s ease-in-out;
-        }
-        .modal-content {
-            transition: transform 0.3s ease-in-out;
-        }
-    </style>
-</head>
-<body class="bg-black text-gray-200 font-poppins">
-     <style>
         /* --- Global Background Animations --- */
         body {
             background: linear-gradient(270deg, #0d0320, #1a094b, #000000, #8e2de2, #000000);
@@ -60,23 +46,49 @@
         .modal-overlay { transition: opacity 0.3s ease-in-out; }
         .modal-content { transition: transform 0.3s ease-in-out; }
 
-        /* General Navbar & Splash (if needed on other pages, though splash is index-specific) */
+        /* General Navbar */
         .navbar.translate-x-0 { transform: translateX(0%); }
         .navbar.-translate-x-full { transform: translateX(-100%); }
-         @keyframes fadeInSlow { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .animate-fade-in-slow { animation: fadeInSlow 1.5s ease-out forwards; } /* For splash on index */
-         @keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
-        .animate-slide-up { animation: slideUp 1s ease-out forwards; } /* For section titles */
+        
+        /* --- Custom Button Styles (copied from index.html for consistency) --- */
+        .btn-theme-primary {
+            @apply inline-block px-7 py-3.5 rounded-lg font-semibold text-sm sm:text-base shadow-md
+                   border-2 border-cyan-500 text-cyan-400 
+                   bg-gray-800/60 hover:bg-cyan-500/20
+                   transition-all duration-300 ease-in-out transform 
+                   focus:outline-none focus:ring-4 focus:ring-cyan-500/50 active:scale-95;
+        }
+        .btn-theme-primary:hover {
+            box-shadow: 0 0 15px rgba(34, 211, 238, 0.4), 0 0 25px rgba(34, 211, 238, 0.2);
+            transform: translateY(-1px) scale(1.02);
+        }
+
+        .btn-theme-secondary {
+            @apply inline-block px-5 py-2.5 rounded-md font-semibold 
+                   border border-indigo-500 text-indigo-400
+                   bg-transparent hover:bg-indigo-500/20 hover:text-indigo-300
+                   transition-all duration-300 ease-in-out transform 
+                   focus:outline-none focus:ring-2 focus:ring-indigo-500/50 active:scale-95;
+        }
+        .btn-theme-secondary:hover {
+            box-shadow: 0 0 10px rgba(129, 140, 248, 0.3);
+            transform: scale(1.03);
+        }
+        /* Fallback for backdrop-filter */
+        @supports not (backdrop-filter: blur(1px)) {
+          #main-header, #main-navbar-detail { /* Updated ID */
+            background-color: rgba(17, 24, 39, 0.95) !important; 
+          }
+        }
 
     </style>
 </head>
-<body class="text-gray-200 font-poppins">
+<body class="bg-black text-gray-200 font-poppins">
 
-    <!-- Animated Star Background - Global -->
     <div class="stars-container fixed inset-0 z-[-1] pointer-events-none" id="stars-bg-global">
         <!-- Stars will be injected here by JavaScript -->
     </div>
-    <!-- Header -->
+    
     <header id="main-header" class="fixed w-full bg-gray-900/80 backdrop-blur-md shadow-2xl flex items-center justify-between p-3 sm:p-4 z-40 border-b border-cyan-500/30">
         <div class="flex-none">
             <button id="toggle-btn-detail" aria-label="Toggle menu" aria-expanded="false" aria-controls="main-navbar-detail" class="text-xl sm:text-2xl text-cyan-400 hover:text-cyan-300 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-cyan-300 rounded" onclick="toggleMenuDetail()">☰</button>
@@ -87,7 +99,6 @@
         <div class="flex-none w-6 sm:w-8 h-6 sm:h-8"></div>
     </header>
 
-    <!-- Navigation -->
     <nav id="main-navbar-detail" class="navbar fixed top-0 left-0 w-64 sm:w-72 h-screen bg-gray-900/80 backdrop-blur-md shadow-lg transform -translate-x-full transition-transform duration-300 z-30 border-r border-cyan-500/30" role="navigation" aria-label="Main navigation">
         <ul class="nav-menu mt-16 sm:mt-20 space-y-3 sm:space-y-4 p-4">
             <li><a href="index.html#home" class="block py-2 px-2 text-indigo-300 hover:text-indigo-200 hover:bg-gray-800/60 rounded transition-colors duration-300 text-sm sm:text-base">Home</a></li>
@@ -99,50 +110,42 @@
         </ul>
     </nav>
 
-    <!-- Tile Detail -->
-    <section class="tile-detail py-20 sm:py-24 bg-gray-900/70 backdrop-blur-sm min-h-screen">
-        <div class="container mx-auto px-4 text-center">
-            <h2 id="detail-title" class="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 sm:mb-8 text-cyan-400">Tile Details</h2>
-            
-            <div class="main-image-container mb-4 sm:mb-6">
-                <img id="detail-image" src="images/placeholder.jpg" alt="Main Tile Image" class="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl mx-auto rounded-lg shadow-2xl object-cover h-64 sm:h-80 md:h-96 border-2 border-gray-700">
-            </div>
-            <div id="related-images-list" class="flex justify-center gap-2 sm:gap-3 flex-wrap mb-8 sm:mb-10">
-                <!-- Thumbnails will be populated by JavaScript -->
-            </div>
+    <main id="page-main-content" class="relative z-10">
+        <section class="tile-detail py-20 sm:py-24 bg-gray-900/70 backdrop-blur-sm min-h-screen">
+            <div class="container mx-auto px-4 text-center">
+                <h2 id="detail-title" class="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 sm:mb-8 text-cyan-400">Tile Details</h2>
+                
+                <div class="main-image-container mb-4 sm:mb-6">
+                    <img id="detail-image" src="images/placeholder.jpg" alt="Main Tile Image" class="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl mx-auto rounded-lg shadow-2xl object-cover h-64 sm:h-80 md:h-96 border-2 border-gray-700">
+                </div>
+                <div id="related-images-list" class="flex justify-center gap-2 sm:gap-3 flex-wrap mb-8 sm:mb-10">
+                    <!-- Thumbnails will be populated by JavaScript -->
+                </div>
 
-            <div class="tile-description mb-8 sm:mb-10">
-                <p id="detail-description" class="text-base sm:text-lg text-gray-300 max-w-xl sm:max-w-2xl mx-auto leading-relaxed">
-                    Loading tile description...
-                </p>
+                <div class="tile-description mb-8 sm:mb-10">
+                    <p id="detail-description" class="text-base sm:text-lg text-gray-300 max-w-xl sm:max-w-2xl mx-auto leading-relaxed">
+                        Loading tile description...
+                    </p>
+                </div>
+                
+                <div class="flex flex-col sm:flex-row flex-wrap justify-center items-center gap-4">
+                    <button id="add-to-cart-btn" class="btn-theme-primary text-lg">
+                        <span class="button-text">Add to Cart</span>
+                        <span class="button-loader hidden">Adding...</span>
+                    </button>
+                    <button id="view-in-room-btn" class="btn-theme-secondary">
+                        View in Room (AR)
+                    </button>
+                    <!-- NEW View Cart Button -->
+                    <a href="cart.html" id="view-cart-btn" class="btn-theme-secondary hidden">
+                        View Cart
+                    </a>
+                </div>
+                <div id="cart-feedback" class="mt-4 font-semibold text-sm sm:text-base"></div>
             </div>
-            
-            <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
-                <button id="add-to-cart-btn" 
-                        class="bg-indigo-500 text-white px-6 py-3 sm:px-8 rounded-lg shadow-lg 
-                               text-base sm:text-lg font-semibold w-full sm:w-auto
-                               transition-all duration-300 ease-in-out 
-                               transform hover:bg-indigo-600 hover:shadow-xl hover:-translate-y-1 hover:scale-105 
-                               focus:outline-none focus:ring-4 focus:ring-indigo-300 focus:ring-opacity-75 
-                               active:bg-indigo-700 active:scale-95">
-                    <span class="button-text">Add to Cart</span>
-                    <span class="button-loader hidden">Adding...</span>
-                </button>
-                <button id="view-in-room-btn" 
-                        class="bg-indigo-500 text-white px-6 py-3 sm:px-8 rounded-lg shadow-lg 
-                               text-base sm:text-lg font-semibold w-full sm:w-auto
-                               transition-all duration-300 ease-in-out 
-                               transform hover:bg-indigo-600 hover:shadow-xl hover:-translate-y-1 hover:scale-105 
-                               focus:outline-none focus:ring-4 focus:ring-indigo-300 focus:ring-opacity-75 
-                               active:bg-indigo-700 active:scale-95">
-                    View in Room (AR)
-                </button>
-            </div>
-            <div id="cart-feedback" class="mt-4 font-semibold text-sm sm:text-base"></div>
-        </div>
-    </section>
+        </section>
+    </main>
 
-    <!-- AR Modal Placeholder -->
     <div id="ar-modal" class="fixed inset-0 bg-black bg-opacity-70 modal-overlay flex items-center justify-center p-4 z-50 hidden opacity-0" role="dialog" aria-modal="true" aria-labelledby="ar-modal-title">
         <div class="bg-gray-800 p-6 sm:p-8 rounded-lg shadow-2xl w-full max-w-md modal-content transform scale-95">
             <div class="flex justify-between items-center mb-4">
@@ -156,11 +159,25 @@
         </div>
     </div>
 
-    <footer class="bg-gray-900 text-gray-400 text-center py-6 border-t border-cyan-500/30">
+    <footer class="bg-gray-900 text-gray-400 text-center py-6 border-t border-cyan-500/30 relative z-10">
         <p class="text-sm sm:text-base">© 2025 Sai Balaji Tiles Home. All Rights Reserved.</p>
     </footer>
 
     <script>
+        // --- Dynamic Header Padding ---
+        const headerElementDetail = document.getElementById('main-header');
+        const mainPageContentAreaDetail = document.getElementById('page-main-content');
+
+        function setDetailPadding() {
+            if (mainPageContentAreaDetail && headerElementDetail) {
+                const headerHeight = headerElementDetail.offsetHeight;
+                mainPageContentAreaDetail.style.paddingTop = `${headerHeight}px`;
+            }
+        }
+        window.addEventListener('load', setDetailPadding);
+        window.addEventListener('resize', setDetailPadding);
+
+
         // --- Menu Toggle for Detail Page ---
         let menuDetailVisible = false;
         const navbarDetail = document.getElementById("main-navbar-detail");
@@ -190,11 +207,32 @@
             }
         });
 
+        // --- Animated Stars Background ---
+        function createStarsGlobalDetail() { // Renamed to avoid conflict if in same scope as index.js
+            const container = document.getElementById('stars-bg-global');
+            if (!container) return;
+            container.innerHTML = ''; // Clear existing stars if any (e.g. if navigating back)
+            const numStars = Math.floor(window.innerWidth / 20); 
+            for (let i = 0; i < numStars; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                const size = Math.random() * 2.5 + 0.5; 
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                star.style.animationDuration = `${Math.random() * 3 + 4}s`; 
+                container.appendChild(star);
+            }
+        }
+        createStarsGlobalDetail(); // Create stars on page load
+
+
         // --- Tile Data and Detail Page Logic ---
-        const tilesData = {
-            polished: { title: "Polished Vitrified Tiles", main: "images/tiles1.jpg", description: "Elegant and durable...", related: ["images/tiles1.jpg", "images/tile1.jpg", "images/tiles3.jpg", "images/tile2.jpg"] },
-            ceramic: { title: "Ceramic Tiles", main: "images/tiles2.jpg", description: "Versatile and affordable...", related: ["images/tile2.jpg", "images/tile1.jpg", "images/tiles1.jpg"] },
-            glazed: { title: "Glazed Vitrified Tiles (GVT)", main: "images/tiles3.jpg", description: "High-quality GVT...", related: ["images/tiles3.jpg", "images/tiles3.jpg", "images/tiles2.jpg", "images/tiles1.jpg"] }
+        const tilesData = { // Ensure your image paths are correct
+            polished: { title: "Polished Vitrified Tiles", main: "images/tiles1.jpg", description: "Elegant and durable Polished Vitrified Tiles offer a luxurious, high-gloss finish perfect for modern interiors. They are known for their strength, low porosity, and resistance to stains and scratches, making them ideal for high-traffic areas in both residential and commercial spaces.", related: ["images/tiles1.jpg", "images/tile1.jpg", "images/tiles3.jpg", "images/tile2.jpg"] },
+            ceramic: { title: "Ceramic Tiles", main: "images/tiles2.jpg", description: "Versatile and affordable Ceramic Tiles come in a wide array of colors, patterns, and sizes. They are easy to clean, maintain, and install, suitable for various applications including kitchen backsplashes, bathroom walls, and flooring in moderate traffic zones.", related: ["images/tile2.jpg", "images/tile1.jpg", "images/tiles1.jpg"] },
+            glazed: { title: "Glazed Vitrified Tiles (GVT)", main: "images/tiles3.jpg", description: "High-quality Glazed Vitrified Tiles (GVT) feature a digitally printed glazed surface, offering endless design possibilities from wood and stone looks to intricate patterns. GVT combines the beauty of natural materials with the superior strength and low maintenance of vitrified tiles.", related: ["images/tiles3.jpg", "images/tiles3.jpg", "images/tiles2.jpg", "images/tiles1.jpg"] }
         };
 
         const urlParams = new URLSearchParams(window.location.search);
@@ -207,6 +245,7 @@
         const relatedImagesListEl = document.getElementById("related-images-list");
         const addToCartButtonEl = document.getElementById("add-to-cart-btn");
         const cartFeedbackEl = document.getElementById("cart-feedback");
+        const viewCartButtonEl = document.getElementById("view-cart-btn"); // Get the new button
 
         function updateMainImage(src, altText, clickedThumbnail) {
             if (detailImageEl) {
@@ -233,7 +272,7 @@
                 const allImagesForGallery = [selectedTile.main, ...selectedTile.related.filter(img => img !== selectedTile.main)];
                 allImagesForGallery.forEach((src, index) => {
                     const img = document.createElement("img");
-                    img.src = src;
+                    img.src = src; // Ensure these image paths are correct
                     const alt = `${selectedTile.title} - View ${index + 1}`;
                     img.alt = alt;
                     img.className = "w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 object-cover rounded-md shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer border-2 border-gray-700 hover:border-cyan-400 transform hover:scale-105";
@@ -277,6 +316,7 @@
                             }
                         }
                         updateCartCountDetail();
+                        if (viewCartButtonEl) viewCartButtonEl.classList.remove('hidden'); // Show View Cart button
                         if (buttonLoader) buttonText.classList.remove('hidden');
                         if (buttonLoader) buttonLoader.classList.add('hidden');
                         addToCartButtonEl.disabled = false;
@@ -286,19 +326,29 @@
             }
         } else { 
             if (detailTitleEl) detailTitleEl.textContent = "Tile Not Found";
-            if (detailImageEl) detailImageEl.src = "images/placeholder-notfound.jpg";
+            if (detailImageEl) detailImageEl.src = "images/placeholder-notfound.jpg"; // Make sure this image exists
             if (detailDescriptionEl) detailDescriptionEl.textContent = "The tile you are looking for could not be found. Please check the catalog.";
             if (addToCartButtonEl) addToCartButtonEl.disabled = true;
             const viewInRoomBtnEl = document.getElementById('view-in-room-btn');
             if(viewInRoomBtnEl) viewInRoomBtnEl.disabled = true;
+            if(viewCartButtonEl) viewCartButtonEl.classList.add('hidden'); // Hide if tile not found
         }
 
         function updateCartCountDetail() {
             const cart = JSON.parse(localStorage.getItem("cart")) || [];
             const cartCountSpan = document.getElementById("cart-count-detail");
              if (cartCountSpan) cartCountSpan.textContent = cart.length;
+             
+             // Show/hide View Cart button based on cart content (optional, could always be visible after first add)
+             if (viewCartButtonEl) {
+                if (cart.length > 0) {
+                    // viewCartButtonEl.classList.remove('hidden'); // Already handled on add, but good for initial load
+                } else {
+                    // viewCartButtonEl.classList.add('hidden'); // Hide if cart becomes empty (e.g. if user removes all from cart page and comes back)
+                }
+             }
         }
-        updateCartCountDetail();
+        updateCartCountDetail(); // Call on page load to set initial state of cart count and View Cart button visibility
 
         const arModal = document.getElementById('ar-modal');
         const viewInRoomBtn = document.getElementById('view-in-room-btn');

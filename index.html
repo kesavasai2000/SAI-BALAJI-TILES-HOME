@@ -8,77 +8,65 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css"> 
     <style>
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            /* The body will be the main scroll container */
-        }
+        html, body { height: 100%; margin: 0; padding: 0; }
         body.main-content-visible { 
             background: linear-gradient(270deg, #0d0320, #1a094b, #000000, #8e2de2, #000000);
-            background-size: 300% 300%;
-            animation: gradientBG 20s ease infinite;
-            overflow-x: hidden; 
+            background-size: 300% 300%; animation: gradientBG 20s ease infinite; overflow-x: hidden; 
         }
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        .stars-container {
-            position: fixed; 
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            pointer-events: none; overflow: hidden; 
-            z-index: 0; /* Behind most things but above body background */
-        }
-        .star {
-            position: absolute; background-color: rgba(255, 255, 255, 0.7);
-            border-radius: 50%; animation: twinkle 6s infinite ease-in-out;
-        }
-        @keyframes twinkle {
-            0%, 100% { opacity: 0.1; transform: scale(0.6); }
-            50% { opacity: 0.7; transform: scale(1); }
-        }
-
-        .navbar.translate-x-0 { transform: translateX(0%); }
-        .navbar.-translate-x-full { transform: translateX(-100%); }
-
-        @keyframes fadeInSlow { 
-            from { opacity: 0; transform: translateY(20px); } 
-            to { opacity: 1; transform: translateY(0); } 
-        }
-        .animate-fade-in-slow { 
-            animation: fadeInSlow 1.2s ease-out forwards;
-        }
+        @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        .stars-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; overflow: hidden; z-index: 0; }
+        .star { position: absolute; background-color: rgba(255, 255, 255, 0.7); border-radius: 50%; animation: twinkle 6s infinite ease-in-out; }
+        @keyframes twinkle { 0%, 100% { opacity: 0.1; transform: scale(0.6); } 50% { opacity: 0.7; transform: scale(1); } }
+        .navbar.translate-x-0 { transform: translateX(0%); } .navbar.-translate-x-full { transform: translateX(-100%); }
+        @keyframes fadeInSlow { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in-slow { animation: fadeInSlow 1.2s ease-out forwards; }
         .delay-500ms { animation-delay: 0.5s; }
-
         #home .splash-content-animation { opacity: 0; }
-        #home .splash-content-animation.start-animation {
-            animation: fadeInMainHomeContent 1.5s ease-out forwards;
-        }
-        @keyframes fadeInMainHomeContent {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .animate-on-scroll {
-            opacity: 0;
-            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
-        }
-        .init-slide-up { transform: translateY(40px); }
-        .init-fade-in { transform: translateY(20px); }
-        .animate-on-scroll.is-visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* Fallback for browsers that don't support backdrop-filter */
+        #home .splash-content-animation.start-animation { animation: fadeInMainHomeContent 1.5s ease-out forwards; }
+        @keyframes fadeInMainHomeContent { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-on-scroll { opacity: 0; transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
+        .init-slide-up { transform: translateY(40px); } .init-fade-in { transform: translateY(20px); }
+        .animate-on-scroll.is-visible { opacity: 1; transform: translateY(0); }
         @supports not (backdrop-filter: blur(1px)) {
-          #main-header, #main-navbar-index {
-            /* Use a more opaque background if blur is not supported */
-            background-color: rgba(17, 24, 39, 0.95) !important; /* Corresponds to bg-gray-900 with 95% opacity */
-          }
+          #main-header, #main-navbar-index { background-color: rgba(17, 24, 39, 0.95) !important; }
+          .needs-blur-fallback { background-color: rgba(31, 41, 55, 0.90) !important; }
         }
+        #page-main-content { position: relative; z-index: 1; }
+
+        .btn {
+            @apply inline-block px-6 py-3 rounded-lg font-semibold text-sm sm:text-base shadow-md
+                   transition-all duration-300 ease-in-out transform 
+                   focus:outline-none focus:ring-4 active:scale-95;
+        }
+        .btn-primary-action { 
+            @apply btn bg-indigo-600 text-white hover:bg-indigo-700 focus:ring-indigo-500/50;
+        }
+        .btn-primary-action:hover {
+            @apply shadow-lg hover:-translate-y-0.5;
+        }
+        .btn-secondary-action { 
+            @apply btn border-2 border-cyan-500 text-cyan-400 bg-transparent hover:bg-cyan-500/20 focus:ring-cyan-500/40;
+        }
+        .btn-secondary-action:hover {
+             @apply text-cyan-300;
+        }
+
+        #contactForm input[type="text"],
+        #contactForm input[type="email"],
+        #contactForm textarea {
+            color: #000000 !important; 
+        }
+        
+        /* Styling for clickable card */
+        .clickable-card-link {
+            @apply block w-full h-full no-underline text-inherit; /* Remove default link styles */
+            display: flex; /* To make the anchor fill the card and layout children */
+            flex-direction: column; /* Stack card content vertically */
+        }
+        .clickable-card-link .btn-secondary-action { /* Ensure button inside clickable card still looks like a button */
+            @apply mt-auto; /* Pushes button to bottom if card content height varies */
+        }
+
     </style>
 </head>
 <body class="bg-black text-gray-200 font-poppins">
@@ -88,12 +76,9 @@
         <h1 class="text-2xl sm:text-3xl md:text-4xl text-white font-bold mt-4 sm:mt-6 text-center opacity-0 animate-fade-in-slow delay-500ms">SAI BALAJI TILES HOME</h1>
     </div>
 
-    <!-- This div acts as the container for scrollable content AND fixed elements like header/nav -->
     <div id="page-container" style="display: none; position: relative; min-height: 100vh;">
-        
         <div class="stars-container" id="stars-bg-global"></div>
 
-        <!-- Header with semi-transparent background and backdrop-filter -->
         <header id="main-header" class="fixed w-full top-0 left-0 bg-gray-900/80 backdrop-blur-md shadow-2xl flex items-center justify-between p-3 sm:p-4 z-30 border-b border-cyan-500/30">
             <div class="flex-none">
                 <button id="toggle-btn-index" aria-label="Toggle menu" aria-expanded="false" aria-controls="main-navbar-index" class="text-xl sm:text-2xl text-cyan-400 hover:text-cyan-300 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-cyan-300 rounded" onclick="toggleMenuIndex()">☰</button>
@@ -104,9 +89,8 @@
             <div class="flex-none w-6 sm:w-8 h-6 sm:h-8"></div>
         </header>
 
-        <!-- Navigation -->
         <nav id="main-navbar-index" class="navbar fixed top-0 left-0 w-64 sm:w-72 h-screen bg-gray-900/80 backdrop-blur-md shadow-lg transform -translate-x-full transition-transform duration-300 z-40 border-r border-cyan-500/30">
-            <ul class="nav-menu mt-16 sm:mt-20 space-y-3 sm:space-y-4 p-4">
+             <ul class="nav-menu mt-16 sm:mt-20 space-y-3 sm:space-y-4 p-4">
                 <li><a href="#home" class="block py-2 px-2 text-indigo-300 hover:text-indigo-200 hover:bg-gray-800/60 rounded transition-colors duration-300 text-sm sm:text-base">Home</a></li>
                 <li><a href="#catalog" class="block py-2 px-2 text-indigo-300 hover:text-indigo-200 hover:bg-gray-800/60 rounded transition-colors duration-300 text-sm sm:text-base">Catalog</a></li>
                 <li><a href="#about" class="block py-2 px-2 text-indigo-300 hover:text-indigo-200 hover:bg-gray-800/60 rounded transition-colors duration-300 text-sm sm:text-base">About Us</a></li>
@@ -116,47 +100,57 @@
             </ul>
         </nav>
 
-        <!-- The main scrollable content area -->
         <main id="page-main-content" class="relative z-10"> 
-            <!-- Added relative and z-10 to ensure it's above stars if stars are z-0 within page-container -->
             <section id="home" class="min-h-screen flex items-center justify-center text-center bg-transparent px-4">
                 <div class="splash-content-animation">
                     <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold text-cyan-400 mb-4">Welcome to Sai Balaji Tiles</h1>
                     <p class="text-lg sm:text-xl md:text-2xl text-indigo-300 mb-8">Discover Elegance & Durability for Your Spaces</p>
-                    <a href="#catalog"
-                       class="bg-indigo-500 text-white px-8 py-3 sm:px-10 sm:py-3.5 rounded-lg shadow-lg text-base sm:text-lg font-semibold transition-all duration-300 ease-in-out transform hover:bg-indigo-600 hover:shadow-xl hover:-translate-y-1 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-indigo-300 focus:ring-opacity-75">
+                    <a href="#catalog" class="btn-primary-action text-lg">
                         Explore Our Catalog
                     </a>
                 </div>
             </section>
 
-            <section id="catalog" class="py-16 sm:py-20 bg-gray-800/70 backdrop-blur-sm"> 
+            <section id="catalog" class="py-16 sm:py-20 bg-gray-800/70 backdrop-blur-sm needs-blur-fallback"> 
                 <div class="container mx-auto px-4 text-center">
                     <h2 class="animate-on-scroll init-slide-up text-2xl sm:text-3xl md:text-4xl font-bold mb-10 sm:mb-12 text-cyan-400">Our Tile Catalog</h2>
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-                        <div class="animate-on-scroll init-slide-up tile-card bg-gray-900/80 p-5 rounded-xl shadow-2xl border border-gray-700/50 hover:border-cyan-500/70 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-cyan-500/30" style="transition-delay: 0.1s;">
-                            <img src="images/tiles1.jpg" alt="Polished Vitrified Tiles" class="w-full h-48 sm:h-56 object-cover rounded-lg mb-4 border-2 border-gray-600">
-                            <h3 class="text-xl sm:text-2xl font-semibold text-indigo-300 mb-2">Polished Vitrified</h3>
-                            <p class="text-gray-400 text-sm sm:text-base mb-4">High gloss, durable, and perfect for luxurious interiors.</p>
-                            <a href="tile-detail.html?id=polished" class="inline-block bg-cyan-500 text-gray-900 px-5 py-2.5 rounded-md font-semibold hover:bg-cyan-400 transition-colors text-sm sm:text-base transform hover:scale-105">View Details</a>
+                        
+                        <!-- Tile Card 1: Polished Vitrified -->
+                        <div class="animate-on-scroll init-slide-up tile-card bg-gray-900/80 rounded-xl shadow-2xl border border-gray-700/50 hover:border-cyan-500/70 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-cyan-500/30" style="transition-delay: 0.1s;">
+                            <a href="tile-detail.html?id=polished" class="clickable-card-link p-5">
+                                <img src="images/tiles1.jpg" alt="Polished Vitrified Tiles" class="w-full h-48 sm:h-56 object-cover rounded-lg mb-4 border-2 border-gray-600">
+                                <h3 class="text-xl sm:text-2xl font-semibold text-indigo-300 mb-2">Polished Vitrified</h3>
+                                <p class="text-gray-400 text-sm sm:text-base mb-4 flex-grow">High gloss, durable, and perfect for luxurious interiors.</p>
+                                <span class="btn-secondary-action self-center">View Details</span> <!-- Span to mimic button inside anchor -->
+                            </a>
                         </div>
-                        <div class="animate-on-scroll init-slide-up tile-card bg-gray-900/80 p-5 rounded-xl shadow-2xl border border-gray-700/50 hover:border-cyan-500/70 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-cyan-500/30" style="transition-delay: 0.2s;">
-                            <img src="images/tiles2.jpg" alt="Ceramic Tiles" class="w-full h-48 sm:h-56 object-cover rounded-lg mb-4 border-2 border-gray-600">
-                            <h3 class="text-xl sm:text-2xl font-semibold text-indigo-300 mb-2">Ceramic Tiles</h3>
-                            <p class="text-gray-400 text-sm sm:text-base mb-4">Versatile, affordable, and great for walls and floors.</p>
-                            <a href="tile-detail.html?id=ceramic" class="inline-block bg-cyan-500 text-gray-900 px-5 py-2.5 rounded-md font-semibold hover:bg-cyan-400 transition-colors text-sm sm:text-base transform hover:scale-105">View Details</a>
+
+                        <!-- Tile Card 2: Ceramic Tiles -->
+                        <div class="animate-on-scroll init-slide-up tile-card bg-gray-900/80 rounded-xl shadow-2xl border border-gray-700/50 hover:border-cyan-500/70 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-cyan-500/30" style="transition-delay: 0.2s;">
+                            <a href="tile-detail.html?id=ceramic" class="clickable-card-link p-5">
+                                <img src="images/tiles2.jpg" alt="Ceramic Tiles" class="w-full h-48 sm:h-56 object-cover rounded-lg mb-4 border-2 border-gray-600">
+                                <h3 class="text-xl sm:text-2xl font-semibold text-indigo-300 mb-2">Ceramic Tiles</h3>
+                                <p class="text-gray-400 text-sm sm:text-base mb-4 flex-grow">Versatile, affordable, and great for walls and floors.</p>
+                                <span class="btn-secondary-action self-center">View Details</span>
+                            </a>
                         </div>
-                        <div class="animate-on-scroll init-slide-up tile-card bg-gray-900/80 p-5 rounded-xl shadow-2xl border border-gray-700/50 hover:border-cyan-500/70 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-cyan-500/30" style="transition-delay: 0.3s;">
-                            <img src="images/tiles3.jpg" alt="Glazed Vitrified Tiles (GVT)" class="w-full h-48 sm:h-56 object-cover rounded-lg mb-4 border-2 border-gray-600">
-                            <h3 class="text-xl sm:text-2xl font-semibold text-indigo-300 mb-2">Glazed Vitrified (GVT)</h3>
-                            <p class="text-gray-400 text-sm sm:text-base mb-4">Wide range of designs, superior finish and strength.</p>
-                            <a href="tile-detail.html?id=glazed" class="inline-block bg-cyan-500 text-gray-900 px-5 py-2.5 rounded-md font-semibold hover:bg-cyan-400 transition-colors text-sm sm:text-base transform hover:scale-105">View Details</a>
+
+                        <!-- Tile Card 3: Glazed Vitrified (GVT) -->
+                        <div class="animate-on-scroll init-slide-up tile-card bg-gray-900/80 rounded-xl shadow-2xl border border-gray-700/50 hover:border-cyan-500/70 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-cyan-500/30" style="transition-delay: 0.3s;">
+                            <a href="tile-detail.html?id=glazed" class="clickable-card-link p-5">
+                                <img src="images/tiles3.jpg" alt="Glazed Vitrified Tiles (GVT)" class="w-full h-48 sm:h-56 object-cover rounded-lg mb-4 border-2 border-gray-600">
+                                <h3 class="text-xl sm:text-2xl font-semibold text-indigo-300 mb-2">Glazed Vitrified (GVT)</h3>
+                                <p class="text-gray-400 text-sm sm:text-base mb-4 flex-grow">Wide range of designs, superior finish and strength.</p>
+                                <span class="btn-secondary-action self-center">View Details</span>
+                            </a>
                         </div>
+
                     </div>
                 </div>
             </section>
 
-            <section id="about" class="py-16 sm:py-20 bg-gray-900/60 backdrop-blur-sm">
+            <section id="about" class="py-16 sm:py-20 bg-gray-900/60 backdrop-blur-sm needs-blur-fallback">
                 <div class="container mx-auto px-4 text-center">
                     <h2 class="animate-on-scroll init-slide-up text-2xl sm:text-3xl md:text-4xl font-bold mb-8 sm:mb-10 text-cyan-400">About Sai Balaji Tiles</h2>
                     <p class="animate-on-scroll init-fade-in text-base sm:text-lg text-gray-300 max-w-xl sm:max-w-2xl mx-auto leading-relaxed" style="transition-delay: 0.1s;">
@@ -168,31 +162,39 @@
                 </div>
             </section>
 
-            <section id="collections" class="py-16 sm:py-20 bg-gray-800/70 backdrop-blur-sm">
+            <section id="collections" class="relative py-12 sm:py-16 bg-gray-900/70 backdrop-blur-md needs-blur-fallback">
                 <div class="container mx-auto px-4">
-                    <h2 class="animate-on-scroll init-slide-up text-2xl sm:text-3xl md:text-4xl font-bold mb-10 sm:mb-12 text-cyan-400 text-center">Our Featured Collections</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-10">
-                        <div class="animate-on-scroll init-fade-in collection-item bg-gray-900/80 p-6 rounded-xl shadow-2xl border border-gray-700/50 hover:shadow-indigo-500/30 transition-shadow duration-300" style="transition-delay: 0.1s;">
-                            <h3 class="text-xl sm:text-2xl font-semibold text-indigo-400 mb-3">Modern Minimalism</h3>
-                            <p class="text-gray-400 text-sm sm:text-base">Clean lines, neutral tones, and subtle textures for contemporary spaces. Perfect for creating a serene and sophisticated atmosphere.</p>
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-8 sm:mb-12 text-cyan-400 animate-on-scroll init-slide-up">Featured Collections</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
+                        <div class="animate-on-scroll init-fade-in collection-card bg-gray-800/80 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 sm:hover:-translate-y-2 border border-gray-700 hover:border-cyan-500/50" style="transition-delay: 0.1s;">
+                            <img src="images/tile1.jpg" alt="Modern Minimalist Collection" class="w-full h-40 sm:h-48 object-cover rounded-t-lg">
+                            <div class="p-3 sm:p-4 text-center">
+                                <h3 class="text-lg sm:text-xl font-bold text-indigo-300">Modern Minimalist</h3>
+                                <p class="text-gray-400 mt-1 text-sm sm:text-base">Sleek designs for a contemporary look.</p>
+                                <a href="#catalog" class="btn-secondary-action mt-2 sm:mt-3 text-sm !px-4 !py-2">Explore</a>
+                            </div>
                         </div>
-                        <div class="animate-on-scroll init-fade-in collection-item bg-gray-900/80 p-6 rounded-xl shadow-2xl border border-gray-700/50 hover:shadow-indigo-500/30 transition-shadow duration-300" style="transition-delay: 0.2s;">
-                            <h3 class="text-xl sm:text-2xl font-semibold text-indigo-400 mb-3">Rustic Charm</h3>
-                            <p class="text-gray-400 text-sm sm:text-base">Warm, earthy tones and natural-looking finishes that bring a cozy, inviting feel to any room. Ideal for a touch of tradition.</p>
+                        <div class="animate-on-scroll init-fade-in collection-card bg-gray-800/80 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 sm:hover:-translate-y-2 border border-gray-700 hover:border-cyan-500/50" style="transition-delay: 0.2s;">
+                            <img src="images/tile2.jpg" alt="Rustic Charm Collection" class="w-full h-40 sm:h-48 object-cover rounded-t-lg">
+                            <div class="p-3 sm:p-4 text-center">
+                                <h3 class="text-lg sm:text-xl font-bold text-indigo-300">Rustic Charm</h3>
+                                <p class="text-gray-400 mt-1 text-sm sm:text-base">Warm tones for a cozy vibe.</p>
+                                <a href="#catalog" class="btn-secondary-action mt-2 sm:mt-3 text-sm !px-4 !py-2">Explore</a>
+                            </div>
                         </div>
-                        <div class="animate-on-scroll init-fade-in collection-item bg-gray-900/80 p-6 rounded-xl shadow-2xl border border-gray-700/50 hover:shadow-indigo-500/30 transition-shadow duration-300" style="transition-delay: 0.3s;">
-                            <h3 class="text-xl sm:text-2xl font-semibold text-indigo-400 mb-3">Luxury Series</h3>
-                            <p class="text-gray-400 text-sm sm:text-base">Exquisite designs, premium materials, and polished finishes for those who seek ultimate elegance and opulence in their interiors.</p>
-                        </div>
-                         <div class="animate-on-scroll init-fade-in collection-item bg-gray-900/80 p-6 rounded-xl shadow-2xl border border-gray-700/50 hover:shadow-indigo-500/30 transition-shadow duration-300" style="transition-delay: 0.4s;">
-                            <h3 class="text-xl sm:text-2xl font-semibold text-indigo-400 mb-3">Outdoor & Patio</h3>
-                            <p class="text-gray-400 text-sm sm:text-base">Durable, weather-resistant tiles designed to beautify your outdoor living spaces, patios, and walkways with style and resilience.</p>
+                        <div class="animate-on-scroll init-fade-in collection-card bg-gray-800/80 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 sm:hover:-translate-y-2 border border-gray-700 hover:border-cyan-500/50" style="transition-delay: 0.3s;">
+                            <img src="images/tiles3.jpg" alt="Luxury Marble Collection" class="w-full h-40 sm:h-48 object-cover rounded-t-lg">
+                            <div class="p-3 sm:p-4 text-center">
+                                <h3 class="text-lg sm:text-xl font-bold text-indigo-300">Luxury Marble</h3>
+                                <p class="text-gray-400 mt-1 text-sm sm:text-base">Elegant finishes for a premium feel.</p>
+                                <a href="#catalog" class="btn-secondary-action mt-2 sm:mt-3 text-sm !px-4 !py-2">Explore</a>
+                            </div>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <section id="contact" class="contact py-16 sm:py-20 bg-gray-900/60 backdrop-blur-sm">
+            <section id="contact" class="contact py-16 sm:py-20 bg-gray-900/60 backdrop-blur-sm needs-blur-fallback">
                 <div class="container mx-auto px-4">
                     <h2 class="animate-on-scroll init-slide-up text-2xl sm:text-3xl md:text-4xl font-bold mb-8 sm:mb-10 text-cyan-400 text-center">Get in Touch</h2>
                     <div class="animate-on-scroll init-fade-in max-w-xl sm:max-w-2xl mx-auto text-center mb-8 sm:mb-12" style="transition-delay: 0.1s;">
@@ -205,7 +207,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start max-w-5xl mx-auto">
                             <div class="map-container rounded-lg overflow-hidden shadow-xl border border-gray-700/50">
                                 <iframe
-                                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d485.52472245956596!2d79.09515021779099!3d13.212896094397927!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bad5da1ba26771d%3A0xba39ee157f4edca4!2sKajaria%20Eternity%20Boutique%20-%20Tiles%20Showroom%20in%20Palamaner%20Road%2C%20Chittor!5e0!3m2!1sen!2sin!4v1749051937329!5m2!1sen!2sin" 
+                                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3887.332740258326!2d79.0926736742076!3d13.212896009265012!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bad5da1ba26771d%3A0xba39ee157f4edca4!2sKajaria%20Eternity%20Boutique%20-%20Tiles%20Showroom%20in%20Palamaner%20Road%2C%20Chittor!5e0!3m2!1sen!2sin!4v1714905193732!5m2!1sen!2sin" 
                                     width="100%" height="350" style="border:0;" allowfullscreen="" loading="lazy"
                                     referrerpolicy="no-referrer-when-downgrade" title="Sai Balaji Tiles Home Location - Replace with your map">
                                 </iframe>
@@ -220,7 +222,7 @@
                                 </address>
                                 <a href="https://maps.app.goo.gl/ePv4dAQ9iEprLneLA" 
                                    target="_blank" rel="noopener noreferrer"
-                                   class="inline-block mt-6 bg-cyan-500 text-gray-900 px-5 py-2.5 rounded-md font-semibold hover:bg-cyan-400 transition-colors text-sm transform hover:scale-105 self-start">
+                                   class="btn-primary-action mt-6 self-start">
                                     Get Directions
                                 </a>
                             </div>
@@ -233,23 +235,40 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-6">
                             <div>
                                 <label for="name" class="block text-sm sm:text-base font-medium text-indigo-300 text-left mb-1">Full Name</label>
-                                <input type="text" name="name" id="name" required class="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-gray-700/50 border border-gray-600 rounded-md text-gray-200 focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400 outline-none transition-colors" placeholder="e.g., John Doe">
+                                <input type="text" name="name" id="name" required 
+                                       class="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-gray-200 border border-gray-500 rounded-md text-black 
+                                              focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400 outline-none transition-colors
+                                              placeholder-gray-500" 
+                                       placeholder="e.g., John Doe">
                             </div>
                             <div>
                                 <label for="email" class="block text-sm sm:text-base font-medium text-indigo-300 text-left mb-1">Email Address</label>
-                                <input type="email" name="email" id="email" required class="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-gray-700/50 border border-gray-600 rounded-md text-gray-200 focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400 outline-none transition-colors" placeholder="e.g., john.doe@example.com">
+                                <input type="email" name="email" id="email" required 
+                                       class="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-gray-200 border border-gray-500 rounded-md text-black 
+                                              focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400 outline-none transition-colors
+                                              placeholder-gray-500" 
+                                       placeholder="e.g., john.doe@example.com">
                             </div>
                         </div>
                         <div class="mb-4 sm:mb-6">
                             <label for="subject" class="block text-sm sm:text-base font-medium text-indigo-300 text-left mb-1">Subject (Optional)</label>
-                            <input type="text" name="subject" id="subject" class="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-gray-700/50 border border-gray-600 rounded-md text-gray-200 focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400 outline-none transition-colors" placeholder="e.g., Inquiry about Polished Tiles">
+                            <input type="text" name="subject" id="subject" 
+                                   class="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-gray-200 border border-gray-500 rounded-md text-black 
+                                          focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400 outline-none transition-colors
+                                          placeholder-gray-500" 
+                                   placeholder="e.g., Inquiry about Polished Tiles">
                         </div>
                         <div class="mb-6 sm:mb-8">
                             <label for="message" class="block text-sm sm:text-base font-medium text-indigo-300 text-left mb-1">Message</label>
-                            <textarea name="message" id="message" rows="4" required class="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-gray-700/50 border border-gray-600 rounded-md text-gray-200 focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400 outline-none transition-colors resize-none" placeholder="Your message here..."></textarea>
+                            <textarea name="message" id="message" rows="4" required 
+                                      class="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-gray-200 border border-gray-500 rounded-md text-black 
+                                             focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400 outline-none transition-colors 
+                                             resize-none placeholder-gray-500" 
+                                      placeholder="Your message here..."></textarea>
                         </div>
                         <div>
-                            <button type="submit" id="sendMessageBtn" class="w-full sm:w-auto bg-indigo-500 text-white px-6 py-3 sm:px-8 rounded-lg shadow-lg text-base sm:text-lg font-semibold transition-all duration-300 ease-in-out transform hover:bg-indigo-600 hover:shadow-xl hover:-translate-y-1 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-indigo-300 focus:ring-opacity-75 active:bg-indigo-700 active:scale-95">
+                            <button type="submit" id="sendMessageBtn" 
+                                    class="btn-primary-action w-full sm:w-auto text-lg">
                                 <span class="button-text">Send Message</span>
                                 <span class="button-loader hidden">Sending...</span>
                             </button>
@@ -261,14 +280,15 @@
         </main>
 
         <footer class="bg-gray-900 text-gray-400 text-center py-6 border-t border-cyan-500/30 relative z-10">
-             <!-- Added relative z-10 to footer -->
             <p class="text-sm sm:text-base">© 2025 Sai Balaji Tiles Home. All Rights Reserved.</p>
         </footer>
-    </div> <!-- End of #page-container -->
+    </div>
 
     <script>
+        // --- All JavaScript from previous version remains the same ---
+        // No changes needed in JS for making the tile cards clickable via HTML structure.
         const splashScreen = document.getElementById('splash-screen');
-        const pageContainer = document.getElementById('page-container'); // Updated ID
+        const pageContainer = document.getElementById('page-container');
         const homeContentAnimationTarget = document.querySelector('#home .splash-content-animation');
         const mainPageContentArea = document.getElementById('page-main-content');
         const headerElement = document.getElementById('main-header');
@@ -330,7 +350,7 @@
                 }
                 if (toggleBtnIndex) {
                     toggleBtnIndex.classList.toggle("text-cyan-600", menuIndexVisible);
-                    toggleBtnIndex.setAttribute('aria-expanded', menuIndexビisible);
+                    toggleBtnIndex.setAttribute('aria-expanded', menuIndexVisible);
                 }
             }
             document.addEventListener("click", (e) => {
@@ -410,7 +430,7 @@
                     formStatusEl.className = 'mt-4 text-sm sm:text-base text-center';
 
                     const formData = new FormData(contactForm);
-                    const formSpreeEndpoint = 'https://formspree.io/f/mldndgpw'; 
+                    const formSpreeEndpoint = 'https://formspree.io/f/YOUR_FORM_ID'; 
                     
                     fetch(formSpreeEndpoint, {
                         method: 'POST',
