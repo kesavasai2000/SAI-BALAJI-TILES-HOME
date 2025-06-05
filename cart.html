@@ -7,83 +7,69 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+
+    <script src="https://ucarecdn.com/libs/widget/3.x/uploadcare.full.min.js" charset="utf-8"></script>
+    <script>
+        UPLOADCARE_PUBLIC_KEY = '301133731b1569c08cb1'; // !!! REPLACE WITH YOUR UPLOADCARE KEY !!!
+        UPLOADCARE_IMAGES_ONLY = true; 
+        UPLOADCARE_CLEARABLE = true; 
+    </script>
+
     <style>
-        /* --- Global Background Animations --- */
         body {
             background: linear-gradient(270deg, #0d0320, #1a094b, #000000, #8e2de2, #000000);
             background-size: 300% 300%;
             animation: gradientBG 20s ease infinite;
-            padding-top: 5rem; /* Adjust to match header height, prevents content from hiding under fixed header */
+            padding-top: 5rem; 
         }
-        @media (min-width: 640px) { /* sm breakpoint */
-           body {
-             padding-top: 5.5rem; /* Slightly more for sm header if p-4 is used */
-           }
-        }
+        @media (min-width: 640px) { body { padding-top: 5.5rem; } }
 
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        @keyframes gradientBG { /* ... */ }
+        .stars-container { /* ... */ }
+        .star { /* ... */ }
+        @keyframes twinkle { /* ... */ }
+        .navbar.translate-x-0 { /* ... */ }
+        .navbar.-translate-x-full { /* ... */ }
+        #checkout-modal.opacity-0 { /* ... */ }
+        #checkout-modal:not(.opacity-0) { /* ... */ } 
+        #checkout-modal .modal-inner-content.scale-95 { /* ... */ }
+        #checkout-modal:not(.opacity-0) .modal-inner-content { /* ... */ }
+        .stepper .step.active .step-circle { /* ... */ }
+        .stepper .step.active { /* ... */ }
+        .stepper .step-line { /* ... */ }
+        .stepper .step.completed .step-circle { /* ... */ }
+        .modal-scrollable-content {
+            max-height: calc(90vh - 10rem); 
+            overflow-y: auto;
         }
-        .stars-container {
-            position: fixed; 
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            pointer-events: none; overflow: hidden; z-index: -1; 
+        @media (max-width: 639px) { 
+            .modal-scrollable-content { max-height: calc(85vh - 7rem); }
+            #checkout-modal .p-4 { padding: 0.75rem; } 
+            #checkout-modal .sm\:p-6 { padding: 1rem; }
+            #checkout-modal .text-lg { font-size: 1rem; line-height: 1.5rem; } 
+            #checkout-modal .text-xs { font-size: 0.7rem; line-height: 1rem; }
+            #checkout-modal .mb-3 { margin-bottom: 0.5rem; }
+            #checkout-modal .mb-4 { margin-bottom: 0.75rem; }
         }
-        .star {
-            position: absolute; background-color: rgba(255, 255, 255, 0.7);
-            border-radius: 50%; animation: twinkle 6s infinite ease-in-out;
+        .uploadcare--widget__button_type_open {
+            background-color: #6366f1 !important; 
+            color: white !important;
+            border-radius: 0.375rem !important; 
+            padding: 0.5rem 1rem !important;
+            font-weight: 600 !important;
         }
-        .star:nth-child(5n+1) { animation-delay: 0s; }
-        .star:nth-child(5n+2) { animation-delay: -1.2s; }
-        .star:nth-child(5n+3) { animation-delay: -2.4s; }
-        .star:nth-child(5n+4) { animation-delay: -3.6s; }
-        .star:nth-child(5n+5) { animation-delay: -4.8s; }
-        @keyframes twinkle {
-            0%, 100% { opacity: 0.1; transform: scale(0.6); }
-            50% { opacity: 0.7; transform: scale(1); }
+        .uploadcare--widget__button_type_open:hover {
+            background-color: #4f46e5 !important; 
         }
-
-        /* General Navbar */
-        .navbar.translate-x-0 { transform: translateX(0%); }
-        .navbar.-translate-x-full { transform: translateX(-100%); }
-        
-        /* Checkout Modal Styles */
-        #checkout-modal.opacity-0 { opacity: 0; }
-        #checkout-modal:not(.opacity-0) { opacity: 1; } 
-
-        #checkout-modal .bg-gray-800.scale-95 { transform: scale(0.95); }
-        #checkout-modal:not(.opacity-0) .bg-gray-800 { transform: scale(1); }
-
-        .stepper .step.active .step-circle {
-            background-color: #6366f1; /* indigo-500 */
-            color: white;
-        }
-        .stepper .step.active {
-            color: #c7d2fe; /* indigo-200 */
-            font-weight: 600;
-        }
-        .stepper .step-line {
-            transition: border-color 0.3s ease;
-        }
-        .stepper .step.completed .step-circle {
-            background-color: #10b981; /* green-500 */
-            color: white;
-        }
-        .stepper .step.completed ~ .step-line,
-        .stepper .step.active ~ .step-line { 
-            /* border-color: #6366f1; */ /* Optional: change line color */
+        .uploadcare--progress {
+            background-color: #4f46e5 !important; 
         }
     </style>
 </head>
 <body class="text-gray-200 font-poppins">
 
-    <!-- Animated Star Background - Global -->
-    <div class="stars-container fixed inset-0 z-[-1] pointer-events-none" id="stars-bg-global">
-        <!-- Stars will be injected here by JavaScript -->
-    </div>
-    <!-- Header -->
+    <div class="stars-container fixed inset-0 z-[-1] pointer-events-none" id="stars-bg-global"></div>
+    
     <header id="main-header" class="fixed w-full top-0 left-0 bg-gray-900/80 backdrop-blur-md shadow-2xl flex items-center justify-between p-3 sm:p-4 z-40 border-b border-cyan-500/30">
         <div class="flex-none">
             <button id="toggle-btn-cart" aria-label="Toggle menu" aria-expanded="false" aria-controls="main-navbar-cart" class="text-xl sm:text-2xl text-cyan-400 hover:text-cyan-300 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-cyan-300 rounded">☰</button>
@@ -94,10 +80,8 @@
         <div class="flex-none w-6 sm:w-8 h-6 sm:h-8"></div>
     </header>
 
-    <!-- Navigation -->
     <nav id="main-navbar-cart" class="navbar fixed top-0 left-0 w-64 sm:w-72 h-screen bg-gray-900/80 backdrop-blur-md shadow-lg transform -translate-x-full transition-transform duration-300 z-30 border-r border-cyan-500/30" role="navigation" aria-label="Main navigation">
-        <!-- Nav padding-top accounts for fixed header height -->
-        <ul class="nav-menu mt-16 sm:mt-20 space-y-3 sm:space-y-4 p-4 pt-[calc(5rem+1rem)] sm:pt-[calc(5.5rem+1rem)]"> 
+        <ul class="nav-menu mt-16 sm:mt-20 space-y-3 sm:space-y-4 p-4"> 
             <li><a href="index.html#home" class="block py-2 px-2 text-indigo-300 hover:text-indigo-200 hover:bg-gray-800/60 rounded transition-colors duration-300 text-sm sm:text-base">Home</a></li>
             <li><a href="index.html#catalog" class="block py-2 px-2 text-indigo-300 hover:text-indigo-200 hover:bg-gray-800/60 rounded transition-colors duration-300 text-sm sm:text-base">Catalog</a></li>
             <li><a href="index.html#about" class="block py-2 px-2 text-indigo-300 hover:text-indigo-200 hover:bg-gray-800/60 rounded transition-colors duration-300 text-sm sm:text-base">About Us</a></li>
@@ -107,142 +91,131 @@
         </ul>
     </nav>
 
-    <!-- Cart Section -->
-    <main> <!-- Wrap main content in <main> for semantic HTML and padding adjustment -->
-        <section class="cart py-12 sm:py-16 bg-transparent min-h-[calc(100vh-5rem)] sm:min-h-[calc(100vh-5.5rem)]"> <!-- Adjusted padding and min-height -->
+    <main>
+        <section class="cart py-12 sm:py-16 bg-transparent min-h-[calc(100vh-5rem)] sm:min-h-[calc(100vh-5.5rem)]">
             <div class="container mx-auto px-4 text-center">
                 <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-8 text-cyan-400">Your Shopping Cart</h2>
-                <div id="cart-items-container" class="space-y-4 sm:space-y-6 mb-8 sm:mb-10 max-w-xl md:max-w-2xl mx-auto">
-                    <!-- Cart items will be populated by JavaScript -->
-                </div>
+                <div id="cart-items-container" class="space-y-4 sm:space-y-6 mb-8 sm:mb-10 max-w-xl md:max-w-2xl mx-auto"></div>
                 <div id="cart-empty-message" class="hidden text-lg sm:text-xl text-indigo-300 mb-8">
                     Your cart is currently empty. <a href="index.html#catalog" class="font-semibold hover:text-cyan-400 underline">Browse our catalog!</a>
                 </div>
                 <button id="checkout-btn" 
-                    class="bg-indigo-500 text-white px-6 py-3 sm:px-8 rounded-lg shadow-lg 
-                                   text-base sm:text-lg font-semibold w-full sm:w-auto
-                                   transition-all duration-300 ease-in-out 
-                                   transform hover:bg-indigo-600 hover:shadow-xl hover:-translate-y-1 hover:scale-105 
-                                   focus:outline-none focus:ring-4 focus:ring-indigo-300 focus:ring-opacity-75 
-                                   active:bg-indigo-700 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
+                    class="bg-indigo-500 text-white px-6 py-3 sm:px-8 rounded-lg shadow-lg text-base sm:text-lg font-semibold w-full sm:w-auto transition-all duration-300 ease-in-out transform hover:bg-indigo-600 hover:shadow-xl hover:-translate-y-1 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-indigo-300 focus:ring-opacity-75 active:bg-indigo-700 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
                     <span class="button-text">Proceed to Checkout</span>
-                    <!-- Loader span removed from here as it's not used in the new flow -->
                 </button>
                 <div id="checkout-status" class="mt-4 text-sm sm:text-base"></div>
             </div>
         </section>
     </main>
 
-    <!-- Footer -->
     <footer class="bg-gray-900 text-gray-400 text-center py-6 border-t border-cyan-500/30">
         <p class="text-sm sm:text-base">© 2025 Sai Balaji Tiles Home. All Rights Reserved.</p>
     </footer>
 
-    <!-- Checkout Modal -->
-    <div id="checkout-modal" class="fixed inset-0 bg-black bg-opacity-80 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden opacity-0 transition-opacity duration-300 ease-in-out" role="dialog" aria-modal="true" aria-labelledby="checkout-modal-title">
-        <div class="bg-gray-800 w-full max-w-2xl rounded-xl shadow-2xl transform scale-95 transition-transform duration-300 ease-in-out overflow-y-auto max-h-[90vh]">
-            <div class="p-6 sm:p-8">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 id="checkout-modal-title" class="text-2xl sm:text-3xl font-bold text-cyan-400">Checkout Process</h2>
-                    <button id="close-checkout-modal-btn" aria-label="Close checkout" class="text-gray-400 hover:text-gray-200 text-3xl">×</button>
+    <div id="checkout-modal" class="fixed inset-0 bg-black bg-opacity-80 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 z-50 hidden opacity-0 transition-opacity duration-300 ease-in-out" role="dialog" aria-modal="true" aria-labelledby="checkout-modal-title">
+        <div class="modal-inner-content bg-gray-800 w-full max-w-2xl rounded-xl shadow-2xl transform scale-95 transition-transform duration-300 ease-in-out flex flex-col max-h-[95vh] sm:max-h-[90vh]">
+            <div class="p-4 sm:p-6 border-b border-gray-700">
+                 <div class="flex justify-between items-center">
+                    <h2 id="checkout-modal-title" class="text-xl sm:text-2xl md:text-3xl font-bold text-cyan-400">Checkout</h2>
+                    <button id="close-checkout-modal-btn" aria-label="Close checkout" class="text-gray-400 hover:text-gray-200 text-2xl sm:text-3xl">×</button>
                 </div>
+            </div>
 
-                <div class="stepper flex justify-between mb-8 text-xs sm:text-sm">
+            <div class="modal-scrollable-content p-4 sm:p-6 flex-grow"> 
+                <div class="stepper flex justify-between mb-6 sm:mb-8 text-xs sm:text-sm">
                     <div id="step-1-indicator" class="step active flex-1 text-center">
-                        <span class="step-circle bg-indigo-500 text-white rounded-full w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center mx-auto mb-1">1</span>
-                        Review Cart
+                        <span class="step-circle bg-indigo-500 text-white rounded-full w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center mx-auto mb-1">1</span>
+                        Review
                     </div>
-                    <div class="step-line flex-1 border-t-2 border-gray-600 mt-3 sm:mt-4"></div>
+                    <div class="step-line flex-1 border-t-2 border-gray-600 mt-3 sm:mt-3.5"></div>
                     <div id="step-2-indicator" class="step flex-1 text-center text-gray-500">
-                        <span class="step-circle bg-gray-600 text-gray-300 rounded-full w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center mx-auto mb-1">2</span>
-                        Your Details
+                        <span class="step-circle bg-gray-600 text-gray-300 rounded-full w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center mx-auto mb-1">2</span>
+                        Details
                     </div>
-                    <div class="step-line flex-1 border-t-2 border-gray-600 mt-3 sm:mt-4"></div>
+                    <div class="step-line flex-1 border-t-2 border-gray-600 mt-3 sm:mt-3.5"></div>
                     <div id="step-3-indicator" class="step flex-1 text-center text-gray-500">
-                        <span class="step-circle bg-gray-600 text-gray-300 rounded-full w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center mx-auto mb-1">3</span>
-                        Measurements
+                        <span class="step-circle bg-gray-600 text-gray-300 rounded-full w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center mx-auto mb-1">3</span>
+                        Photo
                     </div>
                 </div>
 
                 <form id="checkoutForm">
                     <div id="checkout-step-1" class="checkout-step">
-                        <h3 class="text-xl font-semibold text-indigo-300 mb-4">Step 1: Review Your Cart</h3>
-                        <div id="modal-cart-items-summary" class="space-y-3 mb-6 max-h-60 overflow-y-auto p-1 border border-gray-700 rounded-md">
+                        <h3 class="text-lg sm:text-xl font-semibold text-indigo-300 mb-3 sm:mb-4">Step 1: Review Your Cart</h3>
+                        <div id="modal-cart-items-summary" class="space-y-2 sm:space-y-3 mb-4 sm:mb-6 max-h-48 sm:max-h-60 overflow-y-auto p-1 border border-gray-700 rounded-md">
                         </div>
-                        <div class="text-right">
-                            <button type="button" id="next-to-step-2" class="bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105">Next: Your Details →</button>
+                        <div class="text-right mt-4">
+                            <button type="button" id="next-to-step-2" class="bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2 px-4 sm:px-6 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105 text-sm sm:text-base">Next →</button>
                         </div>
                     </div>
 
                     <div id="checkout-step-2" class="checkout-step hidden">
-                        <h3 class="text-xl font-semibold text-indigo-300 mb-4">Step 2: Your Details</h3>
-                        <div class="space-y-4">
+                        <h3 class="text-lg sm:text-xl font-semibold text-indigo-300 mb-3 sm:mb-4">Step 2: Your Details</h3>
+                        <div class="space-y-3 sm:space-y-4">
                             <div>
-                                <label for="customerName" class="block text-sm font-medium text-gray-300 mb-1">Full Name <span class="text-red-500">*</span></label>
-                                <input type="text" id="customerName" name="customerName" required class="w-full p-2.5 bg-gray-700/60 border border-gray-600 rounded-md text-gray-200 focus:ring-2 focus:ring-cyan-400 outline-none">
+                                <label for="customerName" class="block text-xs sm:text-sm font-medium text-gray-300 mb-1">Full Name <span class="text-red-500">*</span></label>
+                                <input type="text" id="customerName" name="customerName" required class="w-full p-2 sm:p-2.5 bg-gray-100 border border-gray-300 rounded-md text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 outline-none text-sm sm:text-base">
                             </div>
                             <div>
-                                <label for="customerPhone" class="block text-sm font-medium text-gray-300 mb-1">Phone Number <span class="text-red-500">*</span></label>
-                                <input type="tel" id="customerPhone" name="customerPhone" required class="w-full p-2.5 bg-gray-700/60 border border-gray-600 rounded-md text-gray-200 focus:ring-2 focus:ring-cyan-400 outline-none">
+                                <label for="customerPhone" class="block text-xs sm:text-sm font-medium text-gray-300 mb-1">Phone Number <span class="text-red-500">*</span></label>
+                                <input type="tel" id="customerPhone" name="customerPhone" required class="w-full p-2 sm:p-2.5 bg-gray-100 border border-gray-300 rounded-md text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 outline-none text-sm sm:text-base">
                             </div>
                             <div>
-                                <label for="customerAddress" class="block text-sm font-medium text-gray-300 mb-1">Delivery Address <span class="text-red-500">*</span></label>
-                                <textarea id="customerAddress" name="customerAddress" rows="3" required class="w-full p-2.5 bg-gray-700/60 border border-gray-600 rounded-md text-gray-200 focus:ring-2 focus:ring-cyan-400 outline-none resize-none"></textarea>
+                                <label for="customerAddress" class="block text-xs sm:text-sm font-medium text-gray-300 mb-1">Delivery Address <span class="text-red-500">*</span></label>
+                                <textarea id="customerAddress" name="customerAddress" rows="2" sm:rows="3" required class="w-full p-2 sm:p-2.5 bg-gray-100 border border-gray-300 rounded-md text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 outline-none resize-none text-sm sm:text-base"></textarea>
                             </div>
                             <div>
-                                <label for="customerMessage" class="block text-sm font-medium text-gray-300 mb-1">Additional Message (Optional)</label>
-                                <textarea id="customerMessage" name="customerMessage" rows="3" class="w-full p-2.5 bg-gray-700/60 border border-gray-600 rounded-md text-gray-200 focus:ring-2 focus:ring-cyan-400 outline-none resize-none"></textarea>
+                                <label for="customerMessage" class="block text-xs sm:text-sm font-medium text-gray-300 mb-1">Additional Message</label>
+                                <textarea id="customerMessage" name="customerMessage" rows="2" sm:rows="3" class="w-full p-2 sm:p-2.5 bg-gray-100 border border-gray-300 rounded-md text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 outline-none resize-none text-sm sm:text-base"></textarea>
                             </div>
                         </div>
-                        <div class="flex justify-between mt-8">
-                            <button type="button" id="back-to-step-1" class="bg-gray-600 hover:bg-gray-500 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105">← Back</button>
-                            <button type="button" id="next-to-step-3" class="bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105">Next: Measurements →</button>
+                        <div class="flex justify-between mt-6 sm:mt-8">
+                             <button type="button" id="back-to-step-1" class="bg-gray-600 hover:bg-gray-500 text-white font-semibold py-2 px-4 sm:px-6 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105 text-sm sm:text-base">← Back</button>
+                            <button type="button" id="next-to-step-3" class="bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2 px-4 sm:px-6 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105 text-sm sm:text-base">Next →</button>
                         </div>
                     </div>
 
                     <div id="checkout-step-3" class="checkout-step hidden">
-                        <h3 class="text-xl font-semibold text-indigo-300 mb-4">Step 3: Upload Measurement Photo</h3>
-                        <p class="text-gray-400 text-sm mb-4">
-                            Please upload a clear photo of your space or a sketch with measurements. This helps us provide a more accurate quote.
+                        <h3 class="text-lg sm:text-xl font-semibold text-indigo-300 mb-3 sm:mb-4">Step 3: Measurement Photo</h3>
+                        <p class="text-gray-400 text-xs sm:text-sm mb-3 sm:mb-4">
+                            Upload a photo/sketch of your space with measurements.
                         </p>
                         <div>
-                            <label for="measurementPhoto" class="block text-sm font-medium text-gray-300 mb-1">Measurement Photo <span class="text-red-500">*</span></label>
-                            <input type="file" id="measurementPhoto" name="measurementPhoto" accept="image/*" class="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-500 file:text-white hover:file:bg-indigo-600 cursor-pointer">
-                            <img id="photoPreview" src="#" alt="Photo Preview" class="hidden mt-3 max-h-40 rounded-md border border-gray-600"/>
-                            <p id="fileUploadInfo" class="text-xs text-gray-500 mt-1">Max file size: 5MB. Accepted: JPG, PNG, GIF.</p>
-                            
-                            <p class="text-amber-400 text-xs mt-3">
-                                <strong>Note:</strong> If issues with direct upload, use a service like
-                                <a href="https://imgbb.com/" target="_blank" rel="noopener noreferrer" class="underline hover:text-amber-300">imgbb.com</a>
-                                and paste the link below.
-                            </p>
-                            <label for="measurementPhotoLink" class="block text-sm font-medium text-gray-300 mt-2 mb-1">Or, paste photo link here:</label>
-                            <input type="url" id="measurementPhotoLink" name="measurementPhotoLink" placeholder="https://example.com/your-photo.jpg" class="w-full p-2.5 bg-gray-700/60 border border-gray-600 rounded-md text-gray-200 focus:ring-2 focus:ring-cyan-400 outline-none">
+                            <label for="measurementPhotoUploadcare" class="block text-xs sm:text-sm font-medium text-gray-300 mb-2">Upload Photo</label>
+                            <input 
+                                type="hidden" 
+                                role="uploadcare-uploader" 
+                                id="measurementPhotoUploadcare" 
+                                name="measurementPhotoURL"
+                                data-images-only="true"
+                                data-clearable="true"
+                            />
+                            <div id="uploadcareFeedback" class="text-xs text-gray-500 mt-2"></div>
                         </div>
+
                         <input type="hidden" name="cartItemsData" id="cartItemsDataField">
-                        <div class="flex justify-between mt-8">
-                            <button type="button" id="back-to-step-2" class="bg-gray-600 hover:bg-gray-500 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105">← Back</button>
-                            <button type="submit" id="submitOrderBtn" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105">
-                                <span class="button-text">Submit Order Inquiry</span>
+                        <div class="flex justify-between mt-6 sm:mt-8">
+                            <button type="button" id="back-to-step-2" class="bg-gray-600 hover:bg-gray-500 text-white font-semibold py-2 px-4 sm:px-6 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105 text-sm sm:text-base">← Back</button>
+                            <button type="submit" id="submitOrderBtn" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 sm:px-6 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105 text-sm sm:text-base">
+                                <span class="button-text">Submit Inquiry</span>
                                 <span class="button-loader hidden">Submitting...</span>
                             </button>
                         </div>
                     </div>
                 </form>
-                <div id="modal-form-status" class="mt-6 text-center text-sm"></div>
+            </div>
+            <div class="p-4 sm:p-6 border-t border-gray-700">
+                <div id="modal-form-status" class="text-center text-xs sm:text-sm min-h-[1.2em]"></div>
             </div>
         </div>
     </div>
 
-
-    <!-- Scripts -->
     <script>
-        // --- Star Generation (Global) ---
         function createStarsGlobal() {
             const container = document.getElementById('stars-bg-global');
             if (!container) return;
-            container.innerHTML = ''; // Clear existing stars if any on re-init
-            const numStars = Math.floor(window.innerWidth / 25); // Density
+            container.innerHTML = ''; 
+            const numStars = Math.floor(window.innerWidth / 25);
             for (let i = 0; i < numStars; i++) {
                 const star = document.createElement('div');
                 star.classList.add('star');
@@ -256,7 +229,6 @@
             }
         }
 
-        // --- Menu Toggle for Cart Page ---
         let menuCartVisible = false;
         const navbarCart = document.getElementById("main-navbar-cart");
         const toggleBtnCart = document.getElementById("toggle-btn-cart");
@@ -272,7 +244,7 @@
                  toggleBtnCart.setAttribute('aria-expanded', menuCartVisible);
             }
         }
-        if (toggleBtnCart) { // Ensure button exists before adding listener
+        if (toggleBtnCart) {
             toggleBtnCart.addEventListener('click', toggleMenuCart);
         }
         document.addEventListener("click", (e) => {
@@ -288,11 +260,10 @@
             }
         });
 
-        // --- Cart Management Logic ---
         const cartItemsContainer = document.getElementById("cart-items-container");
         const cartEmptyMessage = document.getElementById("cart-empty-message");
-        const openCheckoutBtn = document.getElementById("checkout-btn"); // Renamed from checkoutButton
-        const checkoutStatusEl = document.getElementById("checkout-status"); // Main page status
+        const openCheckoutBtn = document.getElementById("checkout-btn"); 
+        const checkoutStatusEl = document.getElementById("checkout-status"); 
 
         function updateCartDisplay() {
             const cart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -323,22 +294,20 @@
             let cart = JSON.parse(localStorage.getItem("cart")) || [];
             cart.splice(index, 1);
             localStorage.setItem("cart", JSON.stringify(cart));
-            updateCartDisplay(); // Update main cart
-            populateCartSummaryInModal(); // Also update modal cart summary if open
+            updateCartDisplay(); 
+            populateCartSummaryInModal(); 
         }
 
         function updateCartCountCart() {
             const cart = JSON.parse(localStorage.getItem("cart")) || [];
             const cartCountSpan = document.getElementById("cart-count-cart");
             if (cartCountSpan) cartCountSpan.textContent = cart.length;
-            // Also update other cart counts if they exist (e.g., on index page)
             const cartCountIndex = document.getElementById("cart-count-index");
             if(cartCountIndex) cartCountIndex.textContent = cart.length;
             const cartCountDetail = document.getElementById("cart-count-detail");
             if(cartCountDetail) cartCountDetail.textContent = cart.length;
         }
         
-        // --- Checkout Modal and Multi-Step Form Logic ---
         const checkoutModal = document.getElementById('checkout-modal');
         const closeCheckoutModalBtn = document.getElementById('close-checkout-modal-btn');
         const checkoutForm = document.getElementById('checkoutForm');
@@ -382,6 +351,8 @@
             });
             currentStep = stepIndex;
             updateStepperUI();
+            const scrollableContent = checkoutModal.querySelector('.modal-scrollable-content');
+            if (scrollableContent) scrollableContent.scrollTop = 0;
         }
 
         function populateCartSummaryInModal() {
@@ -390,27 +361,30 @@
             if (!summaryContainer) return;
             summaryContainer.innerHTML = ''; 
 
+            const nextToStep2Button = document.getElementById('next-to-step-2');
+
             if (cart.length === 0) {
                 summaryContainer.innerHTML = '<p class="text-gray-400 p-2">Your cart is empty.</p>';
-                document.getElementById('next-to-step-2').disabled = true; // Disable next if cart empty
+                if (nextToStep2Button) nextToStep2Button.disabled = true;
                 return;
             }
-            document.getElementById('next-to-step-2').disabled = false;
-
+            if (nextToStep2Button) nextToStep2Button.disabled = false;
 
             cart.forEach(item => {
                 const itemDiv = document.createElement('div');
-                itemDiv.className = 'flex items-center justify-between text-sm p-2 bg-gray-700/50 rounded';
+                itemDiv.className = 'flex items-center justify-between text-sm p-2 bg-gray-700/50 rounded gap-3';
                 itemDiv.innerHTML = `
-                    <img src="${item.image || 'images/placeholder.jpg'}" alt="${item.name}" class="w-10 h-10 object-cover rounded mr-3">
-                    <span class="flex-grow text-gray-300 truncate">${item.name}</span>
+                    <img src="${item.image || 'images/placeholder.jpg'}" alt="${item.name || 'Tile Image'}" class="w-10 h-10 sm:w-12 sm:h-12 object-cover rounded-md border border-gray-600">
+                    <span class="flex-grow text-gray-300 text-left truncate">${item.name || 'Unknown Tile'}</span>
                 `;
+                // If you had "数量" (quantity) and want to add it back:
+                // <span class="text-gray-400 text-xs ml-2">Qty: ${item.quantity || 1}</span>
                 summaryContainer.appendChild(itemDiv);
             });
         }
 
         function openCheckoutModal() {
-            if (checkoutModal) {
+             if (checkoutModal) {
                 const cart = JSON.parse(localStorage.getItem("cart")) || [];
                 if (cart.length === 0) {
                     if(checkoutStatusEl) {
@@ -421,11 +395,20 @@
                     return; 
                 }
                 populateCartSummaryInModal();
-                showStep(0);
+                showStep(0); 
+                const uploadcareWidgetInput = document.getElementById('measurementPhotoUploadcare');
+                if (uploadcareWidgetInput && uploadcareWidgetInput.value) {
+                    const widget = uploadcare.Widget(uploadcareWidgetInput);
+                    widget.value(null); 
+                }
+                const uploadcareFeedbackDiv = document.getElementById('uploadcareFeedback');
+                if(uploadcareFeedbackDiv) uploadcareFeedbackDiv.textContent = '';
+
+
                 checkoutModal.classList.remove('hidden');
                 setTimeout(() => {
                     checkoutModal.classList.remove('opacity-0');
-                    const modalContent = checkoutModal.querySelector('.bg-gray-800');
+                    const modalContent = checkoutModal.querySelector('.modal-inner-content');
                     if (modalContent) modalContent.classList.remove('scale-95');
                 }, 10);
                 if(closeCheckoutModalBtn) closeCheckoutModalBtn.focus();
@@ -435,30 +418,32 @@
         function closeCheckoutModal() {
             if (checkoutModal) {
                 checkoutModal.classList.add('opacity-0');
-                const modalContent = checkoutModal.querySelector('.bg-gray-800');
+                const modalContent = checkoutModal.querySelector('.modal-inner-content');
                 if (modalContent) modalContent.classList.add('scale-95');
                 
                 setTimeout(() => {
                     checkoutModal.classList.add('hidden');
-                    if (checkoutForm) checkoutForm.reset();
+                    if (checkoutForm) checkoutForm.reset(); 
+                    
+                    const uploadcareWidgetInput = document.getElementById('measurementPhotoUploadcare');
+                    if (uploadcareWidgetInput && uploadcareWidgetInput.value) {
+                        const widget = uploadcare.Widget(uploadcareWidgetInput);
+                        widget.value(null); 
+                    }
+                    const uploadcareFeedbackDiv = document.getElementById('uploadcareFeedback');
+                    if(uploadcareFeedbackDiv) uploadcareFeedbackDiv.textContent = '';
+
                     if (modalFormStatusEl) {
                         modalFormStatusEl.textContent = '';
-                        modalFormStatusEl.className = 'mt-6 text-center text-sm';
+                        modalFormStatusEl.className = 'mt-6 text-center text-sm min-h-[1.2em]';
                     }
-                    const photoPreviewEl = document.getElementById('photoPreview');
-                    if(photoPreviewEl) {
-                        photoPreviewEl.classList.add('hidden');
-                        photoPreviewEl.src = "#"; // Clear preview src
-                    }
-                    const measurementPhotoInputEl = document.getElementById('measurementPhoto');
-                    if(measurementPhotoInputEl) measurementPhotoInputEl.value = ""; // Clear file input
                 }, 300);
                  if(openCheckoutBtn) openCheckoutBtn.focus();
             }
         }
 
         if (openCheckoutBtn) {
-            openCheckoutBtn.addEventListener('click', openCheckoutModal);
+             openCheckoutBtn.addEventListener('click', openCheckoutModal);
         }
         if (closeCheckoutModalBtn) {
             closeCheckoutModalBtn.addEventListener('click', closeCheckoutModal);
@@ -474,7 +459,6 @@
             }
         });
 
-        // Navigation buttons event listeners
         const nextToStep2Btn = document.getElementById('next-to-step-2');
         if(nextToStep2Btn) nextToStep2Btn.addEventListener('click', () => showStep(1));
         
@@ -488,17 +472,19 @@
                 const customerPhoneInput = document.getElementById('customerPhone');
                 const customerAddressInput = document.getElementById('customerAddress');
                 let isValid = true;
+
+                if (modalFormStatusEl) modalFormStatusEl.textContent = '';
+
                 if (!customerNameInput.checkValidity()) { customerNameInput.reportValidity(); isValid = false; }
                 if (isValid && !customerPhoneInput.checkValidity()) { customerPhoneInput.reportValidity(); isValid = false; }
                 if (isValid && !customerAddressInput.checkValidity()) { customerAddressInput.reportValidity(); isValid = false; }
 
                 if (isValid) {
                     showStep(2);
-                    if (modalFormStatusEl) modalFormStatusEl.textContent = '';
                 } else {
                     if (modalFormStatusEl) {
                         modalFormStatusEl.textContent = 'Please fill in all required fields in "Your Details".';
-                        modalFormStatusEl.className = 'mt-6 text-center text-sm text-red-400';
+                        modalFormStatusEl.className = 'mt-6 text-center text-sm min-h-[1.2em] text-red-400';
                     }
                 }
             });
@@ -507,21 +493,29 @@
         const backToStep2Btn = document.getElementById('back-to-step-2');
         if(backToStep2Btn) backToStep2Btn.addEventListener('click', () => showStep(1));
 
-        const measurementPhotoInput = document.getElementById('measurementPhoto');
-        const photoPreview = document.getElementById('photoPreview');
-        if (measurementPhotoInput && photoPreview) {
-            measurementPhotoInput.addEventListener('change', function(event) {
-                const file = event.target.files[0];
+        const uploadcareWidgetInput = document.getElementById('measurementPhotoUploadcare');
+        const uploadcareFeedbackDiv = document.getElementById('uploadcareFeedback');
+
+        if (uploadcareWidgetInput) {
+            const widget = uploadcare.Widget(uploadcareWidgetInput);
+            widget.onUploadComplete(fileInfo => {
+                console.log('Uploadcare upload complete:', fileInfo);
+                if (uploadcareFeedbackDiv) {
+                    uploadcareFeedbackDiv.textContent = `File "${fileInfo.name}" uploaded.`;
+                    uploadcareFeedbackDiv.classList.remove('text-red-400');
+                    uploadcareFeedbackDiv.classList.add('text-green-400');
+                }
+            });
+            widget.onChange(file => { // Handles file selection and removal
                 if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        photoPreview.src = e.target.result;
-                        photoPreview.classList.remove('hidden');
+                    // File selected, onUploadComplete will handle the rest
+                    if (uploadcareFeedbackDiv) uploadcareFeedbackDiv.textContent = 'Uploading...';
+                } else { // File was removed by user (cleared)
+                    if (uploadcareFeedbackDiv) {
+                        uploadcareFeedbackDiv.textContent = 'File removed.';
+                        uploadcareFeedbackDiv.classList.remove('text-green-400', 'text-red-400');
+                        uploadcareFeedbackDiv.classList.add('text-gray-500');
                     }
-                    reader.readAsDataURL(file);
-                } else {
-                    photoPreview.classList.add('hidden');
-                    photoPreview.src = "#";
                 }
             });
         }
@@ -531,8 +525,13 @@
                 event.preventDefault();
                 if (modalFormStatusEl) {
                     modalFormStatusEl.textContent = '';
-                    modalFormStatusEl.className = 'mt-6 text-center text-sm';
+                    modalFormStatusEl.className = 'mt-6 text-center text-sm min-h-[1.2em]';
                 }
+                if (uploadcareFeedbackDiv) { // Clear previous upload feedback
+                     uploadcareFeedbackDiv.textContent = '';
+                     uploadcareFeedbackDiv.classList.remove('text-red-400', 'text-green-400');
+                }
+
 
                 const submitBtnText = submitOrderBtn.querySelector('.button-text');
                 const submitBtnLoader = submitOrderBtn.querySelector('.button-loader');
@@ -541,17 +540,25 @@
                 if (submitBtnLoader) submitBtnLoader.classList.remove('hidden');
                 submitOrderBtn.disabled = true;
 
-                const formData = new FormData(checkoutForm);
+                const formData = new FormData(checkoutForm); 
                 const cart = JSON.parse(localStorage.getItem("cart")) || [];
-                formData.set("cartItemsData", JSON.stringify(cart.map(item => ({name: item.name, id: item.id}))));
+                formData.set("cartItemsData", JSON.stringify(cart.map(item => ({name: item.name, id: item.id, image: item.image })))); // Added image to cart data
 
-                const photoFile = formData.get('measurementPhoto');
-                const photoLink = formData.get('measurementPhotoLink');
+                const uploadedPhotoURL = formData.get('measurementPhotoURL'); 
 
-                if ((!photoFile || photoFile.size === 0) && !photoLink) {
+                console.log("Submitting form. Uploadcare Photo URL/UUID:", uploadedPhotoURL);
+                // for (let [key, value] of formData.entries()) { // Detailed FormData log
+                //    console.log("FormData entry:", key, value);
+                // }
+
+                if (!uploadedPhotoURL || uploadedPhotoURL.trim() === '') {
                     if (modalFormStatusEl) {
-                        modalFormStatusEl.textContent = 'Please upload a measurement photo or provide a link.';
-                        modalFormStatusEl.className = 'mt-6 text-center text-sm text-red-400';
+                        modalFormStatusEl.textContent = 'Please upload a measurement photo.';
+                        modalFormStatusEl.className = 'mt-6 text-center text-sm min-h-[1.2em] text-red-400';
+                    }
+                     if (uploadcareFeedbackDiv) { 
+                        uploadcareFeedbackDiv.textContent = 'Photo is required for submission.';
+                        uploadcareFeedbackDiv.classList.add('text-red-400');
                     }
                     if (submitBtnLoader) submitBtnText.classList.remove('hidden');
                     if (submitBtnLoader) submitBtnLoader.classList.add('hidden');
@@ -559,12 +566,11 @@
                     return;
                 }
                 
-                // !!! IMPORTANT: Replace with your NEW Formspree endpoint for orders !!!
-                const orderFormSpreeEndpoint = 'https://formspree.io/f/movwvnvq';
+                const orderFormSpreeEndpoint = 'https://formspree.io/f/movwvnvq'; // !!! REPLACE YOUR ID !!!
 
                 fetch(orderFormSpreeEndpoint, {
                     method: 'POST',
-                    body: formData,
+                    body: formData, 
                     headers: { 'Accept': 'application/json' }
                 }).then(response => {
                     if (response.ok) {
@@ -573,18 +579,21 @@
                             modalFormStatusEl.classList.add('text-green-400');
                         }
                         localStorage.removeItem("cart");
-                        updateCartDisplay();
-                        updateCartCountCart();
-                        setTimeout(() => { closeCheckoutModal(); }, 3000);
+                        updateCartDisplay(); 
+                        updateCartCountCart(); 
+                        setTimeout(() => { closeCheckoutModal(); }, 3500);
                     } else {
                         response.json().then(data => {
                            if (modalFormStatusEl) {
-                             modalFormStatusEl.textContent = data.errors ? data.errors.map(e => e.message).join(', ') : 'Submission failed. Please try again.';
+                             modalFormStatusEl.textContent = (data.errors ? data.errors.map(e => e.message).join(', ') : 'Submission failed.');
+                             if (data.error && typeof data.error === 'string') { 
+                                modalFormStatusEl.textContent = data.error;
+                             }
                              modalFormStatusEl.classList.add('text-red-400');
                            }
-                        }).catch(() => {
+                        }).catch(() => { 
                             if (modalFormStatusEl) {
-                                modalFormStatusEl.textContent = 'Submission failed due to a server error. Please try again.';
+                                modalFormStatusEl.textContent = 'Submission failed. Invalid server response.';
                                 modalFormStatusEl.classList.add('text-red-400');
                             }
                         });
@@ -592,7 +601,7 @@
                 }).catch(error => {
                     console.error("Order submission error:", error);
                     if (modalFormStatusEl) {
-                        modalFormStatusEl.textContent = 'Network error. Please check your connection and try again.';
+                        modalFormStatusEl.textContent = 'Network error. Please check connection.';
                         modalFormStatusEl.classList.add('text-red-400');
                     }
                 }).finally(() => {
@@ -605,25 +614,28 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             createStarsGlobal();
-            updateCartDisplay();
-            const headerHeight = document.getElementById('main-header')?.offsetHeight || 0;
-            // Adjust padding for nav menu items if header height is dynamic
+            updateCartDisplay(); 
+            
+            const header = document.getElementById('main-header');
+            let headerHeight = 0;
+            if (header) {
+                headerHeight = header.offsetHeight;
+            }
+            
             const navMenu = document.querySelector('#main-navbar-cart .nav-menu');
             if (navMenu && headerHeight > 0) {
-                 navMenu.style.paddingTop = `calc(${headerHeight}px + 1rem)`; // 1rem is existing top margin/padding
+                 navMenu.style.paddingTop = `calc(${headerHeight}px + 1rem)`;
             }
         });
-        // Listen for cart updates from other pages
         window.addEventListener('storage', (event) => {
             if (event.key === 'cart') {
                 updateCartDisplay();
                 updateCartCountCart();
                 if (checkoutModal && !checkoutModal.classList.contains('hidden')) {
-                    populateCartSummaryInModal(); // Update modal summary if open
+                    populateCartSummaryInModal(); 
                 }
             }
         });
-
     </script>
 </body>
 </html>
