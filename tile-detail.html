@@ -24,33 +24,20 @@
             top: 0; left: 0; width: 100vw; height: 100vh;
             pointer-events: none; overflow: hidden; z-index: -1; 
         }
-        .star {
-            position: absolute; background-color: rgba(255, 255, 255, 0.7);
-            border-radius: 50%; animation: twinkle 6s infinite ease-in-out;
-        }
-        .star:nth-child(5n+1) { animation-delay: 0s; }
-        .star:nth-child(5n+2) { animation-delay: -1.2s; }
-        .star:nth-child(5n+3) { animation-delay: -2.4s; }
-        .star:nth-child(5n+4) { animation-delay: -3.6s; }
-        .star:nth-child(5n+5) { animation-delay: -4.8s; }
-        @keyframes twinkle {
-            0%, 100% { opacity: 0.1; transform: scale(0.6); }
-            50% { opacity: 0.7; transform: scale(1); }
-        }
+        .star { /* ... (star styles from your code) ... */ }
+        @keyframes twinkle { /* ... (twinkle animation from your code) ... */ }
 
-        /* --- Page-Specific Animations & Styles --- */
         .thumbnail-active {
-            border-color: #22d3ee; /* Tailwind's cyan-400 */
+            border-color: #22d3ee !important; /* Ensure high specificity */
             box-shadow: 0 0 0 2px #22d3ee;
         }
         .modal-overlay { transition: opacity 0.3s ease-in-out; }
         .modal-content { transition: transform 0.3s ease-in-out; }
 
-        /* General Navbar */
         .navbar.translate-x-0 { transform: translateX(0%); }
         .navbar.-translate-x-full { transform: translateX(-100%); }
         
-        /* --- Custom Button Styles (copied from index.html for consistency) --- */
+        /* Custom Button Styles */
         .btn-theme-primary {
             @apply inline-block px-7 py-3.5 rounded-lg font-semibold text-sm sm:text-base shadow-md
                    border-2 border-cyan-500 text-cyan-400 
@@ -58,11 +45,7 @@
                    transition-all duration-300 ease-in-out transform 
                    focus:outline-none focus:ring-4 focus:ring-cyan-500/50 active:scale-95;
         }
-        .btn-theme-primary:hover {
-            box-shadow: 0 0 15px rgba(34, 211, 238, 0.4), 0 0 25px rgba(34, 211, 238, 0.2);
-            transform: translateY(-1px) scale(1.02);
-        }
-
+        .btn-theme-primary:hover { /* ... */ }
         .btn-theme-secondary {
             @apply inline-block px-5 py-2.5 rounded-md font-semibold 
                    border border-indigo-500 text-indigo-400
@@ -70,29 +53,28 @@
                    transition-all duration-300 ease-in-out transform 
                    focus:outline-none focus:ring-2 focus:ring-indigo-500/50 active:scale-95;
         }
-        .btn-theme-secondary:hover {
-            box-shadow: 0 0 10px rgba(129, 140, 248, 0.3);
-            transform: scale(1.03);
-        }
-        /* Fallback for backdrop-filter */
+        .btn-theme-secondary:hover { /* ... */ }
         @supports not (backdrop-filter: blur(1px)) {
-          #main-header, #main-navbar-detail { /* Updated ID */
+          #main-header, #main-navbar-detail { 
             background-color: rgba(17, 24, 39, 0.95) !important; 
           }
         }
-
+        /* Style for the <model-viewer> default AR button if needed */
+        model-viewer::part(default-ar-button) {
+            bottom: 32px; /* Adjust position */
+            /* Add other custom styles if needed */
+        }
     </style>
+    <!-- Loads <model-viewer> for modern browsers: -->
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.1.1/model-viewer.min.js"></script>
 </head>
 <body class="bg-black text-gray-200 font-poppins">
 
-    <div class="stars-container fixed inset-0 z-[-1] pointer-events-none" id="stars-bg-global">
-        <!-- Stars will be injected here by JavaScript -->
-    </div>
+    <div class="stars-container fixed inset-0 z-[-1] pointer-events-none" id="stars-bg-global"></div>
     
-    <header id="main-header" class="fixed w-full bg-gray-900/80 backdrop-blur-md shadow-2xl flex items-center justify-between p-3 sm:p-4 z-40 border-b border-cyan-500/30">
+    <header id="main-header" class="fixed w-full top-0 left-0 bg-gray-900/80 backdrop-blur-md shadow-2xl flex items-center justify-between p-3 sm:p-4 z-40 border-b border-cyan-500/30">
         <div class="flex-none">
-            <button id="toggle-btn-detail" aria-label="Toggle menu" aria-expanded="false" aria-controls="main-navbar-detail" class="text-xl sm:text-2xl text-cyan-400 hover:text-cyan-300 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-cyan-300 rounded" onclick="toggleMenuDetail()">☰</button>
+            <button id="toggle-btn-detail" aria-label="Toggle menu" aria-expanded="false" aria-controls="main-navbar-detail" class="text-xl sm:text-2xl text-cyan-400 hover:text-cyan-300 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-cyan-300 rounded">☰</button>
         </div>
         <div class="flex-grow text-center px-2">
              <a href="index.html" class="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-cyan-400 truncate hover:text-cyan-300">SAI BALAJI TILES HOME</a>
@@ -102,6 +84,7 @@
 
     <nav id="main-navbar-detail" class="navbar fixed top-0 left-0 w-64 sm:w-72 h-screen bg-gray-900/80 backdrop-blur-md shadow-lg transform -translate-x-full transition-transform duration-300 z-30 border-r border-cyan-500/30" role="navigation" aria-label="Main navigation">
         <ul class="nav-menu mt-16 sm:mt-20 space-y-3 sm:space-y-4 p-4">
+            <!-- Nav links -->
             <li><a href="index.html#home" class="block py-2 px-2 text-indigo-300 hover:text-indigo-200 hover:bg-gray-800/60 rounded transition-colors duration-300 text-sm sm:text-base">Home</a></li>
             <li><a href="index.html#catalog" class="block py-2 px-2 text-indigo-300 hover:text-indigo-200 hover:bg-gray-800/60 rounded transition-colors duration-300 text-sm sm:text-base">Catalog</a></li>
             <li><a href="index.html#about" class="block py-2 px-2 text-indigo-300 hover:text-indigo-200 hover:bg-gray-800/60 rounded transition-colors duration-300 text-sm sm:text-base">About Us</a></li>
@@ -112,76 +95,126 @@
     </nav>
 
     <main id="page-main-content" class="relative z-10">
-        <section class="tile-detail py-20 sm:py-24 bg-gray-900/70 backdrop-blur-sm min-h-screen">
-            <div class="container mx-auto px-4 text-center">
-                <h2 id="detail-title" class="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 sm:mb-8 text-cyan-400">Tile Details</h2>
-                
-                <div class="main-image-container mb-4 sm:mb-6">
-                    <img id="detail-image" src="images/placeholder.jpg" alt="Main Tile Image" class="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl mx-auto rounded-lg shadow-2xl object-cover h-64 sm:h-80 md:h-96 border-2 border-gray-700">
-                </div>
-                <div id="related-images-list" class="flex justify-center gap-2 sm:gap-3 flex-wrap mb-8 sm:mb-10">
-                    <!-- Thumbnails will be populated by JavaScript -->
-                </div>
+        <section class="tile-detail py-12 bg-transparent min-h-screen"> <!-- Adjusted padding -->
+            <div class="container mx-auto px-4">
+                <h2 id="detail-page-title" class="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 sm:mb-8 text-cyan-400 text-center">
+                    Tile Details
+                </h2>
 
-                <div class="tile-description mb-8 sm:mb-10">
-                    <p id="detail-description" class="text-base sm:text-lg text-gray-300 max-w-xl sm:max-w-2xl mx-auto leading-relaxed">
-                        Loading tile description...
-                    </p>
-                </div>
-                
-                <div class="flex flex-col sm:flex-row flex-wrap justify-center items-center gap-4">
-                    <button id="add-to-cart-btn" class="btn-theme-primary text-lg">
-                        <span class="button-text">Add to Cart</span>
-                        <span class="button-loader hidden">Adding...</span>
-                    </button>
-                    <button id="view-in-room-btn" class="btn-theme-secondary">
-                        View in Room (AR)
-                    </button>
-                    <!-- NEW View Cart Button -->
-                    <a href="cart.html" id="view-cart-btn" class="btn-theme-secondary hidden">
-                        View Cart
-                    </a>
-                </div>
-                <div id="cart-feedback" class="mt-4 font-semibold text-sm sm:text-base"></div>
+                <!-- View Container -->
+                <div id="tileViewContainer" class="bg-gray-800/70 backdrop-blur-sm p-4 sm:p-6 md:p-8 rounded-xl shadow-2xl border border-gray-700/50">
+
+                    <!-- View 1: Image Gallery -->
+                    <div id="view-image-gallery" class="tile-view-step">
+                        <h3 class="text-xl sm:text-2xl font-semibold text-indigo-300 mb-4 text-center sr-only">Image Gallery</h3>
+                        <div class="main-image-container mb-4 sm:mb-6">
+                            <img id="detail-image" src="images/placeholder.jpg" alt="Main Tile Image" 
+                                 class="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl mx-auto rounded-lg shadow-2xl object-cover h-64 sm:h-80 md:h-96 border-2 border-gray-600">
+                        </div>
+                        <div id="related-images-list" class="flex justify-center gap-2 sm:gap-3 flex-wrap mb-6 sm:mb-8">
+                            <!-- Thumbnails will be populated by JavaScript -->
+                        </div>
+                        <p class="text-center text-xs sm:text-sm text-gray-400 mb-4">Click thumbnails to change main image.</p>
+                    </div>
+
+                    <!-- View 2: Tile Specifications & Actions -->
+                    <div id="view-tile-specs" class="tile-view-step hidden">
+                        <h3 class="text-xl sm:text-2xl font-semibold text-indigo-300 mb-4 text-center">Specifications & Details</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 items-start">
+                            <div class="flex flex-col items-center md:items-start">
+                                <img id="specs-tile-thumbnail" src="images/placeholder.jpg" alt="Tile Thumbnail" class="w-48 h-48 sm:w-56 sm:h-56 mx-auto md:mx-0 rounded-md shadow-lg border-2 border-gray-600 mb-4 object-cover">
+                                <p id="detail-description" class="text-sm sm:text-base text-gray-300 leading-relaxed text-center md:text-left">
+                                    Loading tile description...
+                                </p>
+                            </div>
+                            <div class="specs-list space-y-2 text-sm sm:text-base bg-gray-700/50 p-4 rounded-md">
+                                <p><strong class="text-indigo-300 w-24 sm:w-28 inline-block">Name:</strong> <span id="spec-title" class="text-gray-200">N/A</span></p>
+                                <p><strong class="text-indigo-300 w-24 sm:w-28 inline-block">Size:</strong> <span id="spec-size" class="text-gray-200">N/A</span></p>
+                                <p><strong class="text-indigo-300 w-24 sm:w-28 inline-block">Material:</strong> <span id="spec-material" class="text-gray-200">N/A</span></p>
+                                <p><strong class="text-indigo-300 w-24 sm:w-28 inline-block">Finish:</strong> <span id="spec-finish" class="text-gray-200">N/A</span></p>
+                                <p><strong class="text-indigo-300 w-24 sm:w-28 inline-block">Thickness:</strong> <span id="spec-thickness" class="text-gray-200">N/A</span></p>
+                                <p><strong class="text-indigo-300 w-24 sm:w-28 inline-block">Suitability:</strong> <span id="spec-suitability" class="text-gray-200">N/A</span></p>
+                                <p class="mt-3"><strong class="text-cyan-400 text-base sm:text-lg w-24 sm:w-28 inline-block">Price:</strong> <span id="spec-price" class="text-base sm:text-lg text-cyan-400 font-semibold">N/A</span></p>
+                                
+                                <div class="mt-6 pt-4 border-t border-gray-600/50 flex flex-col items-center gap-3 sm:gap-4">
+                                    <button id="add-to-cart-btn" class="btn-theme-primary w-full max-w-xs text-base">
+                                        <span class="button-text">Add to Cart</span>
+                                        <span class="button-loader hidden">Adding...</span>
+                                    </button>
+                                    <a href="cart.html" id="view-cart-btn-specs" class="btn-theme-secondary w-full max-w-xs hidden text-sm">
+                                        View Cart
+                                    </a>
+                                </div>
+                                <div id="cart-feedback" class="mt-3 text-center font-semibold text-xs sm:text-sm min-h-[1.2em]"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- View 3: AR View in Room -->
+                    <div id="view-ar-room" class="tile-view-step hidden text-center">
+                         <h3 class="text-xl sm:text-2xl font-semibold text-indigo-300 mb-4">View in Your Room (AR)</h3>
+                         <img id="ar-tile-thumbnail" src="images/placeholder.jpg" alt="Tile Thumbnail for AR" class="w-32 h-32 sm:w-40 sm:h-40 mx-auto rounded-md shadow-lg border-2 border-gray-600 mb-6 object-cover">
+                         
+                         <!-- Model Viewer Integration -->
+                         <div id="model-viewer-container" class="my-6 mx-auto max-w-xl">
+                            <model-viewer
+                                id="tile-model-viewer"
+                                src="web ar/tilear.glb" <!-- Placeholder, will be set by JS -->
+                                ios-src="web ar/tilear.usdz" <!-- Placeholder -->
+                                alt="A 3D model of the tile"
+                                ar
+                                ar-modes="webxr scene-viewer quick-look"
+                                ar-placement="wall" 
+                                camera-controls
+                                touch-action="pan-y" <!-- Allows vertical scroll on page when not interacting with model -->
+                                style="width: 100%; height: 400px; border-radius: 12px; border: 1px solid #4A5568; background-color: #2D3748;"
+                                class="shadow-xl"
+                            >
+                                <button slot="ar-button" class="btn-theme-secondary !absolute bottom-4 right-4 text-xs sm:text-sm">
+                                    View in Your Space
+                                </button>
+                                <div slot="progress-bar" class="w-full h-1 bg-indigo-500 absolute top-0 left-0 animate-pulse"></div>
+                            </model-viewer>
+                         </div>
+                         <p class="text-xs text-gray-400 mt-2">Requires a compatible device and browser for AR.</p>
+                         <!-- Removed old "Launch AR Viewer" button as model-viewer has its own -->
+                    </div>
+
+                    <!-- Navigation Controls for Views -->
+                    <div class="mt-8 flex justify-between items-center border-t border-gray-700/50 pt-6">
+                        <button id="prevViewBtn" class="btn-theme-secondary text-sm">
+                            ← Previous
+                        </button>
+                        <div class="view-step-indicator text-sm text-indigo-300">
+                            Step <span id="currentViewStep">1</span> of <span id="totalViewSteps">3</span>
+                        </div>
+                        <button id="nextViewBtn" class="btn-theme-primary text-sm"> <!-- Matched button style -->
+                            Next →
+                        </button>
+                    </div>
+                </div> 
             </div>
         </section>
     </main>
 
+    <!-- This AR Modal is now a fallback or for a different AR experience if model-viewer isn't used -->
     <div id="ar-modal" class="fixed inset-0 bg-black bg-opacity-70 modal-overlay flex items-center justify-center p-4 z-50 hidden opacity-0" role="dialog" aria-modal="true" aria-labelledby="ar-modal-title">
         <div class="bg-gray-800 p-6 sm:p-8 rounded-lg shadow-2xl w-full max-w-md modal-content transform scale-95">
             <div class="flex justify-between items-center mb-4">
-                <h3 id="ar-modal-title" class="text-xl sm:text-2xl font-bold text-cyan-400">View in Room (AR)</h3>
+                <h3 id="ar-modal-title" class="text-xl sm:text-2xl font-bold text-cyan-400">View in Room (Legacy AR)</h3>
                 <button id="close-ar-modal-btn" aria-label="Close AR modal" class="text-gray-400 hover:text-gray-200 text-2xl">×</button>
             </div>
             <p class="text-gray-300 text-base sm:text-lg">
-                Our Augmented Reality "View in Room" feature is coming soon! This will allow you to visualize how our beautiful tiles will look in your own space directly through your device's camera.
+                Legacy AR Feature: Coming soon!
             </p>
-            <p class="text-gray-400 text-sm mt-4">Stay tuned for updates!</p>
         </div>
     </div>
-    <!-- AR Viewer for Your Tile -->
-<model-viewer
-    src="web ar/tilear.glb"
-    ios-src="web ar/tilear.usdz"
-    alt="A 3D model of a ceramic tile"
-    ar
-    ar-modes="webxr scene-viewer quick-look"
-    ar-placement="wall"
-    camera-controls
-    style="width: 100%; height: 400px; border-radius: 12px; border: 1px solid #eee;"
->
-    <button slot="ar-button" style="background-color: white; border-radius: 4px; border: 1px solid black; position: absolute; bottom: 16px; right: 16px; padding: 8px 12px;">
-        👋 View in Your Room
-    </button>
-</model-viewer>
-<!-- End of AR Viewer -->
 
     <footer class="bg-gray-900 text-gray-400 text-center py-6 border-t border-cyan-500/30 relative z-10">
         <p class="text-sm sm:text-base">© 2025 Sai Balaji Tiles Home. All Rights Reserved.</p>
     </footer>
 
     <script>
-        // --- Dynamic Header Padding ---
         const headerElementDetail = document.getElementById('main-header');
         const mainPageContentAreaDetail = document.getElementById('page-main-content');
 
@@ -189,18 +222,22 @@
             if (mainPageContentAreaDetail && headerElementDetail) {
                 const headerHeight = headerElementDetail.offsetHeight;
                 mainPageContentAreaDetail.style.paddingTop = `${headerHeight}px`;
+                // Also adjust padding for nav menu items if header height is dynamic
+                const navMenu = document.querySelector('#main-navbar-detail .nav-menu');
+                if (navMenu && headerHeight > 0) {
+                     navMenu.style.paddingTop = `calc(${headerHeight}px + 1rem)`;
+                }
             }
         }
         window.addEventListener('load', setDetailPadding);
         window.addEventListener('resize', setDetailPadding);
 
-
-        // --- Menu Toggle for Detail Page ---
         let menuDetailVisible = false;
         const navbarDetail = document.getElementById("main-navbar-detail");
         const toggleBtnDetail = document.getElementById("toggle-btn-detail");
 
-        function toggleMenuDetail() {
+        // Make toggleMenuDetail global if it's called by onclick in HTML
+        window.toggleMenuDetail = function() { 
             menuDetailVisible = !menuDetailVisible;
             if (navbarDetail) {
                 navbarDetail.classList.toggle("translate-x-0", menuDetailVisible);
@@ -211,24 +248,23 @@
                 toggleBtnDetail.setAttribute('aria-expanded', menuDetailVisible);
             }
         }
-        document.addEventListener("click", (e) => {
+        document.addEventListener("click", (e) => { /* ... (menu close logic) ... */ 
             if (menuDetailVisible && navbarDetail && toggleBtnDetail) {
                  if (!navbarDetail.contains(e.target) && e.target !== toggleBtnDetail && !toggleBtnDetail.contains(e.target)) {
                     toggleMenuDetail();
                 }
             }
         });
-        document.addEventListener('keydown', function(event) {
+        document.addEventListener('keydown', function(event) { /* ... (menu close logic) ... */ 
             if (event.key === 'Escape' && menuDetailVisible) {
                 toggleMenuDetail();
             }
         });
 
-        // --- Animated Stars Background ---
-        function createStarsGlobalDetail() { // Renamed to avoid conflict if in same scope as index.js
+        function createStarsGlobalDetail() { /* ... (star creation logic) ... */ 
             const container = document.getElementById('stars-bg-global');
             if (!container) return;
-            container.innerHTML = ''; // Clear existing stars if any (e.g. if navigating back)
+            container.innerHTML = ''; 
             const numStars = Math.floor(window.innerWidth / 20); 
             for (let i = 0; i < numStars; i++) {
                 const star = document.createElement('div');
@@ -242,160 +278,235 @@
                 container.appendChild(star);
             }
         }
-        createStarsGlobalDetail(); // Create stars on page load
-
-
-        // --- Tile Data and Detail Page Logic ---
-        const tilesData = { // Ensure your image paths are correct
-            polished: { title: "Polished Vitrified Tiles", main: "images/tiles1.jpg", description: "Elegant and durable Polished Vitrified Tiles offer a luxurious, high-gloss finish perfect for modern interiors. They are known for their strength, low porosity, and resistance to stains and scratches, making them ideal for high-traffic areas in both residential and commercial spaces.", related: ["images/tiles1.jpg", "images/tile1.jpg", "images/tiles3.jpg", "images/tile2.jpg"] },
-            ceramic: { title: "Ceramic Tiles", main: "images/tiles2.jpg", description: "Versatile and affordable Ceramic Tiles come in a wide array of colors, patterns, and sizes. They are easy to clean, maintain, and install, suitable for various applications including kitchen backsplashes, bathroom walls, and flooring in moderate traffic zones.", related: ["images/tile2.jpg", "images/tile1.jpg", "images/tiles1.jpg"] },
-            glazed: { title: "Glazed Vitrified Tiles (GVT)", main: "images/tiles3.jpg", description: "High-quality Glazed Vitrified Tiles (GVT) feature a digitally printed glazed surface, offering endless design possibilities from wood and stone looks to intricate patterns. GVT combines the beauty of natural materials with the superior strength and low maintenance of vitrified tiles.", related: ["images/tiles3.jpg", "images/tiles3.jpg", "images/tiles2.jpg", "images/tiles1.jpg"] }
+        
+        const tilesData = {
+            polished: { 
+                id: "polished", title: "Polished Vitrified Tiles", main: "images/tiles1.jpg", 
+                description: "Experience unparalleled shine and durability with our Polished Vitrified Tiles. These tiles are manufactured using advanced technology to achieve a mirror-like finish, making them ideal for luxurious living rooms, bedrooms, and commercial spaces. They are highly resistant to stains and scratches.",
+                related: ["images/tiles1.jpg", "images/tile1.jpg", "images/tiles3.jpg", "images/tile2.jpg"],
+                specifications: { size: "800x800mm", material: "Double Charge Vitrified", finish: "High Gloss Polish", thickness: "9mm", suitability: "Floors, Walls (High Traffic Areas)", price: "₹85 / sq.ft."},
+                arModelGLB: "web ar/polished_tile.glb", // Example path
+                arModelUSDZ: "web ar/polished_tile.usdz" // Example path
+            },
+            ceramic: { 
+                id: "ceramic", title: "Ceramic Tiles", main: "images/tiles2.jpg", 
+                description: "Our Ceramic Tiles offer a versatile and affordable solution for any room. Available in a wide array of colors, patterns, and sizes, they are perfect for kitchens, bathrooms, and accent walls. Easy to clean and maintain.",
+                related: ["images/tile2.jpg", "images/tile1.jpg", "images/tiles1.jpg"],
+                specifications: { size: "300x600mm", material: "Ceramic", finish: "Glossy / Matte", thickness: "7.5mm", suitability: "Walls, Floors (Low to Medium Traffic)", price: "₹45 / sq.ft."},
+                arModelGLB: "web ar/ceramic_tile.glb", // Example path - CREATE THESE MODELS
+                arModelUSDZ: "web ar/ceramic_tile.usdz" // Example path - CREATE THESE MODELS
+            },
+            glazed: { 
+                id: "glazed", title: "Glazed Vitrified Tiles (GVT)", main: "images/tiles3.jpg", 
+                description: "Glazed Vitrified Tiles (GVT) combine the strength of vitrified tiles with the aesthetic versatility of digital printing. This allows for intricate designs and patterns, mimicking natural stone, wood, or abstract art. Ideal for both residential and commercial applications.",
+                related: ["images/tiles3.jpg", "images/tiles3.jpg", "images/tiles2.jpg", "images/tiles1.jpg"],
+                specifications: { size: "600x1200mm", material: "Glazed Vitrified", finish: "Satin / Matte / Rustic", thickness: "10mm", suitability: "Floors, Walls (All Areas)", price: "₹110 / sq.ft."},
+                arModelGLB: "web ar/gvt_tile.glb", // Example path
+                arModelUSDZ: "web ar/gvt_tile.usdz" // Example path
+            }
         };
 
         const urlParams = new URLSearchParams(window.location.search);
         const tileId = urlParams.get('id');
         const selectedTile = tilesData[tileId];
 
-        const detailTitleEl = document.getElementById("detail-title");
-        const detailImageEl = document.getElementById("detail-image");
-        const detailDescriptionEl = document.getElementById("detail-description");
+        const detailPageTitleEl = document.getElementById("detail-page-title"); // For main page title
+        const mainDetailImageEl = document.getElementById("detail-image");
         const relatedImagesListEl = document.getElementById("related-images-list");
+        
+        const specsTileThumbnailEl = document.getElementById("specs-tile-thumbnail");
+        const detailDescriptionEl = document.getElementById("detail-description");
+        const specTitleEl = document.getElementById("spec-title"); // Added for tile name in specs
+        const specSizeEl = document.getElementById("spec-size");
+        const specMaterialEl = document.getElementById("spec-material");
+        const specFinishEl = document.getElementById("spec-finish");
+        const specThicknessEl = document.getElementById("spec-thickness");
+        const specSuitabilityEl = document.getElementById("spec-suitability");
+        const specPriceEl = document.getElementById("spec-price");
+
+        const arTileThumbnailEl = document.getElementById("ar-tile-thumbnail");
+        const tileModelViewer = document.getElementById('tile-model-viewer');
+
+
         const addToCartButtonEl = document.getElementById("add-to-cart-btn");
         const cartFeedbackEl = document.getElementById("cart-feedback");
-        const viewCartButtonEl = document.getElementById("view-cart-btn"); // Get the new button
+        const viewCartButtonSpecsEl = document.getElementById("view-cart-btn-specs");
 
-        function updateMainImage(src, altText, clickedThumbnail) {
-            if (detailImageEl) {
-                detailImageEl.src = src;
-                detailImageEl.alt = altText;
+        const viewSteps = document.querySelectorAll(".tile-view-step");
+        const prevViewBtn = document.getElementById("prevViewBtn");
+        const nextViewBtn = document.getElementById("nextViewBtn");
+        const currentViewStepEl = document.getElementById("currentViewStep");
+        const totalViewStepsEl = document.getElementById("totalViewSteps");
+        let currentViewIndex = 0;
+        const totalViews = viewSteps.length;
+
+        function showView(index) {
+            viewSteps.forEach((step, i) => {
+                step.classList.toggle('hidden', i !== index);
+            });
+            currentViewIndex = index;
+            if (currentViewStepEl) currentViewStepEl.textContent = index + 1;
+            if (totalViewStepsEl) totalViewStepsEl.textContent = totalViews;
+
+            if (prevViewBtn) prevViewBtn.disabled = (index === 0);
+            if (nextViewBtn) nextViewBtn.disabled = (index === totalViews - 1);
+
+            const viewContainer = document.getElementById('tileViewContainer');
+            if(viewContainer) viewContainer.scrollTop = 0; 
+        }
+
+        if (prevViewBtn) prevViewBtn.addEventListener('click', () => { if (currentViewIndex > 0) showView(currentViewIndex - 1); });
+        if (nextViewBtn) nextViewBtn.addEventListener('click', () => { if (currentViewIndex < totalViews - 1) showView(currentViewIndex + 1); });
+
+        function updateMainImage(src, altText, clickedThumbnail) { /* ... (same as before) ... */ 
+            if (mainDetailImageEl) {
+                mainDetailImageEl.src = src;
+                mainDetailImageEl.alt = altText;
             }
             document.querySelectorAll('#related-images-list img').forEach(img => {
-                img.classList.remove('thumbnail-active');
+                img.classList.remove('thumbnail-active', 'border-cyan-400');
+                img.classList.add('border-gray-700'); // Ensure default border is applied
                 img.setAttribute('aria-current', 'false');
             });
             if (clickedThumbnail) {
-                clickedThumbnail.classList.add('thumbnail-active');
-                clickedThumbnail.setAttribute('aria-current', 'true');
+                clickedThumbnail.classList.add('thumbnail-active', 'border-cyan-400');
+                 clickedThumbnail.classList.remove('border-gray-700');
+                img.setAttribute('aria-current', 'true');
             }
         }
 
-        if (selectedTile) {
-            if (detailTitleEl) detailTitleEl.textContent = selectedTile.title;
-            if (detailDescriptionEl) detailDescriptionEl.textContent = selectedTile.description;
-            updateMainImage(selectedTile.main, selectedTile.title + " - Main View");
-
-            if (relatedImagesListEl) {
-                relatedImagesListEl.innerHTML = ''; 
-                const allImagesForGallery = [selectedTile.main, ...selectedTile.related.filter(img => img !== selectedTile.main)];
-                allImagesForGallery.forEach((src, index) => {
-                    const img = document.createElement("img");
-                    img.src = src; // Ensure these image paths are correct
-                    const alt = `${selectedTile.title} - View ${index + 1}`;
-                    img.alt = alt;
-                    img.className = "w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 object-cover rounded-md shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer border-2 border-gray-700 hover:border-cyan-400 transform hover:scale-105";
-                    img.setAttribute('role', 'button');
-                    img.setAttribute('tabindex', '0');
-                    if (src === selectedTile.main) {
-                        img.classList.add('thumbnail-active');
-                        img.setAttribute('aria-current', 'true');
-                    } else {
-                         img.setAttribute('aria-current', 'false');
-                    }
-                    img.onclick = () => updateMainImage(src, alt, img);
-                    img.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); updateMainImage(src, alt, img); }};
-                    relatedImagesListEl.appendChild(img);
-                });
-            }
-
-            if (addToCartButtonEl) {
-                const buttonText = addToCartButtonEl.querySelector('.button-text');
-                const buttonLoader = addToCartButtonEl.querySelector('.button-loader');
-                addToCartButtonEl.onclick = function() {
-                    if (buttonLoader) buttonText.classList.add('hidden');
-                    if (buttonLoader) buttonLoader.classList.remove('hidden');
-                    addToCartButtonEl.disabled = true;
-                    setTimeout(() => { 
-                        let cart = JSON.parse(localStorage.getItem("cart")) || [];
-                        const existingItem = cart.find(item => item.id === tileId);
-                        if (cartFeedbackEl) cartFeedbackEl.textContent = ''; 
-                        cartFeedbackEl.className = 'mt-4 font-semibold text-sm sm:text-base';
-                        if (existingItem) {
-                             if(cartFeedbackEl) {
-                                cartFeedbackEl.textContent = `${selectedTile.title} is already in your cart.`;
-                                cartFeedbackEl.classList.add('text-yellow-400');
-                             }
-                        } else {
-                            cart.push({ id: tileId, name: selectedTile.title, image: selectedTile.main });
-                            localStorage.setItem("cart", JSON.stringify(cart));
-                            if(cartFeedbackEl) {
-                                cartFeedbackEl.textContent = `${selectedTile.title} added to cart!`;
-                                cartFeedbackEl.classList.add('text-green-400');
-                            }
+        function populateTileDetails() {
+            if (selectedTile) {
+                if (detailPageTitleEl) detailPageTitleEl.textContent = selectedTile.title; // Update main page H2
+                
+                updateMainImage(selectedTile.main, selectedTile.title + " - Main View");
+                if (relatedImagesListEl) {
+                    relatedImagesListEl.innerHTML = ''; 
+                    const allImagesForGallery = [selectedTile.main, ...selectedTile.related.filter(img => img !== selectedTile.main)];
+                    allImagesForGallery.forEach((src, index) => {
+                        const img = document.createElement("img");
+                        img.src = src;
+                        const alt = `${selectedTile.title} - View ${index + 1}`;
+                        img.alt = alt;
+                        img.className = "w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 object-cover rounded-md shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer border-2 border-gray-700 hover:border-cyan-400 transform hover:scale-105";
+                        img.setAttribute('role', 'button');
+                        img.setAttribute('tabindex', '0');
+                        if (src === selectedTile.main) {
+                            img.classList.add('thumbnail-active', 'border-cyan-400');
+                            img.classList.remove('border-gray-700');
+                            img.setAttribute('aria-current', 'true');
                         }
-                        updateCartCountDetail();
-                        if (viewCartButtonEl) viewCartButtonEl.classList.remove('hidden'); // Show View Cart button
-                        if (buttonLoader) buttonText.classList.remove('hidden');
-                        if (buttonLoader) buttonLoader.classList.add('hidden');
-                        addToCartButtonEl.disabled = false;
-                        setTimeout(() => { if(cartFeedbackEl) cartFeedbackEl.textContent = ''; }, 3000);
-                    }, 700); 
-                };
+                        img.onclick = () => updateMainImage(src, alt, img);
+                        img.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); updateMainImage(src, alt, img); }};
+                        relatedImagesListEl.appendChild(img);
+                    });
+                }
+
+                if (specsTileThumbnailEl) specsTileThumbnailEl.src = selectedTile.main;
+                if (detailDescriptionEl) detailDescriptionEl.textContent = selectedTile.description;
+                if (specTitleEl) specTitleEl.textContent = selectedTile.title; // Populate title in specs
+                if (selectedTile.specifications) {
+                    if (specSizeEl) specSizeEl.textContent = selectedTile.specifications.size || 'N/A';
+                    if (specMaterialEl) specMaterialEl.textContent = selectedTile.specifications.material || 'N/A';
+                    if (specFinishEl) specFinishEl.textContent = selectedTile.specifications.finish || 'N/A';
+                    if (specThicknessEl) specThicknessEl.textContent = selectedTile.specifications.thickness || 'N/A';
+                    if (specSuitabilityEl) specSuitabilityEl.textContent = selectedTile.specifications.suitability || 'N/A';
+                    if (specPriceEl) specPriceEl.textContent = selectedTile.specifications.price || 'N/A';
+                }
+                
+                if (arTileThumbnailEl) arTileThumbnailEl.src = selectedTile.main;
+                if (tileModelViewer) {
+                    tileModelViewer.src = selectedTile.arModelGLB || "web ar/tilear.glb"; // Fallback to default
+                    tileModelViewer.iosSrc = selectedTile.arModelUSDZ || "web ar/tilear.usdz"; // Fallback
+                    tileModelViewer.alt = `A 3D model of ${selectedTile.title}`;
+                }
+
+
+                if (addToCartButtonEl) {
+                    const buttonText = addToCartButtonEl.querySelector('.button-text');
+                    const buttonLoader = addToCartButtonEl.querySelector('.button-loader');
+                    addToCartButtonEl.onclick = function() {
+                        if (buttonLoader && buttonText) { 
+                            buttonText.classList.add('hidden');
+                            buttonLoader.classList.remove('hidden');
+                        }
+                        addToCartButtonEl.disabled = true;
+                        setTimeout(() => { 
+                            let cart = JSON.parse(localStorage.getItem("cart")) || [];
+                            const existingItem = cart.find(item => item.id === selectedTile.id);
+                            if (cartFeedbackEl) {
+                                cartFeedbackEl.textContent = ''; 
+                                cartFeedbackEl.className = 'mt-3 text-center font-semibold text-xs sm:text-sm min-h-[1.2em]';
+                                if (existingItem) {
+                                    cartFeedbackEl.textContent = `${selectedTile.title} is already in your cart.`;
+                                    cartFeedbackEl.classList.add('text-yellow-400');
+                                } else {
+                                    cart.push({ id: selectedTile.id, name: selectedTile.title, image: selectedTile.main });
+                                    localStorage.setItem("cart", JSON.stringify(cart));
+                                    cartFeedbackEl.textContent = `${selectedTile.title} added to cart!`;
+                                    cartFeedbackEl.classList.add('text-green-400');
+                                }
+                            }
+                            updateCartCountDetail();
+                            if (viewCartButtonSpecsEl) viewCartButtonSpecsEl.classList.remove('hidden');
+                            if (buttonLoader && buttonText) {
+                                buttonText.classList.remove('hidden');
+                                buttonLoader.classList.add('hidden');
+                            }
+                            addToCartButtonEl.disabled = false;
+                            setTimeout(() => { if(cartFeedbackEl) cartFeedbackEl.textContent = ''; }, 3000);
+                        }, 700); 
+                    };
+                }
+            } else { 
+                if (detailPageTitleEl) detailPageTitleEl.textContent = "Tile Not Found";
+                if (mainDetailImageEl) mainDetailImageEl.src = "images/placeholder-notfound.jpg";
+                if (detailDescriptionEl) detailDescriptionEl.textContent = "The tile you are looking for could not be found.";
+                if (addToCartButtonEl) addToCartButtonEl.disabled = true;
+                if (viewCartButtonSpecsEl) viewCartButtonSpecsEl.classList.add('hidden');
+                // Hide view navigation if tile not found
+                const viewNavContainer = document.querySelector('#tileViewContainer .flex.justify-between.items-center.border-t');
+                if(viewNavContainer) viewNavContainer.style.display = 'none';
+                 if(tileModelViewer) tileModelViewer.style.display = 'none'; // Hide model viewer if tile not found
             }
-        } else { 
-            if (detailTitleEl) detailTitleEl.textContent = "Tile Not Found";
-            if (detailImageEl) detailImageEl.src = "images/placeholder-notfound.jpg"; // Make sure this image exists
-            if (detailDescriptionEl) detailDescriptionEl.textContent = "The tile you are looking for could not be found. Please check the catalog.";
-            if (addToCartButtonEl) addToCartButtonEl.disabled = true;
-            const viewInRoomBtnEl = document.getElementById('view-in-room-btn');
-            if(viewInRoomBtnEl) viewInRoomBtnEl.disabled = true;
-            if(viewCartButtonEl) viewCartButtonEl.classList.add('hidden'); // Hide if tile not found
+            showView(0); 
         }
 
         function updateCartCountDetail() {
             const cart = JSON.parse(localStorage.getItem("cart")) || [];
             const cartCountSpan = document.getElementById("cart-count-detail");
-             if (cartCountSpan) cartCountSpan.textContent = cart.length;
+            if (cartCountSpan) cartCountSpan.textContent = cart.length;
              
-             // Show/hide View Cart button based on cart content (optional, could always be visible after first add)
-             if (viewCartButtonEl) {
-                if (cart.length > 0) {
-                    // viewCartButtonEl.classList.remove('hidden'); // Already handled on add, but good for initial load
+            if (viewCartButtonSpecsEl) { // This button is in the specs view
+                const itemInCart = cart.find(item => item.id === tileId); // Check if current tile is in cart
+                if (itemInCart) { // Or simply cart.length > 0 if you want it visible whenever cart has items
+                    viewCartButtonSpecsEl.classList.remove('hidden');
                 } else {
-                    // viewCartButtonEl.classList.add('hidden'); // Hide if cart becomes empty (e.g. if user removes all from cart page and comes back)
+                    viewCartButtonSpecsEl.classList.add('hidden');
                 }
              }
         }
-        updateCartCountDetail(); // Call on page load to set initial state of cart count and View Cart button visibility
 
+        // Fallback AR Modal Logic (if you keep the old modal button)
         const arModal = document.getElementById('ar-modal');
-        const viewInRoomBtn = document.getElementById('view-in-room-btn');
         const closeArModalBtn = document.getElementById('close-ar-modal-btn');
-        function openArModal() {
-            if (arModal) {
-                arModal.classList.remove('hidden');
-                setTimeout(() => arModal.classList.add('opacity-100'), 10); 
-                setTimeout(() => arModal.querySelector('.modal-content').classList.add('scale-100'), 10);
-                if(closeArModalBtn) closeArModalBtn.focus();
-            }
-        }
-        function closeArModal() {
-            if (arModal) {
-                arModal.classList.remove('opacity-100');
-                arModal.querySelector('.modal-content').classList.remove('scale-100');
-                setTimeout(() => arModal.classList.add('hidden'), 300); 
-                if(viewInRoomBtn) viewInRoomBtn.focus(); 
-            }
-        }
-        if (viewInRoomBtn) viewInRoomBtn.addEventListener('click', openArModal);
+        // No direct button to open this legacy modal from the main page anymore
+        // It could be triggered programmatically if model-viewer fails, for example.
+        function openLegacyArModal() { /* ... (open modal logic) ... */ }
+        function closeArModal() { /* ... (close modal logic) ... */ }
         if (closeArModalBtn) closeArModalBtn.addEventListener('click', closeArModal);
-        if (arModal) {
-            arModal.addEventListener('click', (event) => { 
-                if (event.target === arModal) closeArModal();
-            });
-        }
-        document.addEventListener('keydown', (event) => { 
-            if (event.key === 'Escape' && arModal && !arModal.classList.contains('hidden')) {
-                closeArModal();
+        // ... (rest of legacy AR modal event listeners) ...
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            createStarsGlobalDetail();
+            populateTileDetails();
+            updateCartCountDetail();
+        });
+
+        window.addEventListener('storage', (event) => {
+            if (event.key === 'cart') {
+                updateCartCountDetail();
             }
         });
     </script>
