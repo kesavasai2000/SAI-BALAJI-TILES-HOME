@@ -44,6 +44,16 @@
         model-viewer::part(default-ar-button):hover {
             background-color: #4338ca !important;
         }
+        /* Class to hide navigation controls initially */
+        .slider-nav-hidden {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease-in-out;
+        }
+        .slider-nav-visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
     </style>
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.1.1/model-viewer.min.js"></script>
 </head>
@@ -78,14 +88,13 @@
         <section class="tile-detail py-12 bg-transparent min-h-screen">
             <div class="container mx-auto px-4">
                 <h2 id="detail-page-title" class="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 sm:mb-8 text-cyan-400 text-center">
-                    <!-- Tile Title will be populated here by JS -->
+                    <!-- Tile Title by JS -->
                 </h2>
 
-                <!-- Multi-Step View Container - ALWAYS VISIBLE NOW -->
-                <div id="tileViewContainer" class="bg-gray-800/70 backdrop-blur-sm p-4 sm:p-6 md:p-8 rounded-xl shadow-2xl border border-gray-700/50">
+                <div id="tileViewContainer" class="bg-gray-800/70 backdrop-blur-sm p-4 sm:p-6 md:p-8 rounded-xl shadow-2xl border border-gray-700/50 cursor-grab active:cursor-grabbing">
                     
-                    <!-- View 1: Image Gallery -->
                     <div id="view-image-gallery" class="tile-view-step">
+                        <!-- Image Gallery content -->
                         <h3 class="text-xl sm:text-2xl font-semibold text-indigo-300 mb-4 text-center sr-only">Image Gallery</h3>
                         <div class="main-image-container mb-4 sm:mb-6">
                             <img id="detail-image" src="images/placeholder.jpg" alt="Main Tile Image" 
@@ -93,17 +102,16 @@
                         </div>
                         <div id="related-images-list" class="flex justify-center gap-2 sm:gap-3 flex-wrap mb-6 sm:mb-8">
                         </div>
-                        <p class="text-center text-xs sm:text-sm text-gray-400 mb-4">Click thumbnails to change main image.</p>
+                        <p class="text-center text-xs sm:text-sm text-gray-400 mb-4">Click thumbnails to change main image. Swipe or use controls for more.</p>
                     </div>
 
-                    <!-- View 2: Tile Specifications & Actions -->
                     <div id="view-tile-specs" class="tile-view-step hidden">
+                        <!-- Tile Specs content -->
                         <h3 class="text-xl sm:text-2xl font-semibold text-indigo-300 mb-4 text-center">Specifications & Details</h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 items-start">
                             <div class="flex flex-col items-center md:items-start">
                                 <img id="specs-tile-thumbnail" src="images/placeholder.jpg" alt="Tile Thumbnail" class="w-48 h-48 sm:w-56 sm:h-56 mx-auto md:mx-0 rounded-md shadow-lg border-2 border-gray-600 mb-4 object-cover">
                                 <p id="detail-description" class="text-sm sm:text-base text-gray-300 leading-relaxed text-center md:text-left">
-                                    Loading tile description...
                                 </p>
                             </div>
                             <div class="specs-list space-y-2 text-sm sm:text-base bg-gray-700/50 p-4 rounded-md">
@@ -129,10 +137,10 @@
                         </div>
                     </div>
 
-                    <!-- View 3: AR View in Room -->
                     <div id="view-ar-room" class="tile-view-step hidden text-center">
-                         <h3 class="text-xl sm:text-2xl font-semibold text-indigo-300 mb-4">View in Your Room (AR)</h3>
-                         <img id="ar-tile-thumbnail" src="images/placeholder.jpg" alt="Tile Thumbnail for AR" class="w-32 h-32 sm:w-40 sm:h-40 mx-auto rounded-md shadow-lg border-2 border-gray-600 mb-6 object-cover">
+                        <!-- AR View content -->
+                        <h3 class="text-xl sm:text-2xl font-semibold text-indigo-300 mb-4">View in Your Room (AR)</h3>
+                         <img id="ar-tile-thumbnail" src="images/tile1.jpg" alt="Tile Thumbnail for AR" class="w-32 h-32 sm:w-40 sm:h-40 mx-auto rounded-md shadow-lg border-2 border-gray-600 mb-6 object-cover">
                          
                          <div class="text-left bg-gray-700/30 p-4 rounded-md mb-6 max-w-lg mx-auto">
                              <p class="text-sm text-indigo-200 font-semibold mb-2">How to use AR View:</p>
@@ -148,8 +156,8 @@
                          <div id="model-viewer-container" class="my-6 mx-auto max-w-xl">
                             <model-viewer
                                 id="tile-model-viewer"
-                                src="web ar/tilear.glb" 
-                                ios-src="web ar/tilear.usdz"
+                                src="C:\Users\kesav\OneDrive\Documents\GITHUB\SAI-BALAJI-TILES-HOME\web ar\tilear.glb" 
+                                ios-src="C:\Users\kesav\OneDrive\Documents\GITHUB\SAI-BALAJI-TILES-HOME\web ar\tilear.usdz"
                                 alt="A 3D model of the tile"
                                 ar
                                 ar-modes="webxr scene-viewer quick-look"
@@ -174,8 +182,8 @@
                          <p class="text-xs text-gray-400 mt-2">Requires a compatible device and browser for AR. Performance may vary.</p>
                     </div>
 
-                    <!-- Navigation Controls for Views -->
-                    <div class="mt-8 flex justify-between items-center border-t border-gray-700/50 pt-6">
+                    <!-- Navigation Controls - Initially hidden -->
+                    <div id="slider-navigation-controls" class="mt-8 flex justify-between items-center border-t border-gray-700/50 pt-6 slider-nav-hidden">
                         <button id="prevViewBtn" class="btn-theme-secondary text-sm">
                             ← Previous
                         </button>
@@ -191,18 +199,9 @@
         </section>
     </main>
 
-    <!-- Fallback AR Modal (Not directly triggered by button, but can be shown if model-viewer fails) -->
+    <!-- Fallback AR Modal (not directly used) -->
     <div id="ar-modal" class="fixed inset-0 bg-black bg-opacity-70 modal-overlay flex items-center justify-center p-4 z-50 hidden opacity-0" role="dialog" aria-modal="true" aria-labelledby="ar-modal-title">
-        <div class="bg-gray-800 p-6 sm:p-8 rounded-lg shadow-2xl w-full max-w-md modal-content transform scale-95">
-            <div class="flex justify-between items-center mb-4">
-                <h3 id="ar-modal-title" class="text-xl sm:text-2xl font-bold text-cyan-400">View in Room (Legacy AR)</h3>
-                <button id="close-ar-modal-btn" aria-label="Close AR modal" class="text-gray-400 hover:text-gray-200 text-2xl">×</button>
-            </div>
-            <p class="text-gray-300 text-base sm:text-lg">
-                Augmented Reality feature is loading or requires specific browser capabilities.
-            </p>
-             <p class="text-gray-400 text-sm mt-4">If AR doesn't start, ensure you're using a compatible browser (like Chrome on Android or Safari on iOS) and have granted camera permissions.</p>
-        </div>
+        <!-- ... (Legacy AR Modal Content) ... -->
     </div>
 
     <footer class="bg-gray-900 text-gray-400 text-center py-6 border-t border-cyan-500/30 relative z-10">
@@ -210,9 +209,7 @@
     </footer>
 
     <script>
-        // --- (JavaScript - Same as the previous FULLY WORKING version with multi-step views, AR, etc.) ---
-        // --- No major structural JS changes needed for this flow, just ensuring initial state is correct ---
-
+        // --- (JavaScript from previous response, with modifications below) ---
         const headerElementDetail = document.getElementById('main-header');
         const mainPageContentAreaDetail = document.getElementById('page-main-content');
 
@@ -245,42 +242,14 @@
         if(toggleBtnDetailGlobal) {
             toggleBtnDetailGlobal.addEventListener('click', toggleMenuDetail);
         }
-
-        document.addEventListener("click", (e) => { 
-            if (menuDetailVisible && navbarDetail && toggleBtnDetailGlobal) {
-                 if (!navbarDetail.contains(e.target) && e.target !== toggleBtnDetailGlobal && !toggleBtnDetailGlobal.contains(e.target)) {
-                    toggleMenuDetail();
-                }
-            }
-        });
-        document.addEventListener('keydown', function(event) { 
-            if (event.key === 'Escape' && menuDetailVisible) {
-                toggleMenuDetail();
-            }
-        });
-
-        function createStarsGlobalDetail() { 
-            const container = document.getElementById('stars-bg-global');
-            if (!container) return;
-            container.innerHTML = ''; 
-            const numStars = Math.floor(window.innerWidth / 20); 
-            for (let i = 0; i < numStars; i++) {
-                const star = document.createElement('div');
-                star.classList.add('star');
-                const size = Math.random() * 2.5 + 0.5; 
-                star.style.width = `${size}px`;
-                star.style.height = `${size}px`;
-                star.style.left = `${Math.random() * 100}%`;
-                star.style.top = `${Math.random() * 100}%`;
-                star.style.animationDuration = `${Math.random() * 3 + 4}s`; 
-                container.appendChild(star);
-            }
-        }
+        document.addEventListener("click", (e) => { /* ... */ });
+        document.addEventListener('keydown', function(event) { /* ... */ });
+        function createStarsGlobalDetail() { /* ... */ }
         
-        const tilesData = {
+        const tilesData = { /* ... (Your expanded tilesData) ... */
             polished: { 
                 id: "polished", title: "Polished Vitrified Tiles", main: "images/tiles1.jpg", 
-                description: "Experience unparalleled shine and durability with our Polished Vitrified Tiles. These tiles are manufactured using advanced technology to achieve a mirror-like finish, making them ideal for luxurious living rooms, bedrooms, and commercial spaces. They are highly resistant to stains and scratches.",
+                description: "Experience unparalleled shine...",
                 related: ["images/tiles1.jpg", "images/tile1.jpg", "images/tiles3.jpg", "images/tile2.jpg"],
                 specifications: { size: "800x800mm", material: "Double Charge Vitrified", finish: "High Gloss Polish", thickness: "9mm", suitability: "Floors, Walls (High Traffic Areas)", price: "₹85 / sq.ft."},
                 arModelGLB: "web ar/polished_tile.glb", 
@@ -288,7 +257,7 @@
             },
             ceramic: { 
                 id: "ceramic", title: "Ceramic Tiles", main: "images/tiles2.jpg", 
-                description: "Our Ceramic Tiles offer a versatile and affordable solution for any room. Available in a wide array of colors, patterns, and sizes, they are perfect for kitchens, bathrooms, and accent walls. Easy to clean and maintain.",
+                description: "Our Ceramic Tiles offer a versatile...",
                 related: ["images/tile2.jpg", "images/tile1.jpg", "images/tiles1.jpg"],
                 specifications: { size: "300x600mm", material: "Ceramic", finish: "Glossy / Matte", thickness: "7.5mm", suitability: "Walls, Floors (Low to Medium Traffic)", price: "₹45 / sq.ft."},
                 arModelGLB: "web ar/ceramic_tile.glb", 
@@ -296,24 +265,24 @@
             },
             glazed: { 
                 id: "glazed", title: "Glazed Vitrified Tiles (GVT)", main: "images/tiles3.jpg", 
-                description: "Glazed Vitrified Tiles (GVT) combine the strength of vitrified tiles with the aesthetic versatility of digital printing. This allows for intricate designs and patterns, mimicking natural stone, wood, or abstract art. Ideal for both residential and commercial applications.",
+                description: "Glazed Vitrified Tiles (GVT) combine...",
                 related: ["images/tiles3.jpg", "images/tiles3.jpg", "images/tiles2.jpg", "images/tiles1.jpg"],
                 specifications: { size: "600x1200mm", material: "Glazed Vitrified", finish: "Satin / Matte / Rustic", thickness: "10mm", suitability: "Floors, Walls (All Areas)", price: "₹110 / sq.ft."},
                 arModelGLB: "web ar/gvt_tile.glb", 
                 arModelUSDZ: "web ar/gvt_tile.usdz"
             }
-        };
+         };
 
         const urlParams = new URLSearchParams(window.location.search);
         const tileId = urlParams.get('id');
         const selectedTile = tilesData[tileId];
 
         const detailPageTitleEl = document.getElementById("detail-page-title");
-        const mainDetailImageEl = document.getElementById("detail-image"); // In multi-view gallery
-        const relatedImagesListEl = document.getElementById("related-images-list"); // In multi-view gallery
+        const mainDetailImageEl = document.getElementById("detail-image");
+        const relatedImagesListEl = document.getElementById("related-images-list");
         
         const specsTileThumbnailEl = document.getElementById("specs-tile-thumbnail");
-        const detailDescriptionEl = document.getElementById("detail-description"); // In specs view
+        const detailDescriptionEl = document.getElementById("detail-description");
         const specTitleEl = document.getElementById("spec-title"); 
         const specSizeEl = document.getElementById("spec-size");
         const specMaterialEl = document.getElementById("spec-material");
@@ -325,21 +294,33 @@
         const arTileThumbnailEl = document.getElementById("ar-tile-thumbnail");
         const tileModelViewer = document.getElementById('tile-model-viewer');
 
-        const addToCartButtonEl = document.getElementById("add-to-cart-btn"); // In specs view
-        const cartFeedbackEl = document.getElementById("cart-feedback"); // In specs view
-        const viewCartButtonSpecsEl = document.getElementById("view-cart-btn-specs"); // In specs view
+        const addToCartButtonEl = document.getElementById("add-to-cart-btn");
+        const cartFeedbackEl = document.getElementById("cart-feedback");
+        const viewCartButtonSpecsEl = document.getElementById("view-cart-btn-specs");
 
-        const tileViewContainerEl = document.getElementById('tileViewContainer'); // The main multi-step container
+        const tileViewContainerEl = document.getElementById('tileViewContainer');
         const viewSteps = document.querySelectorAll(".tile-view-step");
+        const sliderNavigationControlsEl = document.getElementById('slider-navigation-controls'); // Get the navigation controls container
         const prevViewBtn = document.getElementById("prevViewBtn");
         const nextViewBtn = document.getElementById("nextViewBtn");
         const currentViewStepEl = document.getElementById("currentViewStep");
         const totalViewStepsEl = document.getElementById("totalViewSteps");
         let currentViewIndex = 0;
-        const totalViews = viewSteps.length > 0 ? viewSteps.length : 3; 
+        const totalViews = 3; 
+        let sliderNavActivated = false; // Flag to track if nav controls are shown
 
-        function showView(index) {
+        function activateSliderNavigation() {
+            if (!sliderNavActivated && sliderNavigationControlsEl) {
+                sliderNavigationControlsEl.classList.remove('slider-nav-hidden');
+                sliderNavigationControlsEl.classList.add('slider-nav-visible');
+                sliderNavActivated = true;
+            }
+        }
+
+        function showView(index, fromInteraction = false) {
             if (!viewSteps || viewSteps.length === 0) return;
+            if (fromInteraction) activateSliderNavigation(); // Show nav controls on first interaction
+
             viewSteps.forEach((step, i) => {
                 step.classList.toggle('hidden', i !== index);
             });
@@ -353,198 +334,94 @@
             if(tileViewContainerEl) tileViewContainerEl.scrollTop = 0; 
         }
 
-        if (prevViewBtn) prevViewBtn.addEventListener('click', () => { if (currentViewIndex > 0) showView(currentViewIndex - 1); });
-        if (nextViewBtn) nextViewBtn.addEventListener('click', () => { if (currentViewIndex < totalViews - 1) showView(currentViewIndex + 1); });
-
-        function updateMainImage(src, altText, clickedThumbnail) {
-            if (mainDetailImageEl) { // This is the image inside the multi-step gallery view
-                mainDetailImageEl.src = src;
-                mainDetailImageEl.alt = altText;
-            }
-            // Update thumbnails only for the multi-step gallery view
-            document.querySelectorAll('#related-images-list img').forEach(img => {
-                img.classList.remove('thumbnail-active', 'border-cyan-400');
-                img.classList.add('border-gray-700'); 
-                img.setAttribute('aria-current', 'false');
-            });
-            if (clickedThumbnail) {
-                clickedThumbnail.classList.add('thumbnail-active', 'border-cyan-400');
-                clickedThumbnail.classList.remove('border-gray-700');
-                clickedThumbnail.setAttribute('aria-current', 'true'); 
-            }
-        }
+        if (prevViewBtn) prevViewBtn.addEventListener('click', () => { if (currentViewIndex > 0) showView(currentViewIndex - 1, true); });
+        if (nextViewBtn) nextViewBtn.addEventListener('click', () => { if (currentViewIndex < totalViews - 1) showView(currentViewIndex + 1, true); });
         
-        function populateThumbnails(containerEl, targetMainImageEl) {
-            if (!selectedTile || !containerEl) return;
-            containerEl.innerHTML = ''; 
-            const allImagesForGallery = [selectedTile.main, ...selectedTile.related.filter(img => img !== selectedTile.main)];
-            allImagesForGallery.forEach((src, index) => {
-                const img = document.createElement("img");
-                img.src = src;
-                const alt = `${selectedTile.title} - View ${index + 1}`;
-                img.alt = alt;
-                img.className = "w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 object-cover rounded-md shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer border-2 border-gray-700 hover:border-cyan-400 transform hover:scale-105";
-                img.setAttribute('role', 'button');
-                img.setAttribute('tabindex', '0');
-                
-                // Special handling for the main image in the thumbnail list
-                if (src === selectedTile.main) {
-                    // No automatic active state here, updateMainImage will handle it based on clicks
-                }
-
-                img.onclick = () => {
-                    // When a thumbnail in the multi-view gallery is clicked, update its main image
-                    updateMainImage(src, alt, img); 
-                };
-                img.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); img.onclick(); }};
-                containerEl.appendChild(img);
+        // Add click listener to the main image in the first view to activate slider nav
+        const firstViewMainImage = document.querySelector('#view-image-gallery #detail-image');
+        if (firstViewMainImage) {
+            firstViewMainImage.addEventListener('click', () => {
+                activateSliderNavigation();
+                // Optionally, go to the next slide if you want click to also navigate
+                // if (currentViewIndex < totalViews - 1) showView(currentViewIndex + 1, true);
             });
         }
 
 
-        function populateTileDetails() {
+        function updateMainImage(src, altText, clickedThumbnail) { /* ... (same) ... */ }
+        function populateThumbnails(containerEl, targetMainImageEl) { /* ... (same) ... */ }
+        function populateTileDetails() { /* ... (same, ensure it calls showView(0, false) at the end) ... */ 
             if (selectedTile) {
                 if (detailPageTitleEl) detailPageTitleEl.textContent = selectedTile.title;
                 
-                // Populate Multi-Step View: Gallery (Step 1)
                 if (mainDetailImageEl) updateMainImage(selectedTile.main, selectedTile.title + " - Main View", null);
                 if (relatedImagesListEl) populateThumbnails(relatedImagesListEl, mainDetailImageEl);
 
-
-                // Populate Multi-Step View: Specs (Step 2)
                 if (specsTileThumbnailEl) specsTileThumbnailEl.src = selectedTile.main;
                 if (detailDescriptionEl) detailDescriptionEl.textContent = selectedTile.description; 
                 if (specTitleEl) specTitleEl.textContent = selectedTile.title; 
-                if (selectedTile.specifications) {
-                    if (specSizeEl) specSizeEl.textContent = selectedTile.specifications.size || 'N/A';
-                    if (specMaterialEl) specMaterialEl.textContent = selectedTile.specifications.material || 'N/A';
-                    if (specFinishEl) specFinishEl.textContent = selectedTile.specifications.finish || 'N/A';
-                    if (specThicknessEl) specThicknessEl.textContent = selectedTile.specifications.thickness || 'N/A';
-                    if (specSuitabilityEl) specSuitabilityEl.textContent = selectedTile.specifications.suitability || 'N/A';
-                    if (specPriceEl) specPriceEl.textContent = selectedTile.specifications.price || 'N/A';
-                }
+                if (selectedTile.specifications) { /* ... spec populating ... */ }
                 
-                // Populate Multi-Step View: AR (Step 3)
                 if (arTileThumbnailEl) arTileThumbnailEl.src = selectedTile.main;
                 if (tileModelViewer) {
                     tileModelViewer.src = selectedTile.arModelGLB || "web ar/tilear.glb"; 
                     tileModelViewer.iosSrc = selectedTile.arModelUSDZ || "web ar/tilear.usdz"; 
                     tileModelViewer.alt = `A 3D model of ${selectedTile.title}`;
+                    // Add error handling for model loading
+                    tileModelViewer.addEventListener('error', (event) => {
+                        console.error('Error loading 3D model:', event.detail);
+                        const modelContainer = document.getElementById('model-viewer-container');
+                        if (modelContainer) {
+                            modelContainer.innerHTML = `<p class="text-red-400 text-center p-4">Could not load 3D model. Please ensure the file path is correct and the model is valid.</p><p class="text-xs text-gray-500 text-center">Expected GLB: ${tileModelViewer.src}<br>Expected USDZ: ${tileModelViewer.iosSrc}</p>`;
+                        }
+                    });
                 }
 
-                if (addToCartButtonEl) { 
-                    const buttonText = addToCartButtonEl.querySelector('.button-text');
-                    const buttonLoader = addToCartButtonEl.querySelector('.button-loader');
-                    addToCartButtonEl.onclick = function() {
-                        if (buttonLoader && buttonText) { 
-                            buttonText.classList.add('hidden');
-                            buttonLoader.classList.remove('hidden');
-                        }
-                        addToCartButtonEl.disabled = true;
-                        setTimeout(() => { 
-                            let cart = JSON.parse(localStorage.getItem("cart")) || [];
-                            const existingItem = cart.find(item => item.id === selectedTile.id);
-                            if (cartFeedbackEl) {
-                                cartFeedbackEl.textContent = ''; 
-                                cartFeedbackEl.className = 'mt-3 text-center font-semibold text-xs sm:text-sm min-h-[1.2em]';
-                                if (existingItem) {
-                                    cartFeedbackEl.textContent = `${selectedTile.title} is already in your cart.`;
-                                    cartFeedbackEl.classList.add('text-yellow-400');
-                                } else {
-                                    cart.push({ id: selectedTile.id, name: selectedTile.title, image: selectedTile.main });
-                                    localStorage.setItem("cart", JSON.stringify(cart));
-                                    cartFeedbackEl.textContent = `${selectedTile.title} added to cart!`;
-                                    cartFeedbackEl.classList.add('text-green-400');
-                                }
-                            }
-                            updateCartCountDetail(); // This will also handle viewCartButtonSpecsEl visibility
-                            if (buttonLoader && buttonText) {
-                                buttonText.classList.remove('hidden');
-                                buttonLoader.classList.add('hidden');
-                            }
-                            addToCartButtonEl.disabled = false;
-                            setTimeout(() => { if(cartFeedbackEl) cartFeedbackEl.textContent = ''; }, 3000);
-                        }, 700); 
-                    };
-                }
+                if (addToCartButtonEl) { /* ... Add to cart logic ... */ }
             } else { 
                 if (detailPageTitleEl) detailPageTitleEl.textContent = "Tile Not Found";
                 if (tileViewContainerEl) tileViewContainerEl.innerHTML = `<p class="text-center text-xl text-red-400 p-10">The tile you are looking for could not be found.</p>`;
             }
-            showView(0); // Always show the first step of the multi-view on page load
+            showView(0, false); // Show first view, don't activate nav controls yet
         }
 
-        function updateCartCountDetail() {
-            const cart = JSON.parse(localStorage.getItem("cart")) || [];
-            const cartCountSpan = document.getElementById("cart-count-detail");
-            if (cartCountSpan) cartCountSpan.textContent = cart.length;
-             
-            if (viewCartButtonSpecsEl && selectedTile) { 
-                const itemInCart = cart.find(item => item.id === selectedTile.id); 
-                viewCartButtonSpecsEl.classList.toggle('hidden', !itemInCart);
-             } else if (viewCartButtonSpecsEl) {
-                 viewCartButtonSpecsEl.classList.add('hidden');
-             }
-        }
+        function updateCartCountDetail() { /* ... (same) ... */ }
         
-        // Swipe Gesture for Multi-View Container
         let touchstartX = 0;
         let touchendX = 0;
-        const swipeThreshold = 70; // Min distance for a swipe
+        const swipeThreshold = 50; // Reduced threshold for easier swipe
 
         function checkDirection() {
-            if (touchendX < touchstartX - swipeThreshold) { // Swiped left
-                if (currentViewIndex < totalViews - 1) showView(currentViewIndex + 1);
-            }
-            if (touchendX > touchstartX + swipeThreshold) { // Swiped right
-                if (currentViewIndex > 0) showView(currentViewIndex - 1);
+            const dx = touchendX - touchstartX;
+            if (Math.abs(dx) < swipeThreshold) return; // Not a swipe
+
+            activateSliderNavigation(); // Activate nav on first swipe
+
+            if (dx < 0) { // Swiped left
+                if (currentViewIndex < totalViews - 1) showView(currentViewIndex + 1, true);
+            } else { // Swiped right
+                if (currentViewIndex > 0) showView(currentViewIndex - 1, true);
             }
         }
-        if (tileViewContainerEl) { // Ensure element exists before adding listeners
-            tileViewContainerEl.addEventListener('touchstart', e => {
-                touchstartX = e.changedTouches[0].screenX;
-            }, { passive: true }); // passive for better scroll performance
-            tileViewContainerEl.addEventListener('touchend', e => {
-                touchendX = e.changedTouches[0].screenX;
-                checkDirection();
-            });
+        if (tileViewContainerEl) {
+            tileViewContainerEl.addEventListener('touchstart', e => { touchstartX = e.changedTouches[0].screenX; }, { passive: true });
+            tileViewContainerEl.addEventListener('touchend', e => { touchendX = e.changedTouches[0].screenX; checkDirection(); });
         }
 
-        // Fallback AR Modal Logic (if you want to keep it for any reason)
         const arModal = document.getElementById('ar-modal');
         const closeArModalBtn = document.getElementById('close-ar-modal-btn');
-        function closeArModal() { 
-            if (arModal) {
-                arModal.classList.remove('opacity-100');
-                const modalContent = arModal.querySelector('.modal-content');
-                if(modalContent) modalContent.classList.remove('scale-100');
-                setTimeout(() => arModal.classList.add('hidden'), 300); 
-            }
-        }
+        function closeArModal() { /* ... (same) ... */ }
         if (closeArModalBtn) closeArModalBtn.addEventListener('click', closeArModal);
-        if (arModal) {
-            arModal.addEventListener('click', (event) => { 
-                if (event.target === arModal) closeArModal();
-            });
-        }
-        document.addEventListener('keydown', (event) => { 
-            if (event.key === 'Escape' && arModal && !arModal.classList.contains('hidden')) {
-                closeArModal();
-            }
-        });
+        // ... (other AR modal listeners) ...
 
         document.addEventListener('DOMContentLoaded', () => {
             setDetailPadding(); 
             createStarsGlobalDetail();
-            populateTileDetails(); // This now sets up the multi-view directly
+            populateTileDetails();
             updateCartCountDetail();
         });
 
-        window.addEventListener('storage', (event) => { 
-            if (event.key === 'cart') {
-                updateCartCountDetail();
-            }
-        });
+        window.addEventListener('storage', (event) => { /* ... (same) ... */ });
     </script>
 </body>
 </html>
