@@ -11,7 +11,6 @@
         @keyframes gradientBG {0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
         .stars-container {position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;overflow:hidden;z-index:-1}
         .star{position:absolute;background-color:rgba(255,255,255,0.7);border-radius:50%;animation:twinkle 6s infinite ease-in-out}
-        .star:nth-child(5n+1){animation-delay:0s}.star:nth-child(5n+2){animation-delay:-1.2s}.star:nth-child(5n+3){animation-delay:-2.4s}.star:nth-child(5n+4){animation-delay:-3.6s}.star:nth-child(5n+5){animation-delay:-4.8s}
         @keyframes twinkle{0%,100%{opacity:0.1;transform:scale(.6)}50%{opacity:0.7;transform:scale(1)}}
         .thumbnail-active{border-color:#22d3ee!important;box-shadow:0 0 0 2px #22d3ee}
         .navbar.translate-x-0{transform:translateX(0%)}.navbar.-translate-x-full{transform:translateX(-100%)}
@@ -19,8 +18,6 @@
         .btn-theme-primary:hover{box-shadow:0 0 15px rgba(34,211,238,0.4),0 0 25px rgba(34,211,238,0.2);transform:translateY(-1px) scale(1.02)}
         .btn-theme-secondary{@apply inline-block px-5 py-2.5 rounded-md font-semibold border border-indigo-500 text-indigo-400 bg-transparent hover:bg-indigo-500/20 hover:text-indigo-300 transition-all duration-300 ease-in-out transform focus:outline-none focus:ring-2 focus:ring-indigo-500/50 active:scale-95}
         .btn-theme-secondary:hover{box-shadow:0 0 10px rgba(129,140,248,0.3);transform:scale(1.03)}
-        .slider-nav-hidden { opacity: 0; pointer-events: none; height: 0; overflow: hidden; transition: opacity 0.3s ease-in-out, height 0s ease 0.3s; }
-        .slider-nav-visible { opacity: 1; pointer-events: auto; height: auto; overflow: visible; transition: opacity 0.3s ease-in-out, height 0s ease 0s; }
     </style>
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.1.1/model-viewer.min.js"></script>
 </head>
@@ -43,7 +40,7 @@
     <main id="page-main-content" class="relative z-10 pt-20">
         <section class="tile-detail py-12 bg-transparent min-h-screen">
             <div class="container mx-auto px-4">
-                <h2 id="detail-page-title" class="text-4xl font-bold mb-8 text-cyan-400 text-center">Tile Title</h2>
+                <h2 id="detail-page-title" class="text-4xl font-bold mb-8 text-cyan-400 text-center"></h2>
                 <div id="tileViewContainer" class="bg-gray-800/70 backdrop-blur-sm p-8 rounded-xl shadow-2xl border border-gray-700/50">
                     
                     <div id="view-image-gallery" class="tile-view-step">
@@ -55,13 +52,32 @@
                     </div>
 
                     <div id="view-tile-specs" class="tile-view-step hidden">
-                         <h3 class="text-2xl font-semibold text-indigo-300 mb-4 text-center">Specifications</h3>
-                         </div>
+                        <h3 class="text-2xl font-semibold text-indigo-300 mb-6 text-center">Specifications & Details</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+                            <div class="flex flex-col items-center md:items-start">
+                                <img id="specs-tile-thumbnail" src="" alt="Tile Thumbnail" class="w-56 h-56 mx-auto md:mx-0 rounded-md shadow-lg border-2 border-gray-600 mb-4 object-cover">
+                                <p id="detail-description" class="text-base text-gray-300 leading-relaxed text-center md:text-left"></p>
+                            </div>
+                            <div class="specs-list space-y-2 text-base bg-gray-700/50 p-4 rounded-md">
+                                <p><strong class="text-indigo-300 w-28 inline-block">Name:</strong> <span id="spec-title" class="text-gray-200"></span></p>
+                                <p><strong class="text-indigo-300 w-28 inline-block">Size:</strong> <span id="spec-size" class="text-gray-200"></span></p>
+                                <p><strong class="text-indigo-300 w-28 inline-block">Material:</strong> <span id="spec-material" class="text-gray-200"></span></p>
+                                <p><strong class="text-indigo-300 w-28 inline-block">Finish:</strong> <span id="spec-finish" class="text-gray-200"></span></p>
+                                <p class="mt-4"><strong class="text-cyan-400 text-lg w-28 inline-block">Price:</strong> <span id="spec-price" class="text-lg text-cyan-400 font-semibold"></span></p>
+                                
+                                <div class="mt-8 pt-6 border-t border-gray-600/50 flex flex-col items-center gap-4">
+                                    <button id="add-to-cart-btn" class="btn-theme-primary w-full max-w-xs text-base">Add to Cart</button>
+                                    <a href="cart.html" id="view-cart-btn-specs" class="btn-theme-secondary w-full max-w-xs hidden text-sm">View Cart</a>
+                                    <div id="cart-feedback" class="text-center font-semibold text-sm min-h-[1.2em]"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                     <div id="view-ar-room" class="tile-view-step hidden text-center">
                          <h3 class="text-2xl font-semibold text-indigo-300 mb-4">View in Your Room (AR)</h3>
                          <div class="text-left bg-gray-700/30 p-4 rounded-md mb-6 max-w-lg mx-auto">
-                             <p class="text-sm text-indigo-200 font-semibold mb-2">How to use AR View:</p>
+                            <p class="text-sm text-indigo-200 font-semibold mb-2">How to use AR View:</p>
                              <ul class="list-disc list-inside text-sm text-gray-300 space-y-1">
                                  <li>Make sure you are in a well-lit room.</li>
                                  <li>Point your phone camera at a clear wall or floor space.</li>
@@ -101,71 +117,55 @@
     <script>
     document.addEventListener('DOMContentLoaded', () => {
 
-        // --- DATA ---
         const tilesData = {
             polished: { 
                 id: "polished", title: "Polished Vitrified Tiles", main: "images/tiles1.jpg", 
-                description: "Experience unparalleled shine and durability...",
+                description: "Experience unparalleled shine and durability with our Polished Vitrified Tiles, perfect for adding a touch of luxury to high-traffic areas.",
                 related: ["images/tiles1.jpg", "images/tile1.jpg", "images/tiles3.jpg"],
-                specifications: { size: "800x800mm", material: "Vitrified", price: "₹85 / sq.ft."},
-                arModelGLB: "aug/modules/tilear.glb", // CORRECTED PATH
-                arModelUSDZ: "aug/modules/tilear.usdz" // CORRECTED PATH
+                specifications: { size: "800x800mm", material: "Vitrified", finish: "High Gloss", price: "₹85 / sq.ft."},
+                arModelGLB: "aug/modules/tilear.glb",
+                arModelUSDZ: "aug/modules/tilear.usdz"
             },
             ceramic: { 
                 id: "ceramic", title: "Ceramic Tiles", main: "images/tiles2.jpg", 
-                description: "Our Ceramic Tiles offer a versatile solution...",
+                description: "Our Ceramic Tiles offer a versatile and affordable solution for any room, available in a wide range of colors and patterns to suit your style.",
                 related: ["images/tile2.jpg", "images/tile1.jpg"],
-                specifications: { size: "300x600mm", material: "Ceramic", price: "₹45 / sq.ft."},
-                arModelGLB: "aug/modules/tilear.glb", // CORRECTED PATH
-                arModelUSDZ: "aug/modules/tilear.usdz" // CORRECTED PATH
+                specifications: { size: "300x600mm", material: "Ceramic", finish: "Glossy / Matte", price: "₹45 / sq.ft."},
+                arModelGLB: "aug/modules/tilear.glb",
+                arModelUSDZ: "aug/g/modules/tilear.usdz"
             },
             glazed: { 
                 id: "glazed", title: "Glazed Vitrified Tiles (GVT)", main: "images/tiles3.jpg", 
-                description: "Glazed Vitrified Tiles combine strength and beauty...",
+                description: "Glazed Vitrified Tiles (GVT) combine strength with aesthetic versatility, featuring digitally printed designs for a modern and sophisticated look.",
                 related: ["images/tiles3.jpg", "images/tiles1.jpg"],
-                specifications: { size: "600x1200mm", material: "GVT", price: "₹110 / sq.ft."},
-                arModelGLB: "aug/modules/tilear.glb", // CORRECTED PATH
-                arModelUSDZ: "aug/modules/tilear.usdz" // CORRECTED PATH
+                specifications: { size: "600x1200mm", material: "GVT", finish: "Satin / Matte", price: "₹110 / sq.ft."},
+                arModelGLB: "aug/modules/tilear.glb",
+                arModelUSDZ: "aug/modules/tilear.usdz"
             }
         };
 
-        // --- ELEMENTS ---
         const viewSteps = document.querySelectorAll(".tile-view-step");
         const prevViewBtn = document.getElementById("prevViewBtn");
         const nextViewBtn = document.getElementById("nextViewBtn");
         const currentViewStepEl = document.getElementById("currentViewStep");
         const totalViewStepsEl = document.getElementById("totalViewSteps");
         const tileViewContainerEl = document.getElementById('tileViewContainer');
-        const mainDetailImageEl = document.getElementById("detail-image");
         const galleryImageInteractiveArea = document.getElementById('gallery-image-interactive-area');
-
-        // --- STATE ---
         let currentViewIndex = 0;
         const totalViews = viewSteps.length;
         
-        // --- FUNCTIONS ---
         function showView(index) {
-            if (index < 0 || index >= totalViews) return; // Prevent going out of bounds
-            
-            viewSteps.forEach((step, i) => {
-                step.classList.toggle('hidden', i !== index);
-            });
+            if (index < 0 || index >= totalViews) return;
+            viewSteps.forEach((step, i) => step.classList.toggle('hidden', i !== index));
             currentViewIndex = index;
-            
-            // Update UI indicators
             if (currentViewStepEl) currentViewStepEl.textContent = index + 1;
             if (totalViewStepsEl) totalViewStepsEl.textContent = totalViews;
             if (prevViewBtn) prevViewBtn.disabled = (index === 0);
             if (nextViewBtn) nextViewBtn.disabled = (index === totalViews - 1);
         }
 
-        function nextView() {
-            showView(currentViewIndex + 1);
-        }
-
-        function prevView() {
-            showView(currentViewIndex - 1);
-        }
+        function nextView() { showView(currentViewIndex + 1); }
+        function prevView() { showView(currentViewIndex - 1); }
 
         function populateTileDetails() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -173,8 +173,16 @@
             const selectedTile = tilesData[tileId];
 
             if (selectedTile) {
+                // Populate all text and image elements
                 document.getElementById("detail-page-title").textContent = selectedTile.title;
-                mainDetailImageEl.src = selectedTile.main;
+                document.getElementById("detail-image").src = selectedTile.main;
+                document.getElementById("specs-tile-thumbnail").src = selectedTile.main;
+                document.getElementById("detail-description").textContent = selectedTile.description;
+                document.getElementById("spec-title").textContent = selectedTile.title;
+                document.getElementById("spec-size").textContent = selectedTile.specifications.size;
+                document.getElementById("spec-material").textContent = selectedTile.specifications.material;
+                document.getElementById("spec-finish").textContent = selectedTile.specifications.finish;
+                document.getElementById("spec-price").textContent = selectedTile.specifications.price;
                 
                 // Populate AR model viewer
                 const tileModelViewer = document.getElementById('tile-model-viewer');
@@ -182,44 +190,31 @@
                     tileModelViewer.src = selectedTile.arModelGLB;
                     tileModelViewer.iosSrc = selectedTile.arModelUSDZ;
                     tileModelViewer.alt = `A 3D model of ${selectedTile.title}`;
+                } else {
+                    document.getElementById('view-ar-room').style.display = 'none';
                 }
-                
-                // ... you can add more logic here to populate thumbnails and specs
-                
             } else {
-                document.querySelector('.container').innerHTML = `<h2 class="text-3xl font-bold text-center text-red-400">Tile not found.</h2>`;
+                document.querySelector('.container').innerHTML = `<h2 class="text-3xl font-bold text-center text-red-400">Tile not found. Please check the URL.</h2>`;
             }
-            showView(0); // Initialize to the first view
+            showView(0);
         }
 
-        // --- EVENT LISTENERS ---
         if (nextViewBtn) nextViewBtn.addEventListener('click', nextView);
         if (prevViewBtn) prevViewBtn.addEventListener('click', prevView);
+        if (galleryImageInteractiveArea) galleryImageInteractiveArea.addEventListener('click', nextView);
 
-        // **FIXED**: Clicking the image now goes to the next view
-        if (galleryImageInteractiveArea) {
-            galleryImageInteractiveArea.addEventListener('click', nextView);
-        }
-
-        // Swipe gesture logic
         let touchstartX = 0;
-        let touchendX = 0;
         if (tileViewContainerEl) {
             tileViewContainerEl.addEventListener('touchstart', e => { touchstartX = e.changedTouches[0].screenX; }, { passive: true });
             tileViewContainerEl.addEventListener('touchend', e => {
-                touchendX = e.changedTouches[0].screenX;
-                const swipeDistance = touchendX - touchstartX;
-                if (Math.abs(swipeDistance) > 50) { // Swipe threshold
-                    if (swipeDistance < 0) {
-                        nextView(); // Swiped left
-                    } else {
-                        prevView(); // Swiped right
-                    }
+                const touchendX = e.changedTouches[0].screenX;
+                if (Math.abs(touchendX - touchstartX) > 50) {
+                    if (touchendX < touchstartX) nextView();
+                    else prevView();
                 }
             });
         }
         
-        // --- INITIALIZATION ---
         populateTileDetails();
     });
     </script>
