@@ -15,32 +15,37 @@
     </style>
 
     <script>
-      // === UPDATED COMPONENT ===
-      // It now accepts the model's path directly.
+      // === THE FINAL, CORRECTED COMPONENT ===
       AFRAME.registerComponent('tile-grid', {
         schema: {
           gridSize: {type: 'number', default: 15},
           tileWidth: {type: 'number', default: 0.3},
           tileHeight: {type: 'number', default: 0.3},
-          modelSrc: {type: 'string', default: ''} // New property to hold the model URL
+          modelSrc: {type: 'string', default: ''}
         },
-        init: function () {
+        // The 'update' function runs after the component's data (like modelSrc) is set.
+        // This solves the timing issue.
+        update: function (oldData) {
           const data = this.data;
           const el = this.el;
 
-          // Don't build the grid if the model source is not set
-          if (!data.modelSrc) { return; }
+          // Only build the grid if the modelSrc is new and valid.
+          if (data.modelSrc && data.modelSrc !== oldData.modelSrc) {
+            // Clear any old grid before building a new one
+            while (el.firstChild) {
+              el.removeChild(el.firstChild);
+            }
 
-          const halfGridSize = data.gridSize / 2;
-          for (let i = 0; i < data.gridSize; i++) {
-            for (let j = 0; j < data.gridSize; j++) {
-              const tile = document.createElement('a-entity');
-              // Use the modelSrc directly from the component data
-              tile.setAttribute('gltf-model', data.modelSrc);
-              const xPos = (i - halfGridSize) * data.tileWidth;
-              const yPos = (j - halfGridSize) * data.tileHeight;
-              tile.setAttribute('position', { x: xPos, y: yPos, z: 0 });
-              el.appendChild(tile);
+            const halfGridSize = data.gridSize / 2;
+            for (let i = 0; i < data.gridSize; i++) {
+              for (let j = 0; j < data.gridSize; j++) {
+                const tile = document.createElement('a-entity');
+                tile.setAttribute('gltf-model', data.modelSrc);
+                const xPos = (i - halfGridSize) * data.tileWidth;
+                const yPos = (j - halfGridSize) * data.tileHeight;
+                tile.setAttribute('position', { x: xPos, y: yPos, z: 0 });
+                el.appendChild(tile);
+              }
             }
           }
         }
@@ -89,8 +94,7 @@
             const tileGridContainer = document.getElementById('tile-grid-container');
             const instructionsEl = document.getElementById('instructions');
 
-            // === UPDATED SCRIPT LOGIC ===
-            // Directly set the model path on the component itself. This is more reliable.
+            // Set the component properties. The 'update' function will now run and build the grid.
             tileGridContainer.setAttribute('tile-grid', { modelSrc: glbPath });
 
             sceneEl.addEventListener('ar-hit-test-select', (event) => {
