@@ -7,74 +7,69 @@
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
     <style>
       body { margin: 0; font-family: sans-serif; }
-      #ar-button { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); padding: 12px 24px; z-index: 10; background-color:#007aff; color:white; border:none; border-radius:8px; }
+      #ar-button { 
+        position: absolute; 
+        bottom: 20px; 
+        left: 50%; 
+        transform: translateX(-50%); 
+        padding: 12px 24px; 
+        z-index: 10; 
+        background-color:#007aff; 
+        color:white; 
+        border:none; 
+        border-radius:8px; 
+      }
       a-scene { display: none; }
       .hidden { display: none; }
     </style>
-    <script>
-      AFRAME.registerComponent('tile-grid', {
-        schema: {
-          gridSize: {type: 'number', default: 5},
-          tileWidth: {type: 'number', default: 0.3},
-          tileHeight: {type: 'number', default: 0.3}
-        },
-        init: function () {
-          const data = this.data;
-          const el = this.el;
-          const halfGridSize = data.gridSize / 2;
-          for (let i = 0; i < data.gridSize; i++) {
-            for (let j = 0; j < data.gridSize; j++) {
-              const tile = document.createElement('a-entity');
-              tile.setAttribute('gltf-model', '#tile-model-asset');
-              const xPos = (i - halfGridSize) * data.tileWidth;
-              const yPos = (j - halfGridSize) * data.tileHeight;
-              tile.setAttribute('position', { x: xPos, y: yPos, z: 0 });
-              el.appendChild(tile);
-            }
-          }
-        }
-      });
-    </script>
   </head>
   <body>
     <button id="ar-button" class="hidden">Start AR</button>
-    <a id="ios-link" rel="ar" href="#" class="hidden"><img id="ios-thumbnail" src="#" /></a>
+    <a id="ios-link" rel="ar" href="#" class="hidden">
+      <img id="ios-thumbnail" src="#" />
+    </a>
 
     <a-scene 
         id="ar-scene"
         webxr="requiredFeatures: hit-test, local-floor;"
-        ar-hit-test="target: #tile-grid-container; type: feature-point;"
+        ar-hit-test="target: #tile-floor; type: feature-point;"
         renderer="colorManagement: true;">
+      
       <a-assets>
-        <a-asset-item id="tile-model-asset" src=""></a-asset-item>
+        <!-- Tile texture -->
+        <img id="tile-texture" src="aug/modules/tile-thumbnail.png" crossorigin="anonymous">
       </a-assets>
+
       <a-camera position="0 1.2 0"></a-camera>
-      <a-entity id="tile-grid-container" visible="false" tile-grid></a-entity>
+      
+      <!-- Large floor plane with repeating texture -->
+      <a-entity id="tile-floor" visible="false"
+                geometry="primitive: plane; width: 5; height: 5"
+                material="src: #tile-texture; repeat: 10 10; side: double"
+                rotation="-90 0 0">
+      </a-entity>
     </a-scene>
 
     <script>
       document.addEventListener('DOMContentLoaded', () => {
         // --- DYNAMIC LOADING LOGIC ---
         const urlParams = new URLSearchParams(window.location.search);
-        const tileName = urlParams.get('tile'); // Gets 'blue-tile' from the URL
+        const tileName = urlParams.get('tile');
 
         if (tileName) {
-          // Get references to the elements we need to update
+          // Get references
           const iosLink = document.getElementById('ios-link');
           const iosThumbnail = document.getElementById('ios-thumbnail');
-          const glbAsset = document.getElementById('tile-model-asset');
           
-          // Construct the file paths dynamically
-          const usdzPath = `aug\modules\tilear.usdz`;
-          const glbPath = `aug\modules\tilear.glb`;
+          // Construct paths dynamically (example, adjust as needed)
+          const usdzPath = `aug/modules/tilear.usdz`;
           const thumbnailPath = `aug/modules/tile-thumbnail.png`;
 
           // Set the dynamic paths
           iosLink.setAttribute('href', usdzPath);
           iosThumbnail.setAttribute('src', thumbnailPath);
-          glbAsset.setAttribute('src', glbPath);
 
-          // Now show the AR button
+          // Show AR button
           document.getElementById('ar-button').classList.remove('hidden');
         } else {
           document.body.innerHTML = '<h1>Error: No tile specified.</h1>';
@@ -83,8 +78,11 @@
         // --- AR LAUNCH LOGIC ---
         const arButton = document.getElementById('ar-button');
         const sceneEl = document.getElementById('ar-scene');
-        
-        function isIOS() { return ['iPad', 'iPhone', 'iPod'].includes(navigator.platform) || (navigator.userAgent.includes("Mac") && "ontouchend" in document); }
+
+        function isIOS() { 
+          return ['iPad', 'iPhone', 'iPod'].includes(navigator.platform) || 
+                 (navigator.userAgent.includes("Mac") && "ontouchend" in document); 
+        }
 
         arButton.addEventListener('click', () => {
           if (isIOS()) {
@@ -97,11 +95,11 @@
         });
 
         // --- AR PLACEMENT LOGIC ---
-        const tileGridContainer = document.getElementById('tile-grid-container');
+        const tileFloor = document.getElementById('tile-floor');
         sceneEl.addEventListener('ar-hit-test-select', (event) => {
           const position = event.detail.xrHitResult.getPose(sceneEl.xrSession.getReferenceSpace('local-floor')).transform.position;
-          tileGridContainer.setAttribute('position', position);
-          tileGridContainer.setAttribute('visible', 'true');
+          tileFloor.setAttribute('position', { x: position.x, y: position.y, z: position.z });
+          tileFloor.setAttribute('visible', 'true');
         });
       });
     </script>
