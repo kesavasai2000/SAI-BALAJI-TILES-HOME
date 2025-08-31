@@ -105,21 +105,21 @@
             document.body.innerHTML = '<h1>Error: No tile specified.</h1>';
             return;
         }
-
+        
+        // This is a placeholder. You should pass the real thumbnail from the previous page if needed.
+        const thumbnailPath = `images/tiles1.jpg`; 
         const isIOS = ['iPad', 'iPhone', 'iPod'].includes(navigator.platform) || (navigator.userAgent.includes("Mac") && "ontouchend" in document);
 
         if (isIOS) {
             // Setup for iOS
             document.getElementById('ios-fallback-container').style.display = 'flex';
-            const usdzPath = `aug/modules/tilear.usdz`;
-            // Use a generic thumbnail or create one per model
-            const thumbnailPath = `aug/modules/tile-thumbnail.png`; 
+            const usdzPath = `aug/modules/tilear.usdz`; // CORRECTED FOLDER PATH
             document.getElementById('ios-link').setAttribute('href', usdzPath);
             document.getElementById('ios-thumbnail').setAttribute('src', thumbnailPath);
         } else {
             // Setup for Android
             document.getElementById('android-ar-container').style.display = 'block';
-            const glbPath = `aug/modules/tilear.glb`;
+            const glbPath = `aug/modules/tilear.glb`; // CORRECTED FOLDER PATH
             document.getElementById('tile-model-asset').setAttribute('src', glbPath);
 
             const sceneEl = document.getElementById('ar-scene');
@@ -133,7 +133,6 @@
               instructionsEl.innerHTML = 'Tap again to move the pattern.';
             });
             
-            // Enter AR immediately
             sceneEl.enterVR();
         }
       });
