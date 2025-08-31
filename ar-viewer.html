@@ -111,15 +111,15 @@
         if (isIOS) {
             // Setup for iOS
             document.getElementById('ios-fallback-container').style.display = 'flex';
-            const usdzPath = `aug\modules\tilear.usdz`;
+            const usdzPath = `aug/modules/tilear.usdz`;
             // Use a generic thumbnail or create one per model
-            const thumbnailPath = `aug\modules\tile-thumbnail.png`; 
+            const thumbnailPath = `aug/modules/tile-thumbnail.png`; 
             document.getElementById('ios-link').setAttribute('href', usdzPath);
             document.getElementById('ios-thumbnail').setAttribute('src', thumbnailPath);
         } else {
             // Setup for Android
             document.getElementById('android-ar-container').style.display = 'block';
-            const glbPath = `aug\modules\tilear.glb`;
+            const glbPath = `aug/modules/tilear.glb`;
             document.getElementById('tile-model-asset').setAttribute('src', glbPath);
 
             const sceneEl = document.getElementById('ar-scene');
