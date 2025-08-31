@@ -19,8 +19,7 @@
         .btn-theme-secondary{@apply inline-block px-5 py-2.5 rounded-md font-semibold border border-indigo-500 text-indigo-400 bg-transparent hover:bg-indigo-500/20 hover:text-indigo-300 transition-all duration-300 ease-in-out transform focus:outline-none focus:ring-2 focus:ring-indigo-500/50 active:scale-95}
         .btn-theme-secondary:hover{box-shadow:0 0 10px rgba(129,140,248,0.3);transform:scale(1.03)}
     </style>
-    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.1.1/model-viewer.min.js"></script>
-</head>
+    </head>
 <body class="bg-black text-gray-200">
 
     <div class="stars-container" id="stars-bg-global"></div>
@@ -64,42 +63,30 @@
                                 <p><strong class="text-indigo-300 w-28 inline-block">Material:</strong> <span id="spec-material" class="text-gray-200"></span></p>
                                 <p><strong class="text-indigo-300 w-28 inline-block">Finish:</strong> <span id="spec-finish" class="text-gray-200"></span></p>
                                 <p class="mt-4"><strong class="text-cyan-400 text-lg w-28 inline-block">Price:</strong> <span id="spec-price" class="text-lg text-cyan-400 font-semibold"></span></p>
-                                
                                 <div class="mt-8 pt-6 border-t border-gray-600/50 flex flex-col items-center gap-4">
                                     <button id="add-to-cart-btn" class="btn-theme-primary w-full max-w-xs text-base">Add to Cart</button>
                                     <a href="cart.html" id="view-cart-btn-specs" class="btn-theme-secondary w-full max-w-xs hidden text-sm">View Cart</a>
-                                    <div id="cart-feedback" class="text-center font-semibold text-sm min-h-[1.2em]"></div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
+                    
                     <div id="view-ar-room" class="tile-view-step hidden text-center">
-                         <h3 class="text-2xl font-semibold text-indigo-300 mb-4">View in Your Room (AR)</h3>
+                         <h3 class="text-2xl font-semibold text-indigo-300 mb-4">View Tiling Pattern in Your Room</h3>
+                         <img id="ar-tile-thumbnail" src="" alt="Tile Thumbnail for AR" class="w-56 h-56 mx-auto rounded-md shadow-lg border-2 border-gray-600 mb-6 object-cover">
                          <div class="text-left bg-gray-700/30 p-4 rounded-md mb-6 max-w-lg mx-auto">
-                            <p class="text-sm text-indigo-200 font-semibold mb-2">How to use AR View:</p>
+                            <p class="text-sm text-indigo-200 font-semibold mb-2">How it works:</p>
                              <ul class="list-disc list-inside text-sm text-gray-300 space-y-1">
+                                 <li>Clicking the button below will open a new, full-screen AR experience.</li>
                                  <li>Make sure you are in a well-lit room.</li>
-                                 <li>Point your phone camera at a clear wall or floor space.</li>
-                                 <li>Click the "View in Your Space" button that appears below.</li>
-                                 <li>Use one finger to drag the tile, and two fingers to resize it.</li>
+                                 <li>Point your phone at a clear wall or floor, moving it slowly.</li>
+                                 <li>Tap the screen to place a large grid of tiles.</li>
                              </ul>
                          </div>
-                         <div id="model-viewer-container" class="my-6 mx-auto max-w-xl">
-                             <model-viewer
-                                 id="tile-model-viewer"
-                                 alt="A 3D model of the tile"
-                                 ar
-                                 ar-modes="webxr scene-viewer quick-look"
-                                 ar-placement="wall"
-                                 camera-controls
-                                 touch-action="pan-y" 
-                                 style="width: 100%; height: 400px; border-radius: 12px;">
-                                 <div slot="progress-bar" class="w-full h-1 bg-indigo-500 absolute top-0 left-0 animate-pulse"></div>
-                             </model-viewer>
-                         </div>
+                         <a id="ar-launch-button" href="#" class="btn-theme-primary text-lg" target="_blank">
+                             🚀 Launch AR Tiling Viewer
+                         </a>
                     </div>
-
                     <div id="slider-navigation-controls" class="mt-8 flex justify-between items-center border-t border-gray-700/50 pt-6">
                         <button id="prevViewBtn" class="btn-theme-secondary text-sm">← Previous</button>
                         <div class="view-step-indicator text-sm text-indigo-300">
@@ -122,15 +109,15 @@
         const tilesData = {
             polished: { 
                 id: "polished", title: "Polished Vitrified Tiles", main: "images/tiles1.jpg", 
-                description: "Experience unparalleled shine and durability with our Polished Vitrified Tiles, perfect for adding a touch of luxury to high-traffic areas.",
-                related: ["images/tiles1.jpg", "images/tile1.jpg", "images/tiles3.jpg"],
+                description: "Experience unparalleled shine...",
+                related: ["images/tiles1.jpg", "images/tile1.jpg"],
                 specifications: { size: "800x800mm", material: "Vitrified", finish: "High Gloss", price: "₹85 / sq.ft."},
                 arModelGLB: "aug/modules/tilear.glb",
                 arModelUSDZ: "aug/modules/tilear.usdz"
             },
             ceramic: { 
                 id: "ceramic", title: "Ceramic Tiles", main: "images/tiles2.jpg", 
-                description: "Our Ceramic Tiles offer a versatile and affordable solution for any room, available in a wide range of colors and patterns to suit your style.",
+                description: "Our Ceramic Tiles offer a versatile solution...",
                 related: ["images/tile2.jpg", "images/tile1.jpg"],
                 specifications: { size: "300x600mm", material: "Ceramic", finish: "Glossy / Matte", price: "₹45 / sq.ft."},
                 arModelGLB: "aug/modules/tilear.glb",
@@ -138,7 +125,7 @@
             },
             glazed: { 
                 id: "glazed", title: "Glazed Vitrified Tiles (GVT)", main: "images/tiles3.jpg", 
-                description: "Glazed Vitrified Tiles (GVT) combine strength with aesthetic versatility, featuring digitally printed designs for a modern and sophisticated look.",
+                description: "Glazed Vitrified Tiles combine strength...",
                 related: ["images/tiles3.jpg", "images/tiles1.jpg"],
                 specifications: { size: "600x1200mm", material: "GVT", finish: "Satin / Matte", price: "₹110 / sq.ft."},
                 arModelGLB: "aug/modules/tilear.glb",
@@ -185,16 +172,19 @@
                 document.getElementById("spec-finish").textContent = selectedTile.specifications.finish;
                 document.getElementById("spec-price").textContent = selectedTile.specifications.price;
                 
-                const tileModelViewer = document.getElementById('tile-model-viewer');
-                if (tileModelViewer && selectedTile.arModelGLB) {
-                    tileModelViewer.src = selectedTile.arModelGLB;
-                    tileModelViewer.iosSrc = selectedTile.arModelUSDZ;
-                    tileModelViewer.alt = `A 3D model of ${selectedTile.title}`;
-                } else {
-                    document.getElementById('view-ar-room').style.display = 'none';
+                // === JAVASCRIPT UPDATE ===
+                // Set the thumbnail for the AR view
+                document.getElementById("ar-tile-thumbnail").src = selectedTile.main;
+
+                // Set the link for the new AR launch button
+                const arLaunchButton = document.getElementById('ar-launch-button');
+                if (arLaunchButton) {
+                    arLaunchButton.href = `ar-viewer.html?tile=${selectedTile.id}`;
                 }
+                // =========================
+                
             } else {
-                document.querySelector('.container').innerHTML = `<h2 class="text-3xl font-bold text-center text-red-400">Tile not found. Please check the URL.</h2>`;
+                document.querySelector('.container').innerHTML = `<h2 class="text-3xl font-bold text-center text-red-400">Tile not found.</h2>`;
             }
             showView(0);
         }
@@ -209,8 +199,7 @@
             tileViewContainerEl.addEventListener('touchend', e => {
                 const touchendX = e.changedTouches[0].screenX;
                 if (Math.abs(touchendX - touchstartX) > 50) {
-                    if (touchendX < touchstartX) nextView();
-                    else prevView();
+                    if (touchendX < touchstartX) nextView(); else prevView();
                 }
             });
         }
