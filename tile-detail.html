@@ -19,7 +19,7 @@
         .btn-theme-secondary{@apply inline-block px-5 py-2.5 rounded-md font-semibold border border-indigo-500 text-indigo-400 bg-transparent hover:bg-indigo-500/20 hover:text-indigo-300 transition-all duration-300 ease-in-out transform focus:outline-none focus:ring-2 focus:ring-indigo-500/50 active:scale-95}
         .btn-theme-secondary:hover{box-shadow:0 0 10px rgba(129,140,248,0.3);transform:scale(1.03)}
     </style>
-    </head>
+</head>
 <body class="bg-black text-gray-200">
 
     <div class="stars-container" id="stars-bg-global"></div>
@@ -87,6 +87,7 @@
                              🚀 Launch AR Tiling Viewer
                          </a>
                     </div>
+
                     <div id="slider-navigation-controls" class="mt-8 flex justify-between items-center border-t border-gray-700/50 pt-6">
                         <button id="prevViewBtn" class="btn-theme-secondary text-sm">← Previous</button>
                         <div class="view-step-indicator text-sm text-indigo-300">
@@ -172,16 +173,14 @@
                 document.getElementById("spec-finish").textContent = selectedTile.specifications.finish;
                 document.getElementById("spec-price").textContent = selectedTile.specifications.price;
                 
-                // === JAVASCRIPT UPDATE ===
-                // Set the thumbnail for the AR view
                 document.getElementById("ar-tile-thumbnail").src = selectedTile.main;
 
-                // Set the link for the new AR launch button
                 const arLaunchButton = document.getElementById('ar-launch-button');
                 if (arLaunchButton) {
-                    arLaunchButton.href = `ar-viewer.html?tile=${selectedTile.id}`;
+                    const glbPath = encodeURIComponent(selectedTile.arModelGLB);
+                    const usdzPath = encodeURIComponent(selectedTile.arModelUSDZ);
+                    arLaunchButton.href = `ar-viewer.html?model=${glbPath}&iosmodel=${usdzPath}`;
                 }
-                // =========================
                 
             } else {
                 document.querySelector('.container').innerHTML = `<h2 class="text-3xl font-bold text-center text-red-400">Tile not found.</h2>`;
@@ -205,6 +204,7 @@
         }
         
         populateTileDetails();
+        // Add other initializers like createStars() etc. if they are in separate functions
     });
     </script>
 </body>
