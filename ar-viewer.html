@@ -24,12 +24,12 @@
             text-align: center;
             padding: 20px;
             box-sizing: border-box;
-            background-color: #1a094b;
+            background: linear-gradient(135deg, #1a094b, #0d0320);
             color: white;
         }
         .fallback-container h2 { font-size: 24px; margin-bottom: 15px; }
-        .fallback-container p { font-size: 16px; max-width: 350px; margin-bottom: 25px; line-height: 1.5; }
-        .fallback-container img { width: 150px; height: 150px; border-radius: 12px; margin-bottom: 20px; object-fit: cover; }
+        .fallback-container p { font-size: 16px; max-width: 350px; margin-bottom: 25px; line-height: 1.5; opacity: 0.9; }
+        .fallback-container img { width: 150px; height: 150px; border-radius: 12px; margin-bottom: 20px; object-fit: cover; box-shadow: 0 5px 20px rgba(0,0,0,0.3); }
         .ui-button, .fallback-container a {
             display: inline-block;
             padding: 12px 24px;
@@ -48,6 +48,7 @@
         .ar-session-ui { padding: 20px; display: flex; flex-direction: column; align-items: center; gap: 15px; }
         #instructions { background-color: rgba(0,0,0,0.75); color: white; padding: 12px 22px; border-radius: 25px; text-align: center; font-size: 14px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
         .ui-buttons { display: none; gap: 15px; }
+        .pro-tip { font-size: 13px; font-style: italic; max-width: 320px; margin-top: 30px; opacity: 0.7; line-height: 1.6; }
     </style>
 </head>
 <body>
@@ -59,12 +60,15 @@
         </div>
     </div>
     
-    <!-- Fallback for iOS Quick Look -->
+    <!-- Fallback for iOS Quick Look - NOW WITH HELPFUL HINT -->
     <div id="ios-fallback" class="fallback-container">
         <img id="ios-thumbnail" src="images/tiles1.jpg" alt="Tile Preview"/>
         <h2>View in Your Room</h2>
-        <p>Your browser supports a simpler AR view. Tap the link below to place the tile in your space using AR Quick Look.</p>
-        <a id="ios-link" rel="ar" href="#">🚀 View in AR</a>
+        <p>Your browser supports a simpler AR view. Tap the link below to place the tile.</p>
+        <a id="ios-link" rel="ar" href="#">🚀 View in AR (Single Tile)</a>
+        <p class="pro-tip">
+            <strong>Pro Tip:</strong> To unlock the multi-tile experience, go to iPhone Settings > Safari > Advanced > Experimental Features and turn on "WebXR".
+        </p>
     </div>
 
     <!-- Fallback for unsupported devices -->
@@ -85,6 +89,7 @@
     </a-scene>
 
     <script>
+      // The Javascript logic remains the same as it correctly handles the fallback.
       document.addEventListener('DOMContentLoaded', async () => {
         const sceneEl = document.getElementById('ar-scene');
         const instructionsEl = document.getElementById('instructions');
@@ -119,11 +124,9 @@
 
         function handleFallback() {
             if (isIOS && usdzPath) {
-                // Show the iOS AR Quick Look fallback
                 document.getElementById('ios-link').href = usdzPath;
                 document.getElementById('ios-fallback').style.display = 'flex';
             } else {
-                // Show the generic "unsupported" message for Android and others
                 document.getElementById('unsupported-fallback').style.display = 'flex';
             }
             sceneEl.style.display = 'none';
@@ -131,7 +134,6 @@
         }
 
         function startWebXR() {
-            // This is the full interactive experience
             instructionsEl.innerText = 'Starting AR... Please grant camera permissions.';
             let hasPlacedFirstTile = false;
             sceneEl.addEventListener('ar-hit-test-start', () => { uiButtons.style.display = 'flex'; instructionsEl.innerText = 'Scanning for floor... Move your phone slowly.'; });
