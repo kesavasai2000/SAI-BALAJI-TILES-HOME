@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebAR Support Test</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; padding: 20px; font-size: 18px; line-height: 1.6; }
+        .result { padding: 10px; border-radius: 8px; margin-bottom: 15px; font-weight: bold; }
+        .supported { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .not-supported { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        code { background-color: #eee; padding: 2px 5px; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <h1>WebAR Support Diagnostic</h1>
+    <p>This page checks your browser's capabilities for interactive Augmented Reality.</p>
+    <hr>
+    <div id="results"></div>
+
+    <script>
+        async function runTest() {
+            const resultsDiv = document.getElementById('results');
+            let output = '';
+
+            // Test 1: Check for the WebXR API (navigator.xr)
+            output += '<h2>Test 1: WebXR API</h2>';
+            if (navigator.xr) {
+                output += '<div class="result supported">WebXR API (<code>navigator.xr</code>) FOUND.</div>';
+                
+                // Test 2: Check for Immersive AR Session Support
+                output += '<h2>Test 2: Immersive AR Session</h2>';
+                try {
+                    const supported = await navigator.xr.isSessionSupported('immersive-ar');
+                    if (supported) {
+                        output += '<div class="result supported"><code>immersive-ar</code> sessions are SUPPORTED. Multi-tile mode should work!</div>';
+                    } else {
+                        output += '<div class="result not-supported"><code>immersive-ar</code> sessions are NOT SUPPORTED. The browser will fall back to single-tile mode.</div>';
+                        output += '<p><strong>Reason:</strong> This usually means the experimental flags in Safari settings are turned off.</p>';
+                    }
+                } catch (e) {
+                    output += '<div class="result not-supported">An ERROR occurred while checking for <code>immersive-ar</code> support.</div>';
+                    output += '<p><strong>Error details:</strong> ' + e.message + '</p>';
+                }
+
+            } else {
+                output += '<div class="result not-supported">WebXR API (<code>navigator.xr</code>) NOT FOUND.</div>';
+                output += '<p><strong>Reason:</strong> Your browser is likely too old, in private mode, or an in-app browser that does not support WebXR.</p>';
+            }
+
+            resultsDiv.innerHTML = output;
+        }
+
+        runTest();
+    </script>
+</body>
+</html>
