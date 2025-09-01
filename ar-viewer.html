@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>AR Tile Viewer</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
     <style>
         body { margin: 0; font-family: 'Poppins', sans-serif; }
@@ -22,12 +22,14 @@
             z-index: 10;
         }
         #instructions {
-            background-color: rgba(0,0,0,0.7);
+            background-color: rgba(0,0,0,0.75);
             color: white;
-            padding: 10px 20px;
-            border-radius: 8px;
+            padding: 12px 22px;
+            border-radius: 25px;
             text-align: center;
             font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
         .ui-buttons {
             display: flex;
@@ -48,36 +50,60 @@
         .ui-button:active {
             transform: scale(0.95);
         }
+        /* Fallback message for when AR is not supported */
+        #fallback-message {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #1a094b;
+            color: #fff;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
     </style>
 </head>
 <body>
-
+    <!-- This UI will be an overlay on the camera feed -->
     <div class="ar-session-ui">
-        <div id="instructions">Point your phone at the floor and move it slowly...</div>
-        <div class="ui-buttons">
+        <div id="instructions">Checking for AR compatibility...</div>
+        <div class="ui-buttons" style="display: none;">
             <button id="reset-button" class="ui-button">Clear Tiles</button>
-            <button id="close-button" class="ui-button">Close AR</button>
+            <button id="close-button" class="ui-button">Close</button>
         </div>
+    </div>
+
+    <!-- This message shows if AR is not supported at all -->
+    <div id="fallback-message">
+        <h2>AR Not Supported</h2>
+        <p>Your device or browser does not support WebXR for Augmented Reality.</p>
+        <p>Please try using a modern browser like Chrome on Android or Safari (iOS 15.5+) on iPhone.</p>
+        <br>
+        <button class="ui-button" onclick="window.history.back()">Go Back</button>
     </div>
 
     <a-scene 
         id="ar-scene"
         webxr="requiredFeatures: hit-test, dom-overlay; overlayElement: .ar-session-ui;"
         ar-hit-test="target: #reticle; enabled: true;"
-        renderer="colorManagement: true;">
+        renderer="colorManagement: true;"
+        ar-mode-ui="enabled: false"> <!-- This disables the default "Enter VR" button -->
         
-        <!-- Assets: Preload the tile model -->
         <a-assets>
             <a-asset-item id="tile-model" src=""></a-asset-item>
         </a-assets>
 
         <a-camera position="0 1.2 0"></a-camera>
         
-        <!-- Lights for realistic rendering -->
         <a-light type="ambient" color="#FFF" intensity="0.7"></a-light>
         <a-light type="directional" color="#FFF" intensity="0.6" position="-1 2 1"></a-light>
         
-        <!-- Reticle: A visual cursor on the floor to show where the tile will be placed -->
         <a-entity id="reticle"
             geometry="primitive: ring; radiusInner: 0.10; radiusOuter: 0.15;"
             material="color: #22d3ee; shader: flat; opacity: 0.8;"
@@ -85,14 +111,15 @@
             visible="false">
         </a-entity>
 
-        <!-- Parent entity to hold all the placed tiles -->
         <a-entity id="tiles-parent"></a-entity>
     </a-scene>
 
     <script>
-      document.addEventListener('DOMContentLoaded', () => {
+      document.addEventListener('DOMContentLoaded', async () => {
         const sceneEl = document.getElementById('ar-scene');
         const instructionsEl = document.getElementById('instructions');
+        const fallbackEl = document.getElementById('fallback-message');
+        const uiButtons = document.querySelector('.ui-buttons');
         const reticle = document.getElementById('reticle');
         const tilesParent = document.getElementById('tiles-parent');
         
@@ -104,80 +131,82 @@
             return;
         }
         
-        // Set the model path in the assets
         document.getElementById('tile-model').setAttribute('src', glbPath);
 
-        let hasPlacedFirstTile = false;
-
-        // --- AR Event Listeners ---
-
-        // Fired when surface detection starts.
-        sceneEl.addEventListener('ar-hit-test-start', () => {
-            instructionsEl.innerText = 'Scanning for floor... Move your phone slowly.';
-        });
-
-        // Fired when a surface is found. Make the reticle visible.
-        sceneEl.addEventListener('ar-hit-test-found', () => {
-            reticle.setAttribute('visible', 'true');
-            if (!hasPlacedFirstTile) {
-                instructionsEl.innerText = 'Surface found! Tap the screen to place a tile.';
+        // --- NEW: Check for AR Support First ---
+        if (navigator.xr) {
+            try {
+                const supported = await navigator.xr.isSessionSupported('immersive-ar');
+                if (supported) {
+                    // AR is supported, let's start the scene!
+                    instructionsEl.innerText = 'Starting AR... Please grant camera permissions.';
+                    startAR();
+                } else {
+                    // AR not supported
+                    showFallback();
+                }
+            } catch (e) {
+                // Error checking for support
+                showFallback();
             }
-        });
+        } else {
+            // WebXR API not available at all
+            showFallback();
+        }
 
-        // Fired when the surface is lost. Hide the reticle.
-        sceneEl.addEventListener('ar-hit-test-lost', () => {
-            reticle.setAttribute('visible', 'false');
-            instructionsEl.innerText = 'Aim at the floor to continue.';
-        });
+        function showFallback() {
+            sceneEl.style.display = 'none';
+            document.querySelector('.ar-session-ui').style.display = 'none';
+            fallbackEl.style.display = 'flex';
+        }
 
-        // Fired when the user taps the screen on a detected surface.
-        sceneEl.addEventListener('ar-hit-test-select', () => {
-            if (!reticle.getAttribute('visible')) return; // Don't place if no surface is found
+        function startAR() {
+            let hasPlacedFirstTile = false;
 
-            // 1. Create a new tile entity
-            const newTile = document.createElement('a-gltf-model');
-            newTile.setAttribute('src', '#tile-model');
+            sceneEl.addEventListener('ar-hit-test-start', () => {
+                instructionsEl.innerText = 'Scanning for floor... Move your phone slowly.';
+                uiButtons.style.display = 'flex'; // Show buttons now
+            });
+            sceneEl.addEventListener('ar-hit-test-found', () => {
+                reticle.setAttribute('visible', 'true');
+                if (!hasPlacedFirstTile) {
+                    instructionsEl.innerText = 'Surface found! Tap to place a tile.';
+                }
+            });
+            sceneEl.addEventListener('ar-hit-test-lost', () => {
+                reticle.setAttribute('visible', 'false');
+            });
+            sceneEl.addEventListener('ar-hit-test-select', () => {
+                if (!reticle.getAttribute('visible')) return;
+                const newTile = document.createElement('a-gltf-model');
+                newTile.setAttribute('src', '#tile-model');
+                newTile.setAttribute('position', reticle.getAttribute('position'));
+                newTile.setAttribute('shadow', 'receive: false; cast: true');
+                tilesParent.appendChild(newTile);
+                if (!hasPlacedFirstTile) {
+                    hasPlacedFirstTile = true;
+                    instructionsEl.innerText = 'Great! Tap to place another.';
+                }
+            });
             
-            // 2. Get the reticle's current position and apply it to the new tile
-            const position = reticle.getAttribute('position');
-            newTile.setAttribute('position', position);
-            
-            // 3. Optional: Add a shadow for realism
-            newTile.setAttribute('shadow', 'receive: false; cast: true');
-            
-            // 4. Add the tile to our scene
-            tilesParent.appendChild(newTile);
+            document.getElementById('reset-button').addEventListener('click', () => {
+                while (tilesParent.firstChild) {
+                    tilesParent.removeChild(tilesParent.firstChild);
+                }
+                hasPlacedFirstTile = false;
+                instructionsEl.innerText = 'Cleared! Tap screen to place a new tile.';
+            });
+            document.getElementById('close-button').addEventListener('click', () => {
+                if (sceneEl.xrSession) sceneEl.xrSession.end();
+                window.history.back();
+            });
 
-            if (!hasPlacedFirstTile) {
-                hasPlacedFirstTile = true;
-                instructionsEl.innerText = 'Great! Tap to place another tile.';
-            }
-        });
-        
-        // --- UI Button Listeners ---
-        
-        document.getElementById('reset-button').addEventListener('click', () => {
-            // Remove all child elements (tiles) from the parent
-            while (tilesParent.firstChild) {
-                tilesParent.removeChild(tilesParent.firstChild);
-            }
-            hasPlacedFirstTile = false;
-            instructionsEl.innerText = 'Cleared! Tap the screen to place a new tile.';
-        });
-
-        document.getElementById('close-button').addEventListener('click', () => {
-            // Attempts to gracefully exit the AR session
-            if (sceneEl.xrSession) {
-                sceneEl.xrSession.end();
-            }
-            // A simple way to go back to the previous page
-            window.history.back();
-        });
-        
-        // Automatically try to enter AR mode
-        sceneEl.addEventListener('loaded', () => {
-             sceneEl.enterVR();
-        });
+            // Automatically enter AR
+            sceneEl.enterVR().catch(e => {
+                console.error("Failed to enter AR session:", e);
+                instructionsEl.innerText = 'Could not start AR. Please refresh and try again.';
+            });
+        }
       });
     </script>
 </body>
