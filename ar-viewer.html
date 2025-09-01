@@ -7,35 +7,31 @@
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
     <style>
         body { margin: 0; font-family: 'Poppins', sans-serif; }
-        .ar-session-ui {
+        .ar-session-ui, .fallback-container {
             position: absolute;
             bottom: 0;
             left: 0;
             width: 100%;
-            padding: 20px;
-            box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
             z-index: 10;
         }
-        #instructions {
-            background-color: rgba(0,0,0,0.75);
-            color: white;
-            padding: 12px 22px;
-            border-radius: 25px;
+        .fallback-container {
+            top: 0;
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             text-align: center;
-            font-size: 14px;
-            font-weight: 500;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            padding: 20px;
+            box-sizing: border-box;
+            background-color: #1a094b;
+            color: white;
         }
-        .ui-buttons {
-            display: flex;
-            gap: 15px;
-        }
-        .ui-button {
+        .fallback-container h2 { font-size: 24px; margin-bottom: 15px; }
+        .fallback-container p { font-size: 16px; max-width: 350px; margin-bottom: 25px; line-height: 1.5; }
+        .fallback-container img { width: 150px; height: 150px; border-radius: 12px; margin-bottom: 20px; object-fit: cover; }
+        .ui-button, .fallback-container a {
+            display: inline-block;
             padding: 12px 24px;
             background: #fff;
             color: #333;
@@ -46,71 +42,45 @@
             cursor: pointer;
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
             transition: transform 0.2s;
+            text-decoration: none;
         }
-        .ui-button:active {
-            transform: scale(0.95);
-        }
-        /* Fallback message for when AR is not supported */
-        #fallback-message {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #1a094b;
-            color: #fff;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 20px;
-            box-sizing: border-box;
-        }
+        .ui-button:active, .fallback-container a:active { transform: scale(0.95); }
+        .ar-session-ui { padding: 20px; display: flex; flex-direction: column; align-items: center; gap: 15px; }
+        #instructions { background-color: rgba(0,0,0,0.75); color: white; padding: 12px 22px; border-radius: 25px; text-align: center; font-size: 14px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .ui-buttons { display: none; gap: 15px; }
     </style>
 </head>
 <body>
-    <!-- This UI will be an overlay on the camera feed -->
     <div class="ar-session-ui">
         <div id="instructions">Checking for AR compatibility...</div>
-        <div class="ui-buttons" style="display: none;">
+        <div class="ui-buttons">
             <button id="reset-button" class="ui-button">Clear Tiles</button>
             <button id="close-button" class="ui-button">Close</button>
         </div>
     </div>
+    
+    <!-- Fallback for iOS Quick Look -->
+    <div id="ios-fallback" class="fallback-container">
+        <img id="ios-thumbnail" src="images/tiles1.jpg" alt="Tile Preview"/>
+        <h2>View in Your Room</h2>
+        <p>Your browser supports a simpler AR view. Tap the link below to place the tile in your space using AR Quick Look.</p>
+        <a id="ios-link" rel="ar" href="#">🚀 View in AR</a>
+    </div>
 
-    <!-- This message shows if AR is not supported at all -->
-    <div id="fallback-message">
+    <!-- Fallback for unsupported devices -->
+    <div id="unsupported-fallback" class="fallback-container">
         <h2>AR Not Supported</h2>
         <p>Your device or browser does not support WebXR for Augmented Reality.</p>
-        <p>Please try using a modern browser like Chrome on Android or Safari (iOS 15.5+) on iPhone.</p>
-        <br>
+        <p>On Android, please ensure "Google Play Services for AR" is installed and updated.</p>
         <button class="ui-button" onclick="window.history.back()">Go Back</button>
     </div>
 
-    <a-scene 
-        id="ar-scene"
-        webxr="requiredFeatures: hit-test, dom-overlay; overlayElement: .ar-session-ui;"
-        ar-hit-test="target: #reticle; enabled: true;"
-        renderer="colorManagement: true;"
-        ar-mode-ui="enabled: false"> <!-- This disables the default "Enter VR" button -->
-        
-        <a-assets>
-            <a-asset-item id="tile-model" src=""></a-asset-item>
-        </a-assets>
-
+    <a-scene id="ar-scene" webxr="requiredFeatures: hit-test, dom-overlay; overlayElement: .ar-session-ui;" ar-hit-test="target: #reticle; enabled: true;" renderer="colorManagement: true;" ar-mode-ui="enabled: false">
+        <a-assets><a-asset-item id="tile-model" src=""></a-asset-item></a-assets>
         <a-camera position="0 1.2 0"></a-camera>
-        
         <a-light type="ambient" color="#FFF" intensity="0.7"></a-light>
         <a-light type="directional" color="#FFF" intensity="0.6" position="-1 2 1"></a-light>
-        
-        <a-entity id="reticle"
-            geometry="primitive: ring; radiusInner: 0.10; radiusOuter: 0.15;"
-            material="color: #22d3ee; shader: flat; opacity: 0.8;"
-            rotation="-90 0 0"
-            visible="false">
-        </a-entity>
-
+        <a-entity id="reticle" geometry="primitive: ring; radiusInner: 0.10; radiusOuter: 0.15;" material="color: #22d3ee; shader: flat; opacity: 0.8;" rotation="-90 0 0" visible="false"></a-entity>
         <a-entity id="tiles-parent"></a-entity>
     </a-scene>
 
@@ -118,94 +88,73 @@
       document.addEventListener('DOMContentLoaded', async () => {
         const sceneEl = document.getElementById('ar-scene');
         const instructionsEl = document.getElementById('instructions');
-        const fallbackEl = document.getElementById('fallback-message');
         const uiButtons = document.querySelector('.ui-buttons');
-        const reticle = document.getElementById('reticle');
-        const tilesParent = document.getElementById('tiles-parent');
-        
         const urlParams = new URLSearchParams(window.location.search);
         const glbPath = urlParams.get('model');
+        const usdzPath = urlParams.get('iosmodel');
 
         if (!glbPath) {
-            instructionsEl.innerText = 'Error: Model not specified in URL.';
+            instructionsEl.innerText = 'Error: Model not specified.';
             return;
         }
         
         document.getElementById('tile-model').setAttribute('src', glbPath);
 
-        // --- NEW: Check for AR Support First ---
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
         if (navigator.xr) {
             try {
                 const supported = await navigator.xr.isSessionSupported('immersive-ar');
                 if (supported) {
-                    // AR is supported, let's start the scene!
-                    instructionsEl.innerText = 'Starting AR... Please grant camera permissions.';
-                    startAR();
+                    startWebXR();
                 } else {
-                    // AR not supported
-                    showFallback();
+                    handleFallback();
                 }
             } catch (e) {
-                // Error checking for support
-                showFallback();
+                handleFallback();
             }
         } else {
-            // WebXR API not available at all
-            showFallback();
+            handleFallback();
         }
 
-        function showFallback() {
+        function handleFallback() {
+            if (isIOS && usdzPath) {
+                // Show the iOS AR Quick Look fallback
+                document.getElementById('ios-link').href = usdzPath;
+                document.getElementById('ios-fallback').style.display = 'flex';
+            } else {
+                // Show the generic "unsupported" message for Android and others
+                document.getElementById('unsupported-fallback').style.display = 'flex';
+            }
             sceneEl.style.display = 'none';
             document.querySelector('.ar-session-ui').style.display = 'none';
-            fallbackEl.style.display = 'flex';
         }
 
-        function startAR() {
+        function startWebXR() {
+            // This is the full interactive experience
+            instructionsEl.innerText = 'Starting AR... Please grant camera permissions.';
             let hasPlacedFirstTile = false;
-
-            sceneEl.addEventListener('ar-hit-test-start', () => {
-                instructionsEl.innerText = 'Scanning for floor... Move your phone slowly.';
-                uiButtons.style.display = 'flex'; // Show buttons now
-            });
-            sceneEl.addEventListener('ar-hit-test-found', () => {
-                reticle.setAttribute('visible', 'true');
-                if (!hasPlacedFirstTile) {
-                    instructionsEl.innerText = 'Surface found! Tap to place a tile.';
-                }
-            });
-            sceneEl.addEventListener('ar-hit-test-lost', () => {
-                reticle.setAttribute('visible', 'false');
-            });
+            sceneEl.addEventListener('ar-hit-test-start', () => { uiButtons.style.display = 'flex'; instructionsEl.innerText = 'Scanning for floor... Move your phone slowly.'; });
+            sceneEl.addEventListener('ar-hit-test-found', () => { document.getElementById('reticle').setAttribute('visible', 'true'); if (!hasPlacedFirstTile) { instructionsEl.innerText = 'Surface found! Tap to place a tile.'; } });
+            sceneEl.addEventListener('ar-hit-test-lost', () => { document.getElementById('reticle').setAttribute('visible', 'false'); });
             sceneEl.addEventListener('ar-hit-test-select', () => {
+                const reticle = document.getElementById('reticle');
                 if (!reticle.getAttribute('visible')) return;
                 const newTile = document.createElement('a-gltf-model');
                 newTile.setAttribute('src', '#tile-model');
                 newTile.setAttribute('position', reticle.getAttribute('position'));
                 newTile.setAttribute('shadow', 'receive: false; cast: true');
-                tilesParent.appendChild(newTile);
-                if (!hasPlacedFirstTile) {
-                    hasPlacedFirstTile = true;
-                    instructionsEl.innerText = 'Great! Tap to place another.';
-                }
+                document.getElementById('tiles-parent').appendChild(newTile);
+                if (!hasPlacedFirstTile) { hasPlacedFirstTile = true; instructionsEl.innerText = 'Great! Tap to place another.'; }
             });
-            
             document.getElementById('reset-button').addEventListener('click', () => {
-                while (tilesParent.firstChild) {
-                    tilesParent.removeChild(tilesParent.firstChild);
-                }
+                const tilesParent = document.getElementById('tiles-parent');
+                while (tilesParent.firstChild) { tilesParent.removeChild(tilesParent.firstChild); }
                 hasPlacedFirstTile = false;
                 instructionsEl.innerText = 'Cleared! Tap screen to place a new tile.';
             });
-            document.getElementById('close-button').addEventListener('click', () => {
-                if (sceneEl.xrSession) sceneEl.xrSession.end();
-                window.history.back();
-            });
-
-            // Automatically enter AR
-            sceneEl.enterVR().catch(e => {
-                console.error("Failed to enter AR session:", e);
-                instructionsEl.innerText = 'Could not start AR. Please refresh and try again.';
-            });
+            document.getElementById('close-button').addEventListener('click', () => { if (sceneEl.xrSession) sceneEl.xrSession.end(); window.history.back(); });
+            sceneEl.enterVR().catch(e => { console.error("Failed to enter AR session:", e); handleFallback(); });
         }
       });
     </script>

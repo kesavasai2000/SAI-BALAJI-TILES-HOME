@@ -77,10 +77,10 @@
                          <div class="text-left bg-gray-700/30 p-4 rounded-md mb-6 max-w-lg mx-auto">
                             <p class="text-sm text-indigo-200 font-semibold mb-2">How it works:</p>
                              <ul class="list-disc list-inside text-sm text-gray-300 space-y-1">
-                                 <li>This AR experience works on both Android and modern iOS devices (iPhone with iOS 15.5+).</li>
-                                 <li>Point your phone at a clear floor and move it slowly.</li>
-                                 <li>A placement ring will appear on the floor.</li>
-                                 <li>**Tap the screen to place a tile.** You can place as many as you like!</li>
+                                 <li>We provide the best AR experience your device can handle.</li>
+                                 <li>Most modern phones get a fully interactive viewer where you can place multiple tiles.</li>
+                                 <li>Some devices may see a simpler viewer for placing a single tile.</li>
+                                 <li>Point your phone at a clear floor and move it slowly to begin.</li>
                              </ul>
                          </div>
                          <a id="ar-launch-button" href="#" class="btn-theme-primary text-lg" target="_blank">
@@ -107,31 +107,33 @@
     <script>
     document.addEventListener('DOMContentLoaded', () => {
 
-        // --- IMPORTANT DATA CHANGE ---
-        // Your GLB and USDZ should represent a SINGLE TILE, not a whole grid.
-        // This is crucial for the new "tap-to-place" system.
-        // I will assume your models are now single tiles. Let's name them `tile.glb` and `tile.usdz`
+        // --- CRUCIAL DATA CHANGE ---
+        // Your 3D models should represent a SINGLE TILE.
+        // We now provide both GLB for the interactive scene and USDZ for the iOS fallback.
         const tilesData = {
             polished: { 
                 id: "polished", title: "Polished Vitrified Tiles", main: "images/tiles1.jpg", 
                 description: "Experience unparalleled shine...",
                 related: ["images/tiles1.jpg", "images/tile1.jpg"],
                 specifications: { size: "800x800mm", material: "Vitrified", finish: "High Gloss", price: "₹85 / sq.ft."},
-                arModel: "aug/modules/tilear.glb"// Only one model is needed for both platforms
+                arModelGLB: "aug/modules/tile.glb",
+                arModelUSDZ: "aug/modules/tile.usdz" 
             },
             ceramic: { 
                 id: "ceramic", title: "Ceramic Tiles", main: "images/tiles2.jpg", 
                 description: "Our Ceramic Tiles offer a versatile solution...",
                 related: ["images/tile2.jpg", "images/tile1.jpg"],
                 specifications: { size: "300x600mm", material: "Ceramic", finish: "Glossy / Matte", price: "₹45 / sq.ft."},
-                arModel: "aug/modules/tilear.glb"
+                arModelGLB: "aug/modules/tile.glb",
+                arModelUSDZ: "aug/modules/tile.usdz"
             },
             glazed: { 
                 id: "glazed", title: "Glazed Vitrified Tiles (GVT)", main: "images/tiles3.jpg", 
                 description: "Glazed Vitrified Tiles combine strength...",
                 related: ["images/tiles3.jpg", "images/tiles1.jpg"],
                 specifications: { size: "600x1200mm", material: "GVT", finish: "Satin / Matte", price: "₹110 / sq.ft."},
-                arModel: "aug/modules/tilear.glb"
+                arModelGLB: "aug/modules/tile.glb",
+                arModelUSDZ: "aug/modules/tile.usdz"
             }
         };
 
@@ -178,9 +180,10 @@
 
                 const arLaunchButton = document.getElementById('ar-launch-button');
                 if (arLaunchButton) {
-                    // We only need to pass the single GLB model now
-                    const glbPath = encodeURIComponent(selectedTile.arModel);
-                    arLaunchButton.href = `ar-viewer.html?model=${glbPath}`;
+                    // We now pass both models to the viewer page.
+                    const glbPath = encodeURIComponent(selectedTile.arModelGLB);
+                    const usdzPath = encodeURIComponent(selectedTile.arModelUSDZ);
+                    arLaunchButton.href = `ar-viewer.html?model=${glbPath}&iosmodel=${usdzPath}`;
                 }
                 
             } else {
