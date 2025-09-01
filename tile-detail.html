@@ -72,19 +72,19 @@
                     </div>
                     
                     <div id="view-ar-room" class="tile-view-step hidden text-center">
-                         <h3 class="text-2xl font-semibold text-indigo-300 mb-4">View Tiling Pattern in Your Room</h3>
+                         <h3 class="text-2xl font-semibold text-indigo-300 mb-4">View Tiles in Your Room</h3>
                          <img id="ar-tile-thumbnail" src="" alt="Tile Thumbnail for AR" class="w-56 h-56 mx-auto rounded-md shadow-lg border-2 border-gray-600 mb-6 object-cover">
                          <div class="text-left bg-gray-700/30 p-4 rounded-md mb-6 max-w-lg mx-auto">
                             <p class="text-sm text-indigo-200 font-semibold mb-2">How it works:</p>
                              <ul class="list-disc list-inside text-sm text-gray-300 space-y-1">
-                                 <li>Clicking the button below will open a new, full-screen AR experience.</li>
-                                 <li>Make sure you are in a well-lit room.</li>
-                                 <li>Point your phone at a clear wall or floor, moving it slowly.</li>
-                                 <li>Tap the screen to place a large grid of tiles.</li>
+                                 <li>This AR experience works on both Android and modern iOS devices (iPhone with iOS 15.5+).</li>
+                                 <li>Point your phone at a clear floor and move it slowly.</li>
+                                 <li>A placement ring will appear on the floor.</li>
+                                 <li>**Tap the screen to place a tile.** You can place as many as you like!</li>
                              </ul>
                          </div>
                          <a id="ar-launch-button" href="#" class="btn-theme-primary text-lg" target="_blank">
-                             🚀 Launch AR Tiling Viewer
+                             🚀 Launch AR Viewer
                          </a>
                     </div>
 
@@ -107,30 +107,31 @@
     <script>
     document.addEventListener('DOMContentLoaded', () => {
 
+        // --- IMPORTANT DATA CHANGE ---
+        // Your GLB and USDZ should represent a SINGLE TILE, not a whole grid.
+        // This is crucial for the new "tap-to-place" system.
+        // I will assume your models are now single tiles. Let's name them `tile.glb` and `tile.usdz`
         const tilesData = {
             polished: { 
                 id: "polished", title: "Polished Vitrified Tiles", main: "images/tiles1.jpg", 
                 description: "Experience unparalleled shine...",
                 related: ["images/tiles1.jpg", "images/tile1.jpg"],
                 specifications: { size: "800x800mm", material: "Vitrified", finish: "High Gloss", price: "₹85 / sq.ft."},
-                arModelGLB: "aug/modules/tilear.glb",
-                arModelUSDZ: "aug/modules/tilear.usdz"
+                arModel: "aug/modules/tile.glb" // Only one model is needed for both platforms
             },
             ceramic: { 
                 id: "ceramic", title: "Ceramic Tiles", main: "images/tiles2.jpg", 
                 description: "Our Ceramic Tiles offer a versatile solution...",
                 related: ["images/tile2.jpg", "images/tile1.jpg"],
                 specifications: { size: "300x600mm", material: "Ceramic", finish: "Glossy / Matte", price: "₹45 / sq.ft."},
-                arModelGLB: "aug/modules/tilear.glb",
-                arModelUSDZ: "aug/modules/tilear.usdz"
+                arModel: "aug/modules/tile.glb"
             },
             glazed: { 
                 id: "glazed", title: "Glazed Vitrified Tiles (GVT)", main: "images/tiles3.jpg", 
                 description: "Glazed Vitrified Tiles combine strength...",
                 related: ["images/tiles3.jpg", "images/tiles1.jpg"],
                 specifications: { size: "600x1200mm", material: "GVT", finish: "Satin / Matte", price: "₹110 / sq.ft."},
-                arModelGLB: "aug/modules/tilear.glb",
-                arModelUSDZ: "aug/modules/tilear.usdz"
+                arModel: "aug/modules/tile.glb"
             }
         };
 
@@ -177,9 +178,9 @@
 
                 const arLaunchButton = document.getElementById('ar-launch-button');
                 if (arLaunchButton) {
-                    const glbPath = encodeURIComponent(selectedTile.arModelGLB);
-                    const usdzPath = encodeURIComponent(selectedTile.arModelUSDZ);
-                    arLaunchButton.href = `ar-viewer.html?model=${glbPath}&iosmodel=${usdzPath}`;
+                    // We only need to pass the single GLB model now
+                    const glbPath = encodeURIComponent(selectedTile.arModel);
+                    arLaunchButton.href = `ar-viewer.html?model=${glbPath}`;
                 }
                 
             } else {
@@ -204,7 +205,6 @@
         }
         
         populateTileDetails();
-        // Add other initializers like createStars() etc. if they are in separate functions
     });
     </script>
 </body>
