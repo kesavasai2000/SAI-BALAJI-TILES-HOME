@@ -1,125 +1,91 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Sai Balaji Tiles Home</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css"> 
     <style>
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-        }
+        html, body { height: 100%; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
         body.main-content-visible { 
             background: linear-gradient(270deg, #0d0320, #1a094b, #000000, #8e2de2, #000000);
             background-size: 300% 300%;
             animation: gradientBG 20s ease infinite;
             overflow-x: hidden; 
         }
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        .stars-container {
-            position: fixed; 
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            pointer-events: none; overflow: hidden; 
-            z-index: 0; 
-        }
-        .star {
-            position: absolute; background-color: rgba(255, 255, 255, 0.7);
-            border-radius: 50%; animation: twinkle 6s infinite ease-in-out;
-        }
-        @keyframes twinkle {
-            0%, 100% { opacity: 0.1; transform: scale(0.6); }
-            50% { opacity: 0.7; transform: scale(1); }
-        }
+        @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+        .stars-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; overflow: hidden; z-index: 0; }
+        .star { position: absolute; background-color: rgba(255, 255, 255, 0.7); border-radius: 50%; animation: twinkle 6s infinite ease-in-out; }
+        @keyframes twinkle { 0%, 100% { opacity: 0.1; transform: scale(0.6); } 50% { opacity: 0.7; transform: scale(1); } }
 
         .navbar.translate-x-0 { transform: translateX(0%); }
         .navbar.-translate-x-full { transform: translateX(-100%); }
 
-        @keyframes fadeInSlow { 
-            from { opacity: 0; transform: translateY(20px); } 
-            to { opacity: 1; transform: translateY(0); } 
-        }
-        .animate-fade-in-slow { 
-            animation: fadeInSlow 1.2s ease-out forwards;
-        }
+        @keyframes fadeInSlow { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in-slow { animation: fadeInSlow 1.2s ease-out forwards; }
         .delay-500ms { animation-delay: 0.5s; }
 
         #home .splash-content-animation { opacity: 0; }
-        #home .splash-content-animation.start-animation {
-            animation: fadeInMainHomeContent 1.5s ease-out forwards;
-        }
-        @keyframes fadeInMainHomeContent {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        #home .splash-content-animation.start-animation { animation: fadeInMainHomeContent 1.5s ease-out forwards; }
+        @keyframes fadeInMainHomeContent { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 
-        .animate-on-scroll {
-            opacity: 0;
-            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
-        }
+        .animate-on-scroll { opacity: 0; transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
         .init-slide-up { transform: translateY(40px); }
         .init-fade-in { transform: translateY(20px); }
-        .animate-on-scroll.is-visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        .animate-on-scroll.is-visible { opacity: 1; transform: translateY(0); }
 
         @supports not (backdrop-filter: blur(1px)) {
-          #main-header, #main-navbar-index {
-            background-color: rgba(17, 24, 39, 0.95) !important; 
-          }
-          .needs-blur-fallback {
-            background-color: rgba(31, 41, 55, 0.90) !important;
-          }
+          #main-header, #main-navbar-index { background-color: rgba(17, 24, 39, 0.95) !important; }
+          .needs-blur-fallback { background-color: rgba(31, 41, 55, 0.90) !important; }
         }
-        #page-main-content {
-             position: relative; 
-             z-index: 1; 
-        }
+        #page-main-content { position: relative; z-index: 1; }
 
-        /* --- NEW Custom Button Styles --- */
+        /* --- Button styles (plain CSS so it works without Tailwind build) --- */
         .btn-theme-primary {
-            @apply inline-block px-7 py-3.5 rounded-lg font-semibold text-sm sm:text-base shadow-md
-                   border-2 border-cyan-500 text-cyan-400 
-                   bg-gray-800/60 hover:bg-cyan-500/20
-                   transition-all duration-300 ease-in-out transform 
-                   focus:outline-none focus:ring-4 focus:ring-cyan-500/50 active:scale-95;
+            display: inline-block;
+            padding: 0.75rem 1.75rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+            border: 2px solid rgba(6,182,212,0.9); /* cyan-500 */
+            color: rgba(34,211,238,0.95); /* cyan-300-ish */
+            background: rgba(31,41,55,0.6);
+            transition: all 0.3s ease-in-out;
+            transform-origin: center;
+            text-decoration: none;
         }
         .btn-theme-primary:hover {
-            /* color: #111827; /* Darker text on hover if background becomes light */
-            /* text-shadow: 0 0 5px rgba(255,255,255,0.3); */
-            box-shadow: 0 0 15px rgba(34, 211, 238, 0.4), 0 0 25px rgba(34, 211, 238, 0.2); /* Cyan glow */
-            transform: translateY(-1px) scale(1.02);
+            box-shadow: 0 0 15px rgba(34,211,238,0.4), 0 0 25px rgba(34,211,238,0.2);
+            transform: translateY(-2px) scale(1.02);
         }
-
-        .btn-theme-secondary { /* For 'View Details' */
-            @apply inline-block px-5 py-2.5 rounded-md font-semibold 
-                   border border-indigo-500 text-indigo-400
-                   bg-transparent hover:bg-indigo-500/20 hover:text-indigo-300
-                   transition-all duration-300 ease-in-out transform 
-                   focus:outline-none focus:ring-2 focus:ring-indigo-500/50 active:scale-95;
+        .btn-theme-secondary {
+            display: inline-block;
+            padding: 0.5rem 1.25rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            border: 1px solid rgba(99,102,241,0.7); /* indigo-500-ish */
+            color: rgba(129,140,248,0.95);
+            background: transparent;
+            transition: all 0.25s ease-in-out;
+            text-decoration: none;
         }
         .btn-theme-secondary:hover {
-            box-shadow: 0 0 10px rgba(129, 140, 248, 0.3); /* Indigo glow */
+            box-shadow: 0 0 10px rgba(129,140,248,0.22);
             transform: scale(1.03);
         }
-        /* End of New Custom Button Styles */
+        /* End buttons */
 
-
-        /* Contact Form Input Text Color */
+        /* Contact form text color when inside inputs */
         #contactForm input[type="text"],
         #contactForm input[type="email"],
-        #contactForm textarea {
-            color: #000000 !important; /* Black text when typing */
-        }
+        #contactForm textarea { color: #000 !important; }
 
+        /* small helpers */
+        .hidden { display: none !important; }
     </style>
 </head>
 <body class="bg-black text-gray-200 font-poppins">
@@ -130,12 +96,11 @@
     </div>
 
     <div id="page-container" style="display: none; position: relative; min-height: 100vh;">
-        
         <div class="stars-container" id="stars-bg-global"></div>
 
         <header id="main-header" class="fixed w-full top-0 left-0 bg-gray-900/80 backdrop-blur-md shadow-2xl flex items-center justify-between p-3 sm:p-4 z-30 border-b border-cyan-500/30">
             <div class="flex-none">
-                <button id="toggle-btn-index" aria-label="Toggle menu" aria-expanded="false" aria-controls="main-navbar-index" class="text-xl sm:text-2xl text-cyan-400 hover:text-cyan-300 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-cyan-300 rounded" onclick="toggleMenuIndex()">☰</button>
+                <button id="toggle-btn-index" aria-label="Toggle menu" aria-expanded="false" aria-controls="main-navbar-index" class="text-xl sm:text-2xl text-cyan-400 hover:text-cyan-300 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-cyan-300 rounded">☰</button>
             </div>
             <div class="flex-grow text-center px-2">
                 <a href="index.html" class="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-cyan-400 truncate hover:text-cyan-300">SAI BALAJI TILES</a>
@@ -159,38 +124,42 @@
                 <div class="splash-content-animation">
                     <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold text-cyan-400 mb-4">Welcome to Sai Balaji Tiles</h1>
                     <p class="text-lg sm:text-xl md:text-2xl text-indigo-300 mb-8">Discover Elegance & Durability for Your Spaces</p>
-                    <a href="#catalog" class="btn-theme-primary text-lg"> <!-- NEW Primary Button Style -->
-                        Explore Our Catalog
-                    </a>
+                    <a href="#catalog" class="btn-theme-primary text-lg">Explore Our Catalog</a>
                 </div>
             </section>
+
+            <!-- rest of content unchanged (catalog, about, collections, contact) -->
+            <!-- I kept your original markup for these sections for brevity; it's the same as your version. -->
+            <!-- ... (catalog, about, collections, contact sections here) ... -->
 
             <section id="catalog" class="py-16 sm:py-20 bg-gray-800/70 backdrop-blur-sm needs-blur-fallback"> 
                 <div class="container mx-auto px-4 text-center">
                     <h2 class="animate-on-scroll init-slide-up text-2xl sm:text-3xl md:text-4xl font-bold mb-10 sm:mb-12 text-cyan-400">Our Tile Catalog</h2>
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                        <!-- three tile cards as in your original file -->
                         <div class="animate-on-scroll init-slide-up tile-card bg-gray-900/80 p-5 rounded-xl shadow-2xl border border-gray-700/50 hover:border-cyan-500/70 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-cyan-500/30" style="transition-delay: 0.1s;">
                             <img src="images/tiles1.jpg" alt="Polished Vitrified Tiles" class="w-full h-48 sm:h-56 object-cover rounded-lg mb-4 border-2 border-gray-600">
                             <h3 class="text-xl sm:text-2xl font-semibold text-indigo-300 mb-2">Polished Vitrified</h3>
                             <p class="text-gray-400 text-sm sm:text-base mb-4">High gloss, durable, and perfect for luxurious interiors.</p>
-                            <a href="tile-detail.html?id=polished" class="btn-theme-secondary">View Details</a> <!-- NEW Secondary Button Style -->
+                            <a href="tile-detail.html?id=polished" class="btn-theme-secondary">View Details</a>
                         </div>
                         <div class="animate-on-scroll init-slide-up tile-card bg-gray-900/80 p-5 rounded-xl shadow-2xl border border-gray-700/50 hover:border-cyan-500/70 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-cyan-500/30" style="transition-delay: 0.2s;">
                             <img src="images/tiles2.jpg" alt="Ceramic Tiles" class="w-full h-48 sm:h-56 object-cover rounded-lg mb-4 border-2 border-gray-600">
                             <h3 class="text-xl sm:text-2xl font-semibold text-indigo-300 mb-2">Ceramic Tiles</h3>
                             <p class="text-gray-400 text-sm sm:text-base mb-4">Versatile, affordable, and great for walls and floors.</p>
-                            <a href="tile-detail.html?id=ceramic" class="btn-theme-secondary">View Details</a> <!-- NEW Secondary Button Style -->
+                            <a href="tile-detail.html?id=ceramic" class="btn-theme-secondary">View Details</a>
                         </div>
                         <div class="animate-on-scroll init-slide-up tile-card bg-gray-900/80 p-5 rounded-xl shadow-2xl border border-gray-700/50 hover:border-cyan-500/70 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-cyan-500/30" style="transition-delay: 0.3s;">
                             <img src="images/tiles3.jpg" alt="Glazed Vitrified Tiles (GVT)" class="w-full h-48 sm:h-56 object-cover rounded-lg mb-4 border-2 border-gray-600">
                             <h3 class="text-xl sm:text-2xl font-semibold text-indigo-300 mb-2">Glazed Vitrified (GVT)</h3>
                             <p class="text-gray-400 text-sm sm:text-base mb-4">Wide range of designs, superior finish and strength.</p>
-                            <a href="tile-detail.html?id=glazed" class="btn-theme-secondary">View Details</a> <!-- NEW Secondary Button Style -->
+                            <a href="tile-detail.html?id=glazed" class="btn-theme-secondary">View Details</a>
                         </div>
                     </div>
                 </div>
             </section>
 
+            <!-- about -->
             <section id="about" class="py-16 sm:py-20 bg-gray-900/60 backdrop-blur-sm needs-blur-fallback">
                 <div class="container mx-auto px-4 text-center">
                     <h2 class="animate-on-scroll init-slide-up text-2xl sm:text-3xl md:text-4xl font-bold mb-8 sm:mb-10 text-cyan-400">About Sai Balaji Tiles</h2>
@@ -203,6 +172,7 @@
                 </div>
             </section>
 
+            <!-- collections -->
             <section id="collections" class="relative py-12 sm:py-16 bg-gray-900/70 backdrop-blur-md needs-blur-fallback">
                 <div class="container mx-auto px-4">
                     <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-8 sm:mb-12 text-cyan-400 animate-on-scroll init-slide-up">Featured Collections</h2>
@@ -235,6 +205,7 @@
                 </div>
             </section>
 
+            <!-- contact (unchanged markup) -->
             <section id="contact" class="contact py-16 sm:py-20 bg-gray-900/60 backdrop-blur-sm needs-blur-fallback">
                 <div class="container mx-auto px-4">
                     <h2 class="animate-on-scroll init-slide-up text-2xl sm:text-3xl md:text-4xl font-bold mb-8 sm:mb-10 text-cyan-400 text-center">Get in Touch</h2>
@@ -263,9 +234,7 @@
                                 </address>
                                 <a href="https://maps.app.goo.gl/ePv4dAQ9iEprLneLA" 
                                    target="_blank" rel="noopener noreferrer"
-                                   class="btn-theme-primary mt-6 self-start"> <!-- NEW Primary Button Style -->
-                                    Get Directions
-                                </a>
+                                   class="btn-theme-primary mt-6 self-start">Get Directions</a>
                             </div>
                         </div>
                     </div>
@@ -308,8 +277,7 @@
                                       placeholder="Your message here..."></textarea>
                         </div>
                         <div>
-                            <button type="submit" id="sendMessageBtn" 
-                                    class="btn-theme-primary w-full sm:w-auto text-lg"> <!-- NEW Primary Button Style -->
+                            <button type="submit" id="sendMessageBtn" class="btn-theme-primary w-full sm:w-auto text-lg">
                                 <span class="button-text">Send Message</span>
                                 <span class="button-loader hidden">Sending...</span>
                             </button>
@@ -332,7 +300,7 @@
         const mainPageContentArea = document.getElementById('page-main-content');
         const headerElement = document.getElementById('main-header');
 
-        const splashDuration = 2500; 
+        const splashDuration = 2500;
         const splashFadeOutDuration = 700;
 
         window.addEventListener('load', () => {
@@ -341,9 +309,9 @@
                     splashScreen.style.opacity = '0';
                     setTimeout(() => {
                         splashScreen.style.display = 'none';
-                        pageContainer.style.display = 'block'; 
+                        pageContainer.style.display = 'block';
                         document.body.classList.add('main-content-visible');
-                        
+
                         if (mainPageContentArea && headerElement) {
                             const headerHeight = headerElement.offsetHeight;
                             mainPageContentArea.style.paddingTop = `${headerHeight}px`;
@@ -356,7 +324,7 @@
                     }, splashFadeOutDuration);
                 }, splashDuration);
             } else {
-                if(pageContainer) pageContainer.style.display = 'block';
+                if (pageContainer) pageContainer.style.display = 'block';
                 document.body.classList.add('main-content-visible');
                 if (mainPageContentArea && headerElement) {
                     const headerHeight = headerElement.offsetHeight;
@@ -373,7 +341,7 @@
                     const headerHeight = headerElement.offsetHeight;
                     mainPageContentArea.style.paddingTop = `${headerHeight}px`;
                 };
-                setMainContentPadding(); 
+                setMainContentPadding();
                 window.addEventListener('resize', setMainContentPadding);
             }
 
@@ -392,6 +360,11 @@
                     toggleBtnIndex.setAttribute('aria-expanded', menuIndexVisible);
                 }
             }
+
+            if (toggleBtnIndex) {
+                toggleBtnIndex.addEventListener('click', toggleMenuIndex);
+            }
+
             document.addEventListener("click", (e) => {
                 if (menuIndexVisible && navbarIndex && toggleBtnIndex) {
                     if (!navbarIndex.contains(e.target) && e.target !== toggleBtnIndex && !toggleBtnIndex.contains(e.target)) {
@@ -410,27 +383,27 @@
                     e.preventDefault();
                     const targetId = this.getAttribute('href');
                     const targetElement = document.querySelector(targetId);
-                    if (targetElement && headerElement) { 
+                    if (targetElement && headerElement) {
                         if (menuIndexVisible) toggleMenuIndex();
-                        
+
                         const headerHeight = headerElement.offsetHeight;
                         const elementPosition = targetElement.getBoundingClientRect().top + window.pageYOffset;
                         const offsetPosition = elementPosition - headerHeight;
-                        
+
                         setTimeout(() => {
-                            window.scrollTo({
-                                top: offsetPosition,
-                                behavior: 'smooth'
-                            });
+                            window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
                         }, menuIndexVisible ? 300 : 0);
                     }
                 });
             });
-            
+
+            // Stars
             function createStarsGlobal() {
                 const container = document.getElementById('stars-bg-global');
                 if (!container) return;
-                const numStars = Math.floor(window.innerWidth / 20);
+                // reasonable limit to avoid too many DOM nodes
+                const numStars = Math.min(200, Math.floor(window.innerWidth / 18));
+                container.innerHTML = '';
                 for (let i = 0; i < numStars; i++) {
                     const star = document.createElement('div');
                     star.classList.add('star');
@@ -444,14 +417,16 @@
                 }
             }
             createStarsGlobal();
+            window.addEventListener('resize', () => { createStarsGlobal(); });
 
             function updateCartCountIndex() {
-                const cart = JSON.parse(localStorage.getItem("cart")) || [];
+                const cart = JSON.parse(localStorage.getItem("cart") || "[]");
                 const cartCountSpan = document.getElementById("cart-count-index");
                 if (cartCountSpan) cartCountSpan.textContent = cart.length;
             }
             updateCartCountIndex();
 
+            // Contact form logic (fixed loader/text toggling)
             const contactForm = document.getElementById('contactForm');
             const sendMessageBtn = document.getElementById('sendMessageBtn');
             const formStatusEl = document.getElementById('form-status');
@@ -462,15 +437,15 @@
                     const buttonText = sendMessageBtn.querySelector('.button-text');
                     const buttonLoader = sendMessageBtn.querySelector('.button-loader');
 
-                    if (buttonLoader) buttonText.classList.add('hidden');
+                    if (buttonText) buttonText.classList.add('hidden');
                     if (buttonLoader) buttonLoader.classList.remove('hidden');
                     sendMessageBtn.disabled = true;
                     formStatusEl.textContent = '';
                     formStatusEl.className = 'mt-4 text-sm sm:text-base text-center';
 
                     const formData = new FormData(contactForm);
-                    const formSpreeEndpoint = 'https://formspree.io/f/mldndgpw'; 
-                    
+                    const formSpreeEndpoint = 'https://formspree.io/f/mldndgpw';
+
                     fetch(formSpreeEndpoint, {
                         method: 'POST',
                         body: formData,
@@ -500,7 +475,7 @@
                         formStatusEl.textContent = 'Network problem. Please check connection and try again.';
                         formStatusEl.classList.add('text-red-400');
                     }).finally(() => {
-                        if (buttonLoader) buttonText.classList.remove('hidden');
+                        if (buttonText) buttonText.classList.remove('hidden');
                         if (buttonLoader) buttonLoader.classList.add('hidden');
                         sendMessageBtn.disabled = false;
                         setTimeout(() => { formStatusEl.textContent = ''; }, 7000);
@@ -508,6 +483,7 @@
                 });
             }
 
+            // Intersection observer for scroll animations
             const animatedElements = document.querySelectorAll('.animate-on-scroll');
             if ("IntersectionObserver" in window) {
                 const observer = new IntersectionObserver((entries, obs) => {
@@ -519,10 +495,9 @@
                     });
                 }, { threshold: 0.1 });
                 animatedElements.forEach(el => { observer.observe(el); });
-            } else { 
-                animatedElements.forEach(el => { el.classList.add('is-visible'); });
-            }
+            } else { animatedElements.forEach(el => { el.classList.add('is-visible'); }); }
 
+            // Sync cart count when localStorage changes (multiple tabs)
             window.addEventListener('storage', (event) => {
                 if (event.key === 'cart') {
                     updateCartCountIndex();

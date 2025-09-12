@@ -1,23 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Tile Detail - Tiles Shop</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        body { background: linear-gradient(270deg, #0d0320, #1a094b, #000000, #8e2de2, #000000); background-size: 300% 300%; animation: gradientBG 20s ease infinite; font-family: 'Poppins', sans-serif; }
+        body { background: linear-gradient(270deg, #0d0320, #1a094b, #000000, #8e2de2, #000000); background-size: 300% 300%; animation: gradientBG 20s ease infinite; font-family: 'Poppins', sans-serif; color: #e5e7eb; }
         @keyframes gradientBG {0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
         .stars-container {position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;overflow:hidden;z-index:-1}
         .star{position:absolute;background-color:rgba(255,255,255,0.7);border-radius:50%;animation:twinkle 6s infinite ease-in-out}
         @keyframes twinkle{0%,100%{opacity:0.1;transform:scale(.6)}50%{opacity:0.7;transform:scale(1)}}
         .thumbnail-active{border-color:#22d3ee!important;box-shadow:0 0 0 2px #22d3ee}
         .navbar.translate-x-0{transform:translateX(0%)}.navbar.-translate-x-full{transform:translateX(-100%)}
-        .btn-theme-primary{@apply inline-block px-7 py-3.5 rounded-lg font-semibold text-sm shadow-md border-2 border-cyan-500 text-cyan-400 bg-gray-800/60 hover:bg-cyan-500/20 transition-all duration-300 ease-in-out transform focus:outline-none focus:ring-4 focus:ring-cyan-500/50 active:scale-95}
-        .btn-theme-primary:hover{box-shadow:0 0 15px rgba(34,211,238,0.4),0 0 25px rgba(34,211,238,0.2);transform:translateY(-1px) scale(1.02)}
-        .btn-theme-secondary{@apply inline-block px-5 py-2.5 rounded-md font-semibold border border-indigo-500 text-indigo-400 bg-transparent hover:bg-indigo-500/20 hover:text-indigo-300 transition-all duration-300 ease-in-out transform focus:outline-none focus:ring-2 focus:ring-indigo-500/50 active:scale-95}
-        .btn-theme-secondary:hover{box-shadow:0 0 10px rgba(129,140,248,0.3);transform:scale(1.03)}
+
+        /* Buttons without Tailwind build */
+        .btn-theme-primary {
+            display:inline-block;padding:0.75rem 1.25rem;border-radius:0.5rem;font-weight:600;border:2px solid rgba(6,182,212,0.9);color:rgba(34,211,238,0.95);background:rgba(31,41,55,0.6);transition:all .3s; text-decoration:none;
+        }
+        .btn-theme-primary:hover { box-shadow:0 0 15px rgba(34,211,238,.4); transform:translateY(-1px) scale(1.02); }
+        .btn-theme-secondary { display:inline-block;padding:0.5rem 1rem;border-radius:0.4rem;font-weight:600;border:1px solid rgba(99,102,241,0.7);color:rgba(129,140,248,0.95);background:transparent;transition:all .25s; text-decoration:none; }
+        .btn-theme-secondary:hover { box-shadow:0 0 10px rgba(129,140,248,0.3); transform:scale(1.03); }
+
+        /* small helpers */
+        .hidden { display: none !important; }
+        .thumbnail { width: 84px; height: 64px; object-fit: cover; border: 2px solid rgba(107,114,128,0.25); border-radius: 0.5rem; cursor: pointer; }
+        .thumbnail:hover { transform: translateY(-2px); transition: transform .15s; }
     </style>
 </head>
 <body class="bg-black text-gray-200">
@@ -25,10 +34,11 @@
     <div class="stars-container" id="stars-bg-global"></div>
     
     <header id="main-header" class="fixed w-full top-0 left-0 bg-gray-900/80 backdrop-blur-md shadow-2xl flex items-center justify-between p-4 z-40 border-b border-cyan-500/30">
-        <div class="flex-none"><button id="toggle-btn-detail" aria-label="Toggle menu" class="text-2xl text-cyan-400 hover:text-cyan-300">☰</button></div>
+        <div class="flex-none"><button id="toggle-btn-detail" aria-label="Toggle menu" aria-expanded="false" class="text-2xl text-cyan-400 hover:text-cyan-300">☰</button></div>
         <div class="flex-grow text-center px-2"><a href="index.html" class="text-xl font-bold text-cyan-400 truncate hover:text-cyan-300">SAI BALAJI TILES HOME</a></div>
         <div class="flex-none w-8 h-8"></div>
     </header>
+
     <nav id="main-navbar-detail" class="navbar fixed top-0 left-0 w-72 h-screen bg-gray-900/80 backdrop-blur-md shadow-lg transform -translate-x-full transition-transform duration-300 z-30 border-r border-cyan-500/30">
         <ul class="nav-menu mt-20 space-y-4 p-4">
              <li><a href="index.html#home" class="block py-2 px-2 text-indigo-300 hover:text-indigo-200 hover:bg-gray-800/60 rounded">Home</a></li>
@@ -83,16 +93,12 @@
                                  <li>Point your phone at a clear floor and move it slowly to begin.</li>
                              </ul>
                          </div>
-                         <a id="ar-launch-button" href="#" class="btn-theme-primary text-lg" target="_blank">
-                             🚀 Launch AR Viewer
-                         </a>
+                         <a id="ar-launch-button" href="#" class="btn-theme-primary text-lg" target="_blank" rel="noopener noreferrer">🚀 Launch AR Viewer</a>
                     </div>
 
                     <div id="slider-navigation-controls" class="mt-8 flex justify-between items-center border-t border-gray-700/50 pt-6">
                         <button id="prevViewBtn" class="btn-theme-secondary text-sm">← Previous</button>
-                        <div class="view-step-indicator text-sm text-indigo-300">
-                            Step <span id="currentViewStep">1</span> of <span id="totalViewSteps">3</span>
-                        </div>
+                        <div class="view-step-indicator text-sm text-indigo-300">Step <span id="currentViewStep">1</span> of <span id="totalViewSteps">3</span></div>
                         <button id="nextViewBtn" class="btn-theme-primary text-sm">Next →</button>
                     </div>
                 </div> 
@@ -106,10 +112,7 @@
 
     <script>
     document.addEventListener('DOMContentLoaded', () => {
-
-        // --- CRUCIAL DATA CHANGE ---
-        // Your 3D models should represent a SINGLE TILE.
-        // We now provide both GLB for the interactive scene and USDZ for the iOS fallback.
+        // tiles data (same as your original)
         const tilesData = {
             polished: { 
                 id: "polished", title: "Polished Vitrified Tiles", main: "images/tiles1.jpg", 
@@ -137,6 +140,7 @@
             }
         };
 
+        // view controls
         const viewSteps = document.querySelectorAll(".tile-view-step");
         const prevViewBtn = document.getElementById("prevViewBtn");
         const nextViewBtn = document.getElementById("nextViewBtn");
@@ -146,7 +150,7 @@
         const galleryImageInteractiveArea = document.getElementById('gallery-image-interactive-area');
         let currentViewIndex = 0;
         const totalViews = viewSteps.length;
-        
+
         function showView(index) {
             if (index < 0 || index >= totalViews) return;
             viewSteps.forEach((step, i) => step.classList.toggle('hidden', i !== index));
@@ -156,39 +160,63 @@
             if (prevViewBtn) prevViewBtn.disabled = (index === 0);
             if (nextViewBtn) nextViewBtn.disabled = (index === totalViews - 1);
         }
-
         function nextView() { showView(currentViewIndex + 1); }
         function prevView() { showView(currentViewIndex - 1); }
 
+        // Populate details & thumbnails
         function populateTileDetails() {
             const urlParams = new URLSearchParams(window.location.search);
             const tileId = urlParams.get('id');
             const selectedTile = tilesData[tileId];
 
-            if (selectedTile) {
-                document.getElementById("detail-page-title").textContent = selectedTile.title;
-                document.getElementById("detail-image").src = selectedTile.main;
-                document.getElementById("specs-tile-thumbnail").src = selectedTile.main;
-                document.getElementById("detail-description").textContent = selectedTile.description;
-                document.getElementById("spec-title").textContent = selectedTile.title;
-                document.getElementById("spec-size").textContent = selectedTile.specifications.size;
-                document.getElementById("spec-material").textContent = selectedTile.specifications.material;
-                document.getElementById("spec-finish").textContent = selectedTile.specifications.finish;
-                document.getElementById("spec-price").textContent = selectedTile.specifications.price;
-                
-                document.getElementById("ar-tile-thumbnail").src = selectedTile.main;
-
-                const arLaunchButton = document.getElementById('ar-launch-button');
-                if (arLaunchButton) {
-                    // We now pass both models to the viewer page.
-                    const glbPath = encodeURIComponent(selectedTile.arModelGLB);
-                    const usdzPath = encodeURIComponent(selectedTile.arModelUSDZ);
-                    arLaunchButton.href = `ar-viewer.html?model=${glbPath}&iosmodel=${usdzPath}`;
-                }
-                
-            } else {
-                document.querySelector('.container').innerHTML = `<h2 class="text-3xl font-bold text-center text-red-400">Tile not found.</h2>`;
+            if (!selectedTile) {
+                const container = document.querySelector('.container');
+                if (container) container.innerHTML = `<h2 class="text-3xl font-bold text-center text-red-400">Tile not found.</h2>`;
+                return;
             }
+
+            const setText = (id, text) => { const el = document.getElementById(id); if (el) el.textContent = text; };
+            const setSrc = (id, src) => { const el = document.getElementById(id); if (el) el.src = src; };
+
+            setText("detail-page-title", selectedTile.title);
+            setSrc("detail-image", selectedTile.main);
+            setSrc("specs-tile-thumbnail", selectedTile.main);
+            setText("detail-description", selectedTile.description);
+            setText("spec-title", selectedTile.title);
+            setText("spec-size", selectedTile.specifications.size);
+            setText("spec-material", selectedTile.specifications.material);
+            setText("spec-finish", selectedTile.specifications.finish);
+            setText("spec-price", selectedTile.specifications.price);
+            setSrc("ar-tile-thumbnail", selectedTile.main);
+
+            const arLaunchButton = document.getElementById('ar-launch-button');
+            if (arLaunchButton) {
+                const glbPath = encodeURIComponent(selectedTile.arModelGLB || '');
+                const usdzPath = encodeURIComponent(selectedTile.arModelUSDZ || '');
+                arLaunchButton.href = `ar-viewer.html?model=${glbPath}&iosmodel=${usdzPath}`;
+            }
+
+            // populate thumbnails
+            const relatedList = document.getElementById('related-images-list');
+            if (relatedList) {
+                relatedList.innerHTML = '';
+                selectedTile.related.forEach((imgSrc, idx) => {
+                    const img = document.createElement('img');
+                    img.src = imgSrc;
+                    img.alt = `${selectedTile.title} thumbnail ${idx+1}`;
+                    img.className = 'thumbnail';
+                    img.addEventListener('click', () => {
+                        const main = document.getElementById('detail-image');
+                        if (main) main.src = imgSrc;
+                        document.querySelectorAll('#related-images-list img').forEach(i => i.classList.remove('thumbnail-active'));
+                        img.classList.add('thumbnail-active');
+                    });
+                    if (idx === 0) img.classList.add('thumbnail-active');
+                    relatedList.appendChild(img);
+                });
+            }
+
+            // show first view
             showView(0);
         }
 
@@ -196,6 +224,7 @@
         if (prevViewBtn) prevViewBtn.addEventListener('click', prevView);
         if (galleryImageInteractiveArea) galleryImageInteractiveArea.addEventListener('click', nextView);
 
+        // swipe support
         let touchstartX = 0;
         if (tileViewContainerEl) {
             tileViewContainerEl.addEventListener('touchstart', e => { touchstartX = e.changedTouches[0].screenX; }, { passive: true });
@@ -206,7 +235,82 @@
                 }
             });
         }
-        
+
+        // basic stars generator for background
+        function createStarsGlobal() {
+            const container = document.getElementById('stars-bg-global');
+            if (!container) return;
+            const numStars = Math.min(140, Math.floor(window.innerWidth / 18));
+            container.innerHTML = '';
+            for (let i = 0; i < numStars; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                const size = Math.random() * 2.5 + 0.5;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                star.style.animationDuration = `${Math.random() * 3 + 4}s`;
+                container.appendChild(star);
+            }
+        }
+        createStarsGlobal();
+        window.addEventListener('resize', createStarsGlobal);
+
+        // navbar toggle and cart count
+        (function navbarAndCart() {
+            const navbar = document.getElementById('main-navbar-detail');
+            const toggleBtn = document.getElementById('toggle-btn-detail');
+            let visible = false;
+            const setAria = (v) => toggleBtn && toggleBtn.setAttribute('aria-expanded', v);
+            function toggle() {
+                visible = !visible;
+                if (navbar) {
+                    navbar.classList.toggle('translate-x-0', visible);
+                    navbar.classList.toggle('-translate-x-full', !visible);
+                }
+                setAria(String(visible));
+            }
+            if (toggleBtn) toggleBtn.addEventListener('click', toggle);
+
+            document.addEventListener('click', (e) => {
+                if (visible && navbar && toggleBtn) {
+                    if (!navbar.contains(e.target) && e.target !== toggleBtn && !toggleBtn.contains(e.target)) {
+                        toggle();
+                    }
+                }
+            });
+            document.addEventListener('keydown', (ev) => { if (ev.key === 'Escape' && visible) toggle(); });
+
+            function updateCartCountDetail() {
+                const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+                const s = document.getElementById("cart-count-detail");
+                if (s) s.textContent = cart.length;
+            }
+            updateCartCountDetail();
+            window.addEventListener('storage', (ev) => { if (ev.key === 'cart') updateCartCountDetail(); });
+
+            // add-to-cart button behavior (basic)
+            const addBtn = document.getElementById('add-to-cart-btn');
+            if (addBtn) {
+                addBtn.addEventListener('click', () => {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const tileId = urlParams.get('id');
+                    if (!tileId) return;
+                    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+                    cart.push({ id: tileId, addedAt: Date.now() });
+                    localStorage.setItem('cart', JSON.stringify(cart));
+                    updateCartCountDetail();
+                    // show view cart link
+                    const viewCartLink = document.getElementById('view-cart-btn-specs');
+                    if (viewCartLink) viewCartLink.classList.remove('hidden');
+                    addBtn.textContent = 'Added ✓';
+                    setTimeout(() => { if (addBtn) addBtn.textContent = 'Add to Cart'; }, 1500);
+                });
+            }
+        })();
+
+        // finally populate tile details
         populateTileDetails();
     });
     </script>
