@@ -5,59 +5,52 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Your Cart - Sai Balaji Tiles</title>
 
-  <!-- Tailwind CDN (optional; your header.js and CSS are resilient) -->
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
   <style>
-    :root { --bg: #0d0320; --bg2: #1a094b; --accent: #22d3ee; --muted: #9ca3af; --card: rgba(31,41,55,0.6); }
-    html,body { height:100%; margin:0; font-family:'Poppins',sans-serif; background: linear-gradient(270deg,var(--bg),var(--bg2),#000, #8e2de2,#000); background-size:300% 300%; animation: gradientBG 18s linear infinite; color:#e6eef7; }
+    :root { --accent: #22d3ee; --card: rgba(17,24,39,0.65); }
+    html,body { height:100%; margin:0; font-family:'Poppins',sans-serif; background: linear-gradient(270deg,#0d0320,#1a094b,#000,#8e2de2,#000); background-size:300% 300%; animation: gradientBG 18s linear infinite; color:#e6eef7; }
     @keyframes gradientBG { 0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%} }
 
-    /* Stars container (header.js will populate it) */
-    .stars-container { position: fixed; inset: 0; pointer-events: none; z-index: -1; }
+    .stars-container { position: fixed; inset:0; pointer-events:none; z-index:-1; }
+    main { padding-top:5.25rem; max-width:1100px; margin:0 auto; }
 
-    /* Basic header spacing - header.js also adjusts main content padding where present */
-    main { padding-top: 5.25rem; }
+    .card { background: var(--card); border:1px solid rgba(148,163,184,0.06); border-radius:12px; padding:1rem; box-shadow: 0 10px 30px rgba(2,6,23,0.6); }
 
-    /* Card / List */
-    .card { background: rgba(17,24,39,0.6); border: 1px solid rgba(148,163,184,0.08); border-radius: 12px; box-shadow: 0 6px 22px rgba(2,6,23,0.6); }
-
-    /* Buttons */
-    .btn-primary { background: var(--accent); color:#071126; padding:0.6rem 1rem; border-radius:10px; font-weight:600; border:0; cursor:pointer; }
-    .btn-ghost { background: transparent; color: #c7d2fe; padding:0.45rem 0.8rem; border-radius:8px; border:1px solid rgba(255,255,255,0.04); cursor:pointer; }
-
-    /* quantity control */
-    .qty-input { width:56px; text-align:center; padding:6px 8px; border-radius:8px; background:#111827; color:#fff; border:1px solid rgba(148,163,184,0.08); }
-
-    /* cart-item layout */
     .cart-grid { display:flex; gap:1rem; align-items:center; justify-content:space-between; padding:0.75rem; border-radius:10px; background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00)); }
     .cart-thumb { width:84px; height:84px; object-fit:cover; border-radius:8px; border:2px solid rgba(148,163,184,0.06); }
 
-    /* modal */
+    .btn-primary { background: var(--accent); color:#071126; padding:0.6rem 1rem; border-radius:10px; font-weight:600; border:0; cursor:pointer; }
+    .btn-ghost { background: transparent; color: #c7d2fe; padding:0.45rem 0.8rem; border-radius:8px; border:1px solid rgba(255,255,255,0.04); cursor:pointer; }
+
+    .qty-input { width:56px; text-align:center; padding:6px 8px; border-radius:8px; background:#111827; color:#fff; border:1px solid rgba(148,163,184,0.08); }
+
     #checkout-modal { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background: rgba(0,0,0,0.6); backdrop-filter: blur(6px); z-index:60; padding:1rem; }
     .modal { width:100%; max-width:880px; border-radius:12px; overflow:hidden; background: linear-gradient(180deg, rgba(17,24,39,0.95), rgba(15,23,42,0.95)); border:1px solid rgba(148,163,184,0.06); }
     .modal-header, .modal-footer { padding:1rem 1.25rem; border-bottom:1px solid rgba(148,163,184,0.03); display:flex; align-items:center; justify-content:space-between; }
     .modal-body { padding:1rem 1.25rem; max-height:60vh; overflow:auto; }
+
+    /* Snackbar */
+    #site-snackbar { position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%) translateY(20px); background: rgba(15,23,42,0.96); color: #e6f9ff; padding: 0.6rem 1rem; border-radius: 10px; box-shadow: 0 10px 30px rgba(2,6,23,0.6); opacity: 0; pointer-events: none; transition: transform .25s ease, opacity .25s ease; z-index: 99999; display:flex; align-items:center; gap:0.6rem; }
+    #site-snackbar.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
+    #site-snackbar.success { background: rgba(2,113,103,0.95); color: #e6fff9; }
+    #site-snackbar.error { background: rgba(127,29,29,0.95); color: #fff3f3; }
+    #site-snackbar .snack-action { color: var(--accent); cursor:pointer; font-weight:600; }
+
     .hidden { display:none !important; }
 
-    /* badges & small */
-    .muted { color: var(--muted); }
-    .price { color: var(--accent); font-weight:700; }
-
-    /* responsive tweaks */
     @media (max-width:640px) {
       .cart-grid { flex-direction:column; align-items:flex-start; }
-      .cart-thumb { width:100%; height:160px; border-radius:8px; }
+      .cart-thumb { width:100%; height:160px; }
       main { padding-top:4.5rem; }
     }
   </style>
 </head>
 <body>
 
-  <!-- Stars container (populated by header.js) -->
   <div id="stars-bg-global" class="stars-container"></div>
 
-  <!-- Header (toggle button IDs match header.js) -->
   <header id="main-header" class="fixed top-0 left-0 w-full z-50 bg-gray-900/70 backdrop-blur-md border-b border-cyan-500/20 flex items-center justify-between p-3 sm:p-4">
     <div class="flex items-center gap-3">
       <button id="toggle-btn-cart" aria-controls="main-navbar-cart" aria-expanded="false" class="text-cyan-400 text-xl sm:text-2xl">☰</button>
@@ -69,8 +62,7 @@
     </div>
   </header>
 
-  <!-- Side nav (header.js expects main-navbar-cart) -->
-  <nav id="main-navbar-cart" class="navbar fixed top-0 left-0 w-64 sm:w-72 h-screen bg-gray-900/80 backdrop-blur-md shadow-lg transform -translate-x-full transition-transform duration-300 z-40 border-r border-cyan-500/30" role="navigation" aria-label="Main navigation">
+  <nav id="main-navbar-cart" class="navbar fixed top-0 left-0 w-64 sm:w-72 h-screen bg-gray-900/80 backdrop-blur-md shadow-lg transform -translate-x-full transition-transform duration-300 z-40 border-r border-cyan-500/30" role="navigation">
     <ul class="nav-menu mt-16 sm:mt-20 space-y-3 p-4">
       <li><a href="index.html#home" class="block py-2 text-indigo-300">Home</a></li>
       <li><a href="index.html#catalog" class="block py-2 text-indigo-300">Catalog</a></li>
@@ -80,12 +72,11 @@
     </ul>
   </nav>
 
-  <main class="max-w-5xl mx-auto px-4">
-    <section class="py-8">
+  <main>
+    <section class="py-8 max-w-5xl mx-auto px-4">
       <h1 class="text-2xl sm:text-3xl font-bold text-cyan-400 mb-4 text-center">Your Shopping Cart</h1>
 
       <div id="cart-wrapper" class="grid gap-6">
-        <!-- Cart list -->
         <div class="card p-4">
           <div id="cart-items-container" class="space-y-3"></div>
 
@@ -104,7 +95,6 @@
           </div>
         </div>
 
-        <!-- Order summary card -->
         <aside class="card p-4">
           <h3 class="font-semibold text-indigo-300 mb-3">Order Summary</h3>
           <div class="flex justify-between mb-2"><div class="muted">Items</div><div id="summary-items-count">0</div></div>
@@ -116,7 +106,7 @@
     </section>
   </main>
 
-  <!-- Checkout Modal (simple - similar flow to previous cart) -->
+  <!-- Checkout Modal -->
   <div id="checkout-modal" class="hidden" role="dialog" aria-modal="true" aria-labelledby="checkoutTitle">
     <div class="modal">
       <div class="modal-header">
@@ -127,37 +117,25 @@
         <div id="checkout-step-1" class="mb-4">
           <h3 class="font-semibold text-indigo-300 mb-2">Step 1 — Review</h3>
           <div id="modal-cart-items-summary" class="space-y-2 mb-2"></div>
-          <div class="flex justify-end">
-            <button id="to-step-2" class="btn-primary">Next →</button>
-          </div>
+          <div class="flex justify-end"><button id="next-to-step-2" class="btn-primary">Next →</button></div>
         </div>
 
         <div id="checkout-step-2" class="hidden mb-4">
           <h3 class="font-semibold text-indigo-300 mb-2">Step 2 — Your Details</h3>
           <form id="checkoutForm">
-            <div class="mb-2">
-              <label class="muted text-xs">Full name<span class="text-red-400"> *</span></label>
-              <input id="customerName" name="customerName" required class="w-full p-2 rounded-md bg-gray-100 text-gray-900" />
-            </div>
-            <div class="mb-2">
-              <label class="muted text-xs">Phone<span class="text-red-400"> *</span></label>
-              <input id="customerPhone" name="customerPhone" required class="w-full p-2 rounded-md bg-gray-100 text-gray-900" />
-            </div>
-            <div class="mb-2">
-              <label class="muted text-xs">Address<span class="text-red-400"> *</span></label>
-              <textarea id="customerAddress" name="customerAddress" rows="2" required class="w-full p-2 rounded-md bg-gray-100 text-gray-900"></textarea>
-            </div>
+            <div class="mb-2"><label class="muted text-xs">Full name <span class="text-red-400">*</span></label><input id="customerName" name="customerName" required class="w-full p-2 rounded-md bg-gray-100 text-gray-900" /></div>
+            <div class="mb-2"><label class="muted text-xs">Phone <span class="text-red-400">*</span></label><input id="customerPhone" name="customerPhone" required class="w-full p-2 rounded-md bg-gray-100 text-gray-900" /></div>
+            <div class="mb-2"><label class="muted text-xs">Address <span class="text-red-400">*</span></label><textarea id="customerAddress" name="customerAddress" rows="2" required class="w-full p-2 rounded-md bg-gray-100 text-gray-900"></textarea></div>
 
             <div class="flex justify-between mt-3">
               <button type="button" id="back-to-step-1" class="btn-ghost">← Back</button>
-              <button type="button" id="to-step-3" class="btn-primary">Next →</button>
+              <button type="button" id="next-to-step-3" class="btn-primary">Next →</button>
             </div>
           </form>
         </div>
 
         <div id="checkout-step-3" class="hidden">
           <h3 class="font-semibold text-indigo-300 mb-2">Step 3 — Upload Measurement Photo</h3>
-
           <p class="muted text-sm mb-2">Upload a photo/sketch with measurements (required).</p>
           <input type="hidden" role="uploadcare-uploader" id="measurementPhotoUploadcare" name="measurementPhotoURL" data-images-only="true" data-clearable="true" />
           <div id="uploadcareFeedback" class="muted text-xs mt-2 mb-4"></div>
@@ -176,36 +154,33 @@
     </div>
   </div>
 
-  <!-- Footer -->
+  <!-- Snackbar (shared) -->
+  <div id="site-snackbar" role="status" aria-live="polite">
+    <div id="site-snackbar-message">Message</div>
+    <div id="site-snackbar-action" class="snack-action hidden"></div>
+  </div>
+
   <footer class="py-6 text-center muted">© 2025 Sai Balaji Tiles Home. All Rights Reserved.</footer>
 
-  <!-- Uploadcare widget (replace the public key placeholder below) -->
+  <!-- Uploadcare widget (replace public key) -->
   <script src="https://ucarecdn.com/libs/widget/3.x/uploadcare.full.min.js" charset="utf-8"></script>
   <script>
-    // IMPORTANT: Replace this with your own Uploadcare public key
-    window.UPLOADCARE_PUBLIC_KEY = '301133731b1569c08cb1'; // <<--- REPLACE ME
+    window.UPLOADCARE_PUBLIC_KEY = '301133731b1569c08cb1'; // <<--- REPLACE WITH YOUR KEY
     window.UPLOADCARE_IMAGES_ONLY = true;
     window.UPLOADCARE_CLEARABLE = true;
   </script>
 
-  <!-- header.js (shared) -->
+  <!-- Shared header -->
   <script src="header.js"></script>
 
   <script>
   (function () {
     'use strict';
 
-    // A small product price lookup (in rupees numeric)
-    const priceLookup = {
-      polished: 85.0,
-      ceramic: 45.0,
-      glazed: 110.0
-    };
-
-    // Utility: format currency
+    // small price lookup
+    const priceLookup = { polished: 85.0, ceramic: 45.0, glazed: 110.0 };
     function fmt(v) { return '₹' + Number(v).toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 2 }); }
 
-    // DOM refs
     const itemsContainer = document.getElementById('cart-items-container');
     const emptyMsg = document.getElementById('cart-empty-message');
     const checkoutBtn = document.getElementById('checkout-btn');
@@ -218,22 +193,17 @@
     const modalStatus = document.getElementById('modal-status');
     const clearCartBtn = document.getElementById('clear-cart-btn');
 
-    // Load cart from localStorage and normalize (ensure quantity & price)
     function loadCart() {
       try {
         const raw = JSON.parse(localStorage.getItem('cart') || '[]');
         if (!Array.isArray(raw)) return [];
         return raw.map(it => {
-          // normalize structure: { id, name, image, quantity, price }
           const q = (it.quantity && Number(it.quantity) > 0) ? Number(it.quantity) : 1;
           let price = (it.price && !isNaN(Number(it.price))) ? Number(it.price) : null;
           if (!price && it.id && priceLookup[it.id]) price = priceLookup[it.id];
-          if (!price) {
-            // try to parse price from string like "₹85 / sq.ft." if provided
-            if (it.price && typeof it.price === 'string') {
-              const digits = it.price.replace(/[^\d.]/g, '');
-              if (digits) price = Number(digits);
-            }
+          if (!price && it.price && typeof it.price === 'string') {
+            const digits = it.price.replace(/[^\d.]/g, '');
+            if (digits) price = Number(digits);
           }
           price = price || 0;
           return { id: it.id || null, name: it.name || 'Unknown Tile', image: it.image || 'images/placeholder.jpg', quantity: q, price };
@@ -245,14 +215,11 @@
     }
 
     function saveCart(cart) {
-      localStorage.setItem('cart', JSON.stringify(cart.map(it => ({ id: it.id, name: it.name, image: it.image, quantity: it.quantity, price: it.price })) ));
-      // header.js listens for storage events in other tabs, but we also call its update method directly
+      localStorage.setItem('cart', JSON.stringify(cart.map(it => ({ id: it.id, name: it.name, image: it.image, quantity: it.quantity, price: it.price }))));
       if (window.headerShared && typeof window.headerShared.updateCartCount === 'function') window.headerShared.updateCartCount();
-      // also trigger UI update
       renderCart();
     }
 
-    // Render cart items
     function renderCart() {
       const cart = loadCart();
       itemsContainer.innerHTML = '';
@@ -275,7 +242,7 @@
         row.className = 'cart-grid';
         row.innerHTML = `
           <div style="display:flex;gap:1rem;align-items:center;flex:1">
-            <img class="cart-thumb" src="${item.image}" alt="${escapeHtml(item.name)}" loading="lazy">
+            <img class="cart-thumb" src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}" loading="lazy">
             <div style="min-width:0">
               <div class="font-semibold text-indigo-300">${escapeHtml(item.name)}</div>
               <div class="muted text-sm">Price: <span class="price">${fmt(item.price)}</span></div>
@@ -300,19 +267,15 @@
       attachItemListeners();
     }
 
-    // Update subtotal / summary
     function updateTotals() {
       const cart = loadCart();
-      let subtotal = 0;
-      let totalItems = 0;
+      let subtotal = 0; let totalItems = 0;
       cart.forEach(it => { subtotal += (it.price * it.quantity); totalItems += it.quantity; });
       subtotal = Math.round((subtotal + Number.EPSILON) * 100) / 100;
       subtotalEl.textContent = fmt(subtotal);
       summaryItemsCount.textContent = String(totalItems);
       summarySubtotal.textContent = fmt(subtotal);
-      // for now delivery is variable; we copy subtotal to total
       summaryTotal.textContent = fmt(subtotal);
-      // update line totals shown per row
       itemsContainer.querySelectorAll('[data-line-total]').forEach((el, i) => {
         const cartNow = loadCart();
         const v = (cartNow[i] && cartNow[i].price * cartNow[i].quantity) || 0;
@@ -320,36 +283,22 @@
       });
     }
 
-    // attach buttons and inputs listeners for each row
     function attachItemListeners() {
       itemsContainer.querySelectorAll('.qty-decr').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const i = Number(btn.getAttribute('data-idx'));
-          changeQty(i, -1);
-        });
+        btn.addEventListener('click', () => { const i = Number(btn.getAttribute('data-idx')); changeQty(i, -1); });
       });
       itemsContainer.querySelectorAll('.qty-incr').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const i = Number(btn.getAttribute('data-idx'));
-          changeQty(i, +1);
-        });
+        btn.addEventListener('click', () => { const i = Number(btn.getAttribute('data-idx')); changeQty(i, +1); });
       });
       itemsContainer.querySelectorAll('.qty-input').forEach(input => {
         input.addEventListener('change', () => {
-          let v = Number(input.value);
-          if (isNaN(v) || v < 1) v = 1;
-          const i = Number(input.getAttribute('data-idx'));
-          setQty(i, v);
+          let v = Number(input.value); if (isNaN(v) || v < 1) v = 1;
+          const i = Number(input.getAttribute('data-idx')); setQty(i, v);
         });
-        input.addEventListener('keydown', (ev) => {
-          if (ev.key === 'Enter') input.blur();
-        });
+        input.addEventListener('keydown', (ev) => { if (ev.key === 'Enter') input.blur(); });
       });
       itemsContainer.querySelectorAll('.remove-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const i = Number(btn.getAttribute('data-idx'));
-          removeFromCart(i);
-        });
+        btn.addEventListener('click', () => { const i = Number(btn.getAttribute('data-idx')); removeFromCart(i); });
       });
     }
 
@@ -359,7 +308,6 @@
       cart[idx].quantity = Math.max(1, Number(cart[idx].quantity) + delta);
       saveCart(cart);
     }
-
     function setQty(idx, value) {
       const cart = loadCart();
       if (!cart[idx]) return;
@@ -367,11 +315,29 @@
       saveCart(cart);
     }
 
-    function removeFromCart(idx) {
-      if (!confirm('Remove this item from the cart?')) return;
-      const cart = loadCart();
-      cart.splice(idx, 1);
-      saveCart(cart);
+    // snackbar
+    function showSnackbar(message, type = 'success') {
+      const snack = document.getElementById('site-snackbar');
+      const msg = document.getElementById('site-snackbar-message');
+      if (!snack || !msg) return;
+      msg.textContent = message;
+      snack.className = ''; // reset
+      if (type) snack.classList.add(type);
+      snack.classList.add('show');
+      clearTimeout(snack._hideTimer);
+      snack._hideTimer = setTimeout(() => { snack.classList.remove('show'); snack.classList.remove(type); }, 3200);
+    }
+
+    function removeFromCart(index) {
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+      const removedItem = cart[index] ? (cart[index].name || 'Item') : 'Item';
+      if (!confirm(`Remove "${removedItem}" from the cart?`)) return;
+      cart.splice(index, 1);
+      localStorage.setItem("cart", JSON.stringify(cart));
+      renderCart();
+      populateCartSummaryInModal();
+      showSnackbar(`${removedItem} removed from cart.`, 'success');
+      if (window.headerShared && typeof window.headerShared.updateCartCount === 'function') window.headerShared.updateCartCount();
     }
 
     function clearCart() {
@@ -379,89 +345,106 @@
       localStorage.removeItem('cart');
       if (window.headerShared && typeof window.headerShared.updateCartCount === 'function') window.headerShared.updateCartCount();
       renderCart();
+      if (checkoutModal && !checkoutModal.classList.contains('hidden')) populateCartSummaryInModal();
+      showSnackbar('Cart cleared.', 'success');
     }
 
-    // Modal / checkout flow handlers
-    function openModal() {
+    // modal and checkout flow (Uploadcare)
+    const checkoutModal = document.getElementById('checkout-modal');
+    const closeCheckoutModalBtn = document.getElementById('close-checkout-modal');
+    const checkoutForm = document.getElementById('checkoutForm');
+    const nextToStep2Btn = document.getElementById('next-to-step-2');
+    const backToStep1Btn = document.getElementById('back-to-step-1');
+    const nextToStep3Btn = document.getElementById('next-to-step-3');
+    const backToStep2Btn = document.getElementById('back-to-step-2');
+    const submitOrderBtn = document.getElementById('submitOrderBtn');
+
+    const steps = ['checkout-step-1','checkout-step-2','checkout-step-3'];
+    let currentStep = 0;
+    function showStep(i) { steps.forEach((id, idx) => { const el = document.getElementById(id); if (el) el.classList.toggle('hidden', idx !== i); }); currentStep = i; }
+
+    function populateCartSummaryInModal() {
       const cart = loadCart();
-      if (cart.length === 0) {
-        alert('Your cart is empty.');
+      modalSummary.innerHTML = '';
+      const nextBtn = document.getElementById('next-to-step-2');
+      if (!cart.length) {
+        modalSummary.innerHTML = '<p class="text-gray-400 p-2">Your cart is empty.</p>';
+        if (nextBtn) nextBtn.disabled = true;
         return;
       }
-      // populate modal summary
-      modalSummary.innerHTML = '';
-      cart.forEach(it => {
-        const d = document.createElement('div');
-        d.className = 'flex items-center gap-3 p-2 bg-gray-800/40 rounded';
-        d.innerHTML = `<img src="${it.image}" alt="${escapeHtml(it.name)}" style="width:48px;height:48px;object-fit:cover;border-radius:6px"><div class="flex-1"><div class="font-semibold text-sm">${escapeHtml(it.name)}</div><div class="muted text-xs">${it.quantity} × ${fmt(it.price)}</div></div><div class="price">${fmt(it.quantity * it.price)}</div>`;
-        modalSummary.appendChild(d);
+      if (nextBtn) nextBtn.disabled = false;
+      cart.forEach(item => {
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'flex items-center justify-between text-sm p-2 bg-gray-700/50 rounded gap-3';
+        itemDiv.innerHTML = `<img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}" class="w-10 h-10 sm:w-12 sm:h-12 object-cover rounded-md border border-gray-600"><span class="flex-grow text-gray-300 text-left truncate">${escapeHtml(item.name)}</span>`;
+        modalSummary.appendChild(itemDiv);
       });
+    }
+
+    function openCheckoutModal() {
+      const cart = loadCart();
+      if (!cart.length) { showSnackbar('Your cart is empty. Add items before checkout.', 'error'); return; }
+      populateCartSummaryInModal();
+      showStep(0);
+      const widgetInput = document.getElementById('measurementPhotoUploadcare');
+      if (widgetInput && widgetInput.value) {
+        try { const widget = uploadcare.Widget(widgetInput); widget.value(null); } catch (e) {}
+      }
+      checkoutModal.classList.remove('hidden');
       modalStatus.textContent = '';
-      showModalStep(1);
-      modal.classList.remove('hidden');
-    }
-    function closeModal() { modal.classList.add('hidden'); }
-
-    // show specific step in modal (1,2,3)
-    function showModalStep(stepNo) {
-      const s1 = document.getElementById('checkout-step-1');
-      const s2 = document.getElementById('checkout-step-2');
-      const s3 = document.getElementById('checkout-step-3');
-      [s1,s2,s3].forEach(s => s && s.classList.add('hidden'));
-      if (stepNo === 1) s1 && s1.classList.remove('hidden');
-      if (stepNo === 2) s2 && s2.classList.remove('hidden');
-      if (stepNo === 3) s3 && s3.classList.remove('hidden');
     }
 
-    // INITIALIZE UPLOADCARE WIDGET
+    function closeCheckoutModal() {
+      checkoutModal.classList.add('hidden');
+      if (checkoutForm) checkoutForm.reset();
+      const widgetInput = document.getElementById('measurementPhotoUploadcare');
+      if (widgetInput && widgetInput.value) {
+        try { const widget = uploadcare.Widget(widgetInput); widget.value(null); } catch(e) {}
+      }
+    }
+
+    document.getElementById('checkout-btn').addEventListener('click', openCheckoutModal);
+    if (closeCheckoutModalBtn) closeCheckoutModalBtn.addEventListener('click', closeCheckoutModal);
+    if (nextToStep2Btn) nextToStep2Btn.addEventListener('click', () => showStep(1));
+    if (backToStep1Btn) backToStep1Btn.addEventListener('click', () => showStep(0));
+    if (nextToStep3Btn) {
+      nextToStep3Btn.addEventListener('click', () => {
+        const name = document.getElementById('customerName'), phone = document.getElementById('customerPhone'), addr = document.getElementById('customerAddress');
+        if (!name.value || !phone.value || !addr.value) { modalStatus.textContent = 'Please fill in required details.'; modalStatus.classList.add('text-red-400'); return; }
+        modalStatus.textContent = ''; showStep(2);
+      });
+    }
+    if (backToStep2Btn) backToStep2Btn.addEventListener('click', () => showStep(1));
+    clearCartBtn.addEventListener('click', clearCart);
+
+    // Uploadcare init
     const uploadcareInput = document.getElementById('measurementPhotoUploadcare');
     let uploadcareWidget = null;
-    if (uploadcare && uploadcare.Widget) {
+    if (window.uploadcare && uploadcare.Widget && uploadcareInput) {
       try {
         uploadcareWidget = uploadcare.Widget(uploadcareInput);
         uploadcareWidget.onChange(file => {
           const fb = document.getElementById('uploadcareFeedback');
-          if (!file) {
-            if (fb) { fb.textContent = 'No file selected.'; fb.classList.remove('text-green-400'); fb.classList.add('muted'); }
-            return;
-          }
+          if (!file) { if (fb) { fb.textContent = 'No file selected.'; fb.classList.remove('text-green-400'); fb.classList.add('muted'); } return; }
           if (fb) fb.textContent = 'Uploading...';
-          file.done(info => {
-            if (fb) { fb.textContent = `Uploaded: ${info.name || info.uuid}`; fb.classList.remove('muted'); fb.classList.add('text-green-400'); }
-            // set hidden value is handled by widget - it stores uuid in the input value
-          }, err => {
-            if (fb) { fb.textContent = 'Upload failed.'; fb.classList.add('text-red-400'); }
-          });
+          file.done(info => { if (fb) { fb.textContent = `Uploaded: ${info.name || info.uuid}`; fb.classList.remove('muted'); fb.classList.add('text-green-400'); }}, err => { if (fb) { fb.textContent = 'Upload failed.'; fb.classList.add('text-red-400'); }});
         });
-      } catch (e) {
-        console.warn('Uploadcare init failed', e);
-      }
+      } catch(e) { console.warn('uploadcare init failed', e); }
     }
 
-    // Submit final order -> Formspree (or any endpoint)
-    const ORDER_FORMSPREE_ENDPOINT = 'https://formspree.io/f/movwvnvq'; // <<--- REPLACE WITH YOUR FORMSPREE ID
-    const submitBtn = document.getElementById('submitOrderBtn');
-    if (submitBtn) {
-      submitBtn.addEventListener('click', async (ev) => {
-        ev.preventDefault();
-        // simple validation: ensure uploadcare has value
-        const uploaded = (uploadcareWidget && uploadcareWidget.value()) || (uploadcareInput && uploadcareInput.value);
-        if (!uploaded) {
-          modalStatus.textContent = 'Please upload a measurement photo.';
-          modalStatus.classList.add('text-red-400');
-          return;
-        }
+    const ORDER_FORMSPREE_ENDPOINT = 'https://formspree.io/f/movwvnvq'; // <<--- REPLACE
 
-        // gather data
+    if (submitOrderBtn) {
+      submitOrderBtn.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        const uploaded = (uploadcareWidget && uploadcareWidget.value()) || (uploadcareInput && uploadcareInput.value);
+        if (!uploaded) { modalStatus.textContent = 'Please upload a measurement photo.'; modalStatus.classList.add('text-red-400'); return; }
+
         const cart = loadCart();
         const name = document.getElementById('customerName').value || '';
         const phone = document.getElementById('customerPhone').value || '';
         const address = document.getElementById('customerAddress').value || '';
-        if (!name || !phone || !address) {
-          modalStatus.textContent = 'Please fill in your details in Step 2.';
-          modalStatus.classList.add('text-red-400');
-          return;
-        }
+        if (!name || !phone || !address) { modalStatus.textContent = 'Please fill in your details.'; modalStatus.classList.add('text-red-400'); return; }
 
         const formPayload = new FormData();
         formPayload.append('name', name);
@@ -470,89 +453,47 @@
         formPayload.append('measurementPhotoURL', uploaded);
         formPayload.append('cartItemsData', JSON.stringify(cart.map(i => ({ id:i.id, name:i.name, qty:i.quantity, price:i.price }))));
 
-        // UI feedback
-        const txt = submitBtn.querySelector('.btn-text');
-        const loader = submitBtn.querySelector('.btn-loader');
-        if (txt) txt.classList.add('hidden');
-        if (loader) loader.classList.remove('hidden');
-        submitBtn.disabled = true;
-        modalStatus.textContent = 'Submitting...';
-        modalStatus.classList.remove('text-red-400', 'text-green-400');
+        const txt = submitOrderBtn.querySelector('.btn-text');
+        const loader = submitOrderBtn.querySelector('.btn-loader');
+        if (txt) txt.classList.add('hidden'); if (loader) loader.classList.remove('hidden');
+        submitOrderBtn.disabled = true; modalStatus.textContent = 'Submitting...'; modalStatus.classList.remove('text-red-400','text-green-400');
 
         try {
           const res = await fetch(ORDER_FORMSPREE_ENDPOINT, { method:'POST', body: formPayload, headers:{ 'Accept':'application/json' } });
           if (res.ok) {
-            modalStatus.textContent = 'Order submitted. We will contact you shortly!';
-            modalStatus.classList.remove('text-red-400');
-            modalStatus.classList.add('text-green-400');
-            // clear cart
+            modalStatus.textContent = 'Order inquiry submitted successfully! We will contact you soon.'; modalStatus.classList.add('text-green-400');
             localStorage.removeItem('cart');
             if (window.headerShared && typeof window.headerShared.updateCartCount === 'function') window.headerShared.updateCartCount();
             renderCart();
-            setTimeout(closeModal, 2500);
+            showSnackbar('Order submitted. We will contact you shortly.', 'success');
+            setTimeout(closeCheckoutModal, 2200);
           } else {
             const data = await res.json().catch(()=>null);
-            modalStatus.textContent = (data && data.error) ? data.error : 'Submission failed.';
-            modalStatus.classList.add('text-red-400');
+            modalStatus.textContent = (data && data.error) ? data.error : 'Submission failed.'; modalStatus.classList.add('text-red-400');
+            showSnackbar('Submission failed. Try again.', 'error');
           }
         } catch (err) {
           console.error(err);
-          modalStatus.textContent = 'Network error. Please try again.';
-          modalStatus.classList.add('text-red-400');
+          modalStatus.textContent = 'Network error. Please try again.'; modalStatus.classList.add('text-red-400');
+          showSnackbar('Network error. Please try again.', 'error');
         } finally {
-          if (txt) txt.classList.remove('hidden');
-          if (loader) loader.classList.add('hidden');
-          submitBtn.disabled = false;
+          if (txt) txt.classList.remove('hidden'); if (loader) loader.classList.add('hidden');
+          submitOrderBtn.disabled = false;
         }
       });
     }
 
-    // Buttons: top-level actions
-    document.getElementById('checkout-btn').addEventListener('click', openModal);
-    document.getElementById('close-checkout-modal').addEventListener('click', closeModal);
-    document.getElementById('to-step-2').addEventListener('click', () => showModalStep(2));
-    document.getElementById('back-to-step-1').addEventListener('click', () => showModalStep(1));
-    document.getElementById('to-step-3').addEventListener('click', () => {
-      // validate step 2 fields
-      const name = document.getElementById('customerName');
-      const phone = document.getElementById('customerPhone');
-      const addr = document.getElementById('customerAddress');
-      if (!name.value || !phone.value || !addr.value) {
-        modalStatus.textContent = 'Please fill in required details.';
-        modalStatus.classList.add('text-red-400');
-        return;
-      }
-      modalStatus.textContent = '';
-      showModalStep(3);
-    });
-    document.getElementById('back-to-step-2').addEventListener('click', () => showModalStep(2));
-    clearCartBtn.addEventListener('click', clearCart);
-
-    // helper: escape HTML for small places
+    // helpers
     function escapeHtml(str) { return String(str).replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s])); }
 
-    // initial render & storage listener
+    // initial render & listeners
     function init() {
       renderCart();
-      // ensure headerShared count is updated
       if (window.headerShared && typeof window.headerShared.updateCartCount === 'function') window.headerShared.updateCartCount();
-
-      // respond to localStorage change (other tabs)
-      window.addEventListener('storage', (ev) => {
-        if (ev.key === 'cart') renderCart();
-      });
-
-      // keyboard escape to close modal
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && !modal.classList.contains('hidden')) closeModal();
-      });
-
-      // click outside modal content closes
-      document.getElementById('checkout-modal')?.addEventListener('click', (ev) => {
-        if (ev.target === document.getElementById('checkout-modal')) closeModal();
-      });
+      window.addEventListener('storage', (ev) => { if (ev.key === 'cart') renderCart(); });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !checkoutModal.classList.contains('hidden')) closeCheckoutModal(); });
+      document.getElementById('checkout-modal')?.addEventListener('click', (ev) => { if (ev.target === document.getElementById('checkout-modal')) closeCheckoutModal(); });
     }
-
     init();
   })();
   </script>
