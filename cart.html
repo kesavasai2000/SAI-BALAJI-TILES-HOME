@@ -1,641 +1,560 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Cart - Tiles Shop</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Your Cart - Sai Balaji Tiles</title>
 
-    <script src="https://ucarecdn.com/libs/widget/3.x/uploadcare.full.min.js" charset="utf-8"></script>
-    <script>
-        UPLOADCARE_PUBLIC_KEY = '301133731b1569c08cb1'; // !!! REPLACE WITH YOUR UPLOADCARE KEY !!!
-        UPLOADCARE_IMAGES_ONLY = true; 
-        UPLOADCARE_CLEARABLE = true; 
-    </script>
+  <!-- Tailwind CDN (optional; your header.js and CSS are resilient) -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root { --bg: #0d0320; --bg2: #1a094b; --accent: #22d3ee; --muted: #9ca3af; --card: rgba(31,41,55,0.6); }
+    html,body { height:100%; margin:0; font-family:'Poppins',sans-serif; background: linear-gradient(270deg,var(--bg),var(--bg2),#000, #8e2de2,#000); background-size:300% 300%; animation: gradientBG 18s linear infinite; color:#e6eef7; }
+    @keyframes gradientBG { 0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%} }
 
-    <style>
-        body {
-            background: linear-gradient(270deg, #0d0320, #1a094b, #000000, #8e2de2, #000000);
-            background-size: 300% 300%;
-            animation: gradientBG 20s ease infinite;
-            padding-top: 5rem; 
-        }
-        @media (min-width: 640px) { body { padding-top: 5.5rem; } }
+    /* Stars container (header.js will populate it) */
+    .stars-container { position: fixed; inset: 0; pointer-events: none; z-index: -1; }
 
-        @keyframes gradientBG { /* ... */ }
-        .stars-container { /* ... */ }
-        .star { /* ... */ }
-        @keyframes twinkle { /* ... */ }
-        .navbar.translate-x-0 { /* ... */ }
-        .navbar.-translate-x-full { /* ... */ }
-        #checkout-modal.opacity-0 { /* ... */ }
-        #checkout-modal:not(.opacity-0) { /* ... */ } 
-        #checkout-modal .modal-inner-content.scale-95 { /* ... */ }
-        #checkout-modal:not(.opacity-0) .modal-inner-content { /* ... */ }
-        .stepper .step.active .step-circle { /* ... */ }
-        .stepper .step.active { /* ... */ }
-        .stepper .step-line { /* ... */ }
-        .stepper .step.completed .step-circle { /* ... */ }
-        .modal-scrollable-content {
-            max-height: calc(90vh - 10rem); 
-            overflow-y: auto;
-        }
-        @media (max-width: 639px) { 
-            .modal-scrollable-content { max-height: calc(85vh - 7rem); }
-            #checkout-modal .p-4 { padding: 0.75rem; } 
-            #checkout-modal .sm\:p-6 { padding: 1rem; }
-            #checkout-modal .text-lg { font-size: 1rem; line-height: 1.5rem; } 
-            #checkout-modal .text-xs { font-size: 0.7rem; line-height: 1rem; }
-            #checkout-modal .mb-3 { margin-bottom: 0.5rem; }
-            #checkout-modal .mb-4 { margin-bottom: 0.75rem; }
-        }
-        .uploadcare--widget__button_type_open {
-            background-color: #6366f1 !important; 
-            color: white !important;
-            border-radius: 0.375rem !important; 
-            padding: 0.5rem 1rem !important;
-            font-weight: 600 !important;
-        }
-        .uploadcare--widget__button_type_open:hover {
-            background-color: #4f46e5 !important; 
-        }
-        .uploadcare--progress {
-            background-color: #4f46e5 !important; 
-        }
-    </style>
+    /* Basic header spacing - header.js also adjusts main content padding where present */
+    main { padding-top: 5.25rem; }
+
+    /* Card / List */
+    .card { background: rgba(17,24,39,0.6); border: 1px solid rgba(148,163,184,0.08); border-radius: 12px; box-shadow: 0 6px 22px rgba(2,6,23,0.6); }
+
+    /* Buttons */
+    .btn-primary { background: var(--accent); color:#071126; padding:0.6rem 1rem; border-radius:10px; font-weight:600; border:0; cursor:pointer; }
+    .btn-ghost { background: transparent; color: #c7d2fe; padding:0.45rem 0.8rem; border-radius:8px; border:1px solid rgba(255,255,255,0.04); cursor:pointer; }
+
+    /* quantity control */
+    .qty-input { width:56px; text-align:center; padding:6px 8px; border-radius:8px; background:#111827; color:#fff; border:1px solid rgba(148,163,184,0.08); }
+
+    /* cart-item layout */
+    .cart-grid { display:flex; gap:1rem; align-items:center; justify-content:space-between; padding:0.75rem; border-radius:10px; background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00)); }
+    .cart-thumb { width:84px; height:84px; object-fit:cover; border-radius:8px; border:2px solid rgba(148,163,184,0.06); }
+
+    /* modal */
+    #checkout-modal { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background: rgba(0,0,0,0.6); backdrop-filter: blur(6px); z-index:60; padding:1rem; }
+    .modal { width:100%; max-width:880px; border-radius:12px; overflow:hidden; background: linear-gradient(180deg, rgba(17,24,39,0.95), rgba(15,23,42,0.95)); border:1px solid rgba(148,163,184,0.06); }
+    .modal-header, .modal-footer { padding:1rem 1.25rem; border-bottom:1px solid rgba(148,163,184,0.03); display:flex; align-items:center; justify-content:space-between; }
+    .modal-body { padding:1rem 1.25rem; max-height:60vh; overflow:auto; }
+    .hidden { display:none !important; }
+
+    /* badges & small */
+    .muted { color: var(--muted); }
+    .price { color: var(--accent); font-weight:700; }
+
+    /* responsive tweaks */
+    @media (max-width:640px) {
+      .cart-grid { flex-direction:column; align-items:flex-start; }
+      .cart-thumb { width:100%; height:160px; border-radius:8px; }
+      main { padding-top:4.5rem; }
+    }
+  </style>
 </head>
-<body class="text-gray-200 font-poppins">
+<body>
 
-    <div class="stars-container fixed inset-0 z-[-1] pointer-events-none" id="stars-bg-global"></div>
-    
-    <header id="main-header" class="fixed w-full top-0 left-0 bg-gray-900/80 backdrop-blur-md shadow-2xl flex items-center justify-between p-3 sm:p-4 z-40 border-b border-cyan-500/30">
-        <div class="flex-none">
-            <button id="toggle-btn-cart" aria-label="Toggle menu" aria-expanded="false" aria-controls="main-navbar-cart" class="text-xl sm:text-2xl text-cyan-400 hover:text-cyan-300 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-cyan-300 rounded">☰</button>
-        </div>
-        <div class="flex-grow text-center px-2">
-            <a href="index.html" class="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-cyan-400 truncate hover:text-cyan-300">SAI BALAJI TILES HOME</a>
-        </div>
-        <div class="flex-none w-6 sm:w-8 h-6 sm:h-8"></div>
-    </header>
+  <!-- Stars container (populated by header.js) -->
+  <div id="stars-bg-global" class="stars-container"></div>
 
-    <nav id="main-navbar-cart" class="navbar fixed top-0 left-0 w-64 sm:w-72 h-screen bg-gray-900/80 backdrop-blur-md shadow-lg transform -translate-x-full transition-transform duration-300 z-30 border-r border-cyan-500/30" role="navigation" aria-label="Main navigation">
-        <ul class="nav-menu mt-16 sm:mt-20 space-y-3 sm:space-y-4 p-4"> 
-            <li><a href="index.html#home" class="block py-2 px-2 text-indigo-300 hover:text-indigo-200 hover:bg-gray-800/60 rounded transition-colors duration-300 text-sm sm:text-base">Home</a></li>
-            <li><a href="index.html#catalog" class="block py-2 px-2 text-indigo-300 hover:text-indigo-200 hover:bg-gray-800/60 rounded transition-colors duration-300 text-sm sm:text-base">Catalog</a></li>
-            <li><a href="index.html#about" class="block py-2 px-2 text-indigo-300 hover:text-indigo-200 hover:bg-gray-800/60 rounded transition-colors duration-300 text-sm sm:text-base">About Us</a></li>
-            <li><a href="index.html#collections" class="block py-2 px-2 text-indigo-300 hover:text-indigo-200 hover:bg-gray-800/60 rounded transition-colors duration-300 text-sm sm:text-base">Collections</a></li>
-            <li><a href="index.html#contact" class="block py-2 px-2 text-indigo-300 hover:text-indigo-200 hover:bg-gray-800/60 rounded transition-colors duration-300 text-sm sm:text-base">Contact</a></li>
-            <li><a href="cart.html" class="block py-2 px-2 text-indigo-300 hover:text-indigo-200 hover:bg-gray-800/60 rounded transition-colors duration-300 text-sm sm:text-base">Cart (<span id="cart-count-cart">0</span>)</a></li>
-        </ul>
-    </nav>
-
-    <main>
-        <section class="cart py-12 sm:py-16 bg-transparent min-h-[calc(100vh-5rem)] sm:min-h-[calc(100vh-5.5rem)]">
-            <div class="container mx-auto px-4 text-center">
-                <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-8 text-cyan-400">Your Shopping Cart</h2>
-                <div id="cart-items-container" class="space-y-4 sm:space-y-6 mb-8 sm:mb-10 max-w-xl md:max-w-2xl mx-auto"></div>
-                <div id="cart-empty-message" class="hidden text-lg sm:text-xl text-indigo-300 mb-8">
-                    Your cart is currently empty. <a href="index.html#catalog" class="font-semibold hover:text-cyan-400 underline">Browse our catalog!</a>
-                </div>
-                <button id="checkout-btn" 
-                    class="bg-indigo-500 text-white px-6 py-3 sm:px-8 rounded-lg shadow-lg text-base sm:text-lg font-semibold w-full sm:w-auto transition-all duration-300 ease-in-out transform hover:bg-indigo-600 hover:shadow-xl hover:-translate-y-1 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-indigo-300 focus:ring-opacity-75 active:bg-indigo-700 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
-                    <span class="button-text">Proceed to Checkout</span>
-                </button>
-                <div id="checkout-status" class="mt-4 text-sm sm:text-base"></div>
-            </div>
-        </section>
-    </main>
-
-    <footer class="bg-gray-900 text-gray-400 text-center py-6 border-t border-cyan-500/30">
-        <p class="text-sm sm:text-base">© 2025 Sai Balaji Tiles Home. All Rights Reserved.</p>
-    </footer>
-
-    <div id="checkout-modal" class="fixed inset-0 bg-black bg-opacity-80 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 z-50 hidden opacity-0 transition-opacity duration-300 ease-in-out" role="dialog" aria-modal="true" aria-labelledby="checkout-modal-title">
-        <div class="modal-inner-content bg-gray-800 w-full max-w-2xl rounded-xl shadow-2xl transform scale-95 transition-transform duration-300 ease-in-out flex flex-col max-h-[95vh] sm:max-h-[90vh]">
-            <div class="p-4 sm:p-6 border-b border-gray-700">
-                 <div class="flex justify-between items-center">
-                    <h2 id="checkout-modal-title" class="text-xl sm:text-2xl md:text-3xl font-bold text-cyan-400">Checkout</h2>
-                    <button id="close-checkout-modal-btn" aria-label="Close checkout" class="text-gray-400 hover:text-gray-200 text-2xl sm:text-3xl">×</button>
-                </div>
-            </div>
-
-            <div class="modal-scrollable-content p-4 sm:p-6 flex-grow"> 
-                <div class="stepper flex justify-between mb-6 sm:mb-8 text-xs sm:text-sm">
-                    <div id="step-1-indicator" class="step active flex-1 text-center">
-                        <span class="step-circle bg-indigo-500 text-white rounded-full w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center mx-auto mb-1">1</span>
-                        Review
-                    </div>
-                    <div class="step-line flex-1 border-t-2 border-gray-600 mt-3 sm:mt-3.5"></div>
-                    <div id="step-2-indicator" class="step flex-1 text-center text-gray-500">
-                        <span class="step-circle bg-gray-600 text-gray-300 rounded-full w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center mx-auto mb-1">2</span>
-                        Details
-                    </div>
-                    <div class="step-line flex-1 border-t-2 border-gray-600 mt-3 sm:mt-3.5"></div>
-                    <div id="step-3-indicator" class="step flex-1 text-center text-gray-500">
-                        <span class="step-circle bg-gray-600 text-gray-300 rounded-full w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center mx-auto mb-1">3</span>
-                        Photo
-                    </div>
-                </div>
-
-                <form id="checkoutForm">
-                    <div id="checkout-step-1" class="checkout-step">
-                        <h3 class="text-lg sm:text-xl font-semibold text-indigo-300 mb-3 sm:mb-4">Step 1: Review Your Cart</h3>
-                        <div id="modal-cart-items-summary" class="space-y-2 sm:space-y-3 mb-4 sm:mb-6 max-h-48 sm:max-h-60 overflow-y-auto p-1 border border-gray-700 rounded-md">
-                        </div>
-                        <div class="text-right mt-4">
-                            <button type="button" id="next-to-step-2" class="bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2 px-4 sm:px-6 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105 text-sm sm:text-base">Next →</button>
-                        </div>
-                    </div>
-
-                    <div id="checkout-step-2" class="checkout-step hidden">
-                        <h3 class="text-lg sm:text-xl font-semibold text-indigo-300 mb-3 sm:mb-4">Step 2: Your Details</h3>
-                        <div class="space-y-3 sm:space-y-4">
-                            <div>
-                                <label for="customerName" class="block text-xs sm:text-sm font-medium text-gray-300 mb-1">Full Name <span class="text-red-500">*</span></label>
-                                <input type="text" id="customerName" name="customerName" required class="w-full p-2 sm:p-2.5 bg-gray-100 border border-gray-300 rounded-md text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 outline-none text-sm sm:text-base">
-                            </div>
-                            <div>
-                                <label for="customerPhone" class="block text-xs sm:text-sm font-medium text-gray-300 mb-1">Phone Number <span class="text-red-500">*</span></label>
-                                <input type="tel" id="customerPhone" name="customerPhone" required class="w-full p-2 sm:p-2.5 bg-gray-100 border border-gray-300 rounded-md text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 outline-none text-sm sm:text-base">
-                            </div>
-                            <div>
-                                <label for="customerAddress" class="block text-xs sm:text-sm font-medium text-gray-300 mb-1">Delivery Address <span class="text-red-500">*</span></label>
-                                <textarea id="customerAddress" name="customerAddress" rows="2" sm:rows="3" required class="w-full p-2 sm:p-2.5 bg-gray-100 border border-gray-300 rounded-md text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 outline-none resize-none text-sm sm:text-base"></textarea>
-                            </div>
-                            <div>
-                                <label for="customerMessage" class="block text-xs sm:text-sm font-medium text-gray-300 mb-1">Additional Message</label>
-                                <textarea id="customerMessage" name="customerMessage" rows="2" sm:rows="3" class="w-full p-2 sm:p-2.5 bg-gray-100 border border-gray-300 rounded-md text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 outline-none resize-none text-sm sm:text-base"></textarea>
-                            </div>
-                        </div>
-                        <div class="flex justify-between mt-6 sm:mt-8">
-                             <button type="button" id="back-to-step-1" class="bg-gray-600 hover:bg-gray-500 text-white font-semibold py-2 px-4 sm:px-6 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105 text-sm sm:text-base">← Back</button>
-                            <button type="button" id="next-to-step-3" class="bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2 px-4 sm:px-6 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105 text-sm sm:text-base">Next →</button>
-                        </div>
-                    </div>
-
-                    <div id="checkout-step-3" class="checkout-step hidden">
-                        <h3 class="text-lg sm:text-xl font-semibold text-indigo-300 mb-3 sm:mb-4">Step 3: Measurement Photo</h3>
-                        <p class="text-gray-400 text-xs sm:text-sm mb-3 sm:mb-4">
-                            Upload a photo/sketch of your space with measurements.
-                        </p>
-                        <div>
-                            <label for="measurementPhotoUploadcare" class="block text-xs sm:text-sm font-medium text-gray-300 mb-2">Upload Photo</label>
-                            <input 
-                                type="hidden" 
-                                role="uploadcare-uploader" 
-                                id="measurementPhotoUploadcare" 
-                                name="measurementPhotoURL"
-                                data-images-only="true"
-                                data-clearable="true"
-                            />
-                            <div id="uploadcareFeedback" class="text-xs text-gray-500 mt-2"></div>
-                        </div>
-
-                        <input type="hidden" name="cartItemsData" id="cartItemsDataField">
-                        <div class="flex justify-between mt-6 sm:mt-8">
-                            <button type="button" id="back-to-step-2" class="bg-gray-600 hover:bg-gray-500 text-white font-semibold py-2 px-4 sm:px-6 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105 text-sm sm:text-base">← Back</button>
-                            <button type="submit" id="submitOrderBtn" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 sm:px-6 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105 text-sm sm:text-base">
-                                <span class="button-text">Submit Inquiry</span>
-                                <span class="button-loader hidden">Submitting...</span>
-                            </button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="p-4 sm:p-6 border-t border-gray-700">
-                <div id="modal-form-status" class="text-center text-xs sm:text-sm min-h-[1.2em]"></div>
-            </div>
-        </div>
+  <!-- Header (toggle button IDs match header.js) -->
+  <header id="main-header" class="fixed top-0 left-0 w-full z-50 bg-gray-900/70 backdrop-blur-md border-b border-cyan-500/20 flex items-center justify-between p-3 sm:p-4">
+    <div class="flex items-center gap-3">
+      <button id="toggle-btn-cart" aria-controls="main-navbar-cart" aria-expanded="false" class="text-cyan-400 text-xl sm:text-2xl">☰</button>
+      <a href="index.html" class="font-bold text-cyan-400 text-lg sm:text-xl">SAI BALAJI TILES</a>
     </div>
+    <div class="hidden sm:block muted">Cart</div>
+    <div class="flex items-center gap-3">
+      <a href="index.html" class="muted hover:text-cyan-200">Continue shopping</a>
+    </div>
+  </header>
 
-    <script>
-        function createStarsGlobal() {
-            const container = document.getElementById('stars-bg-global');
-            if (!container) return;
-            container.innerHTML = ''; 
-            const numStars = Math.floor(window.innerWidth / 25);
-            for (let i = 0; i < numStars; i++) {
-                const star = document.createElement('div');
-                star.classList.add('star');
-                const size = Math.random() * 2.5 + 0.5;
-                star.style.width = `${size}px`;
-                star.style.height = `${size}px`;
-                star.style.left = `${Math.random() * 100}%`;
-                star.style.top = `${Math.random() * 100}%`;
-                star.style.animationDuration = `${Math.random() * 3 + 4}s`;
-                container.appendChild(star);
-            }
-        }
+  <!-- Side nav (header.js expects main-navbar-cart) -->
+  <nav id="main-navbar-cart" class="navbar fixed top-0 left-0 w-64 sm:w-72 h-screen bg-gray-900/80 backdrop-blur-md shadow-lg transform -translate-x-full transition-transform duration-300 z-40 border-r border-cyan-500/30" role="navigation" aria-label="Main navigation">
+    <ul class="nav-menu mt-16 sm:mt-20 space-y-3 p-4">
+      <li><a href="index.html#home" class="block py-2 text-indigo-300">Home</a></li>
+      <li><a href="index.html#catalog" class="block py-2 text-indigo-300">Catalog</a></li>
+      <li><a href="index.html#contact" class="block py-2 text-indigo-300">Contact</a></li>
+      <li><a href="index.html#collections" class="block py-2 text-indigo-300">Collections</a></li>
+      <li><a href="cart.html" class="block py-2 text-indigo-300">Cart (<span id="cart-count-cart">0</span>)</a></li>
+    </ul>
+  </nav>
 
-        let menuCartVisible = false;
-        const navbarCart = document.getElementById("main-navbar-cart");
-        const toggleBtnCart = document.getElementById("toggle-btn-cart");
+  <main class="max-w-5xl mx-auto px-4">
+    <section class="py-8">
+      <h1 class="text-2xl sm:text-3xl font-bold text-cyan-400 mb-4 text-center">Your Shopping Cart</h1>
 
-        function toggleMenuCart() {
-            menuCartVisible = !menuCartVisible;
-            if (navbarCart) {
-                navbarCart.classList.toggle("translate-x-0", menuCartVisible);
-                navbarCart.classList.toggle("-translate-x-full", !menuCartVisible);
+      <div id="cart-wrapper" class="grid gap-6">
+        <!-- Cart list -->
+        <div class="card p-4">
+          <div id="cart-items-container" class="space-y-3"></div>
+
+          <div id="cart-empty-message" class="text-center muted hidden">
+            Your cart is empty — <a href="index.html#catalog" class="text-cyan-300 underline">browse our catalog</a>.
+          </div>
+
+          <div id="cart-controls" class="mt-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+              <button id="clear-cart-btn" class="btn-ghost">Clear Cart</button>
+              <div id="cart-totals" class="ml-2 muted">Subtotal: <span id="cart-subtotal" class="price">₹0</span></div>
+            </div>
+            <div class="flex items-center gap-3 ml-auto">
+              <button id="checkout-btn" class="btn-primary" aria-haspopup="dialog" disabled>Proceed to Checkout</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Order summary card -->
+        <aside class="card p-4">
+          <h3 class="font-semibold text-indigo-300 mb-3">Order Summary</h3>
+          <div class="flex justify-between mb-2"><div class="muted">Items</div><div id="summary-items-count">0</div></div>
+          <div class="flex justify-between mb-2"><div class="muted">Subtotal</div><div id="summary-subtotal" class="price">₹0</div></div>
+          <div class="flex justify-between mb-4"><div class="muted">Delivery</div><div id="summary-delivery" class="muted">Calculated at checkout</div></div>
+          <div class="flex justify-between items-center font-bold text-lg mt-2"><div>Total</div><div id="summary-total" class="price">₹0</div></div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <!-- Checkout Modal (simple - similar flow to previous cart) -->
+  <div id="checkout-modal" class="hidden" role="dialog" aria-modal="true" aria-labelledby="checkoutTitle">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="checkoutTitle" class="text-lg font-bold text-cyan-400">Checkout</h2>
+        <button id="close-checkout-modal" aria-label="Close">✕</button>
+      </div>
+      <div class="modal-body">
+        <div id="checkout-step-1" class="mb-4">
+          <h3 class="font-semibold text-indigo-300 mb-2">Step 1 — Review</h3>
+          <div id="modal-cart-items-summary" class="space-y-2 mb-2"></div>
+          <div class="flex justify-end">
+            <button id="to-step-2" class="btn-primary">Next →</button>
+          </div>
+        </div>
+
+        <div id="checkout-step-2" class="hidden mb-4">
+          <h3 class="font-semibold text-indigo-300 mb-2">Step 2 — Your Details</h3>
+          <form id="checkoutForm">
+            <div class="mb-2">
+              <label class="muted text-xs">Full name<span class="text-red-400"> *</span></label>
+              <input id="customerName" name="customerName" required class="w-full p-2 rounded-md bg-gray-100 text-gray-900" />
+            </div>
+            <div class="mb-2">
+              <label class="muted text-xs">Phone<span class="text-red-400"> *</span></label>
+              <input id="customerPhone" name="customerPhone" required class="w-full p-2 rounded-md bg-gray-100 text-gray-900" />
+            </div>
+            <div class="mb-2">
+              <label class="muted text-xs">Address<span class="text-red-400"> *</span></label>
+              <textarea id="customerAddress" name="customerAddress" rows="2" required class="w-full p-2 rounded-md bg-gray-100 text-gray-900"></textarea>
+            </div>
+
+            <div class="flex justify-between mt-3">
+              <button type="button" id="back-to-step-1" class="btn-ghost">← Back</button>
+              <button type="button" id="to-step-3" class="btn-primary">Next →</button>
+            </div>
+          </form>
+        </div>
+
+        <div id="checkout-step-3" class="hidden">
+          <h3 class="font-semibold text-indigo-300 mb-2">Step 3 — Upload Measurement Photo</h3>
+
+          <p class="muted text-sm mb-2">Upload a photo/sketch with measurements (required).</p>
+          <input type="hidden" role="uploadcare-uploader" id="measurementPhotoUploadcare" name="measurementPhotoURL" data-images-only="true" data-clearable="true" />
+          <div id="uploadcareFeedback" class="muted text-xs mt-2 mb-4"></div>
+
+          <div class="flex justify-between">
+            <button id="back-to-step-2" class="btn-ghost">← Back</button>
+            <button id="submitOrderBtn" class="btn-primary">
+              <span class="btn-text">Submit Order</span>
+              <span class="btn-loader hidden">Submitting...</span>
+            </button>
+          </div>
+        </div>
+
+        <div id="modal-status" class="mt-3 muted text-sm"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="py-6 text-center muted">© 2025 Sai Balaji Tiles Home. All Rights Reserved.</footer>
+
+  <!-- Uploadcare widget (replace the public key placeholder below) -->
+  <script src="https://ucarecdn.com/libs/widget/3.x/uploadcare.full.min.js" charset="utf-8"></script>
+  <script>
+    // IMPORTANT: Replace this with your own Uploadcare public key
+    window.UPLOADCARE_PUBLIC_KEY = '301133731b1569c08cb1'; // <<--- REPLACE ME
+    window.UPLOADCARE_IMAGES_ONLY = true;
+    window.UPLOADCARE_CLEARABLE = true;
+  </script>
+
+  <!-- header.js (shared) -->
+  <script src="header.js"></script>
+
+  <script>
+  (function () {
+    'use strict';
+
+    // A small product price lookup (in rupees numeric)
+    const priceLookup = {
+      polished: 85.0,
+      ceramic: 45.0,
+      glazed: 110.0
+    };
+
+    // Utility: format currency
+    function fmt(v) { return '₹' + Number(v).toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 2 }); }
+
+    // DOM refs
+    const itemsContainer = document.getElementById('cart-items-container');
+    const emptyMsg = document.getElementById('cart-empty-message');
+    const checkoutBtn = document.getElementById('checkout-btn');
+    const subtotalEl = document.getElementById('cart-subtotal');
+    const summaryItemsCount = document.getElementById('summary-items-count');
+    const summarySubtotal = document.getElementById('summary-subtotal');
+    const summaryTotal = document.getElementById('summary-total');
+    const modal = document.getElementById('checkout-modal');
+    const modalSummary = document.getElementById('modal-cart-items-summary');
+    const modalStatus = document.getElementById('modal-status');
+    const clearCartBtn = document.getElementById('clear-cart-btn');
+
+    // Load cart from localStorage and normalize (ensure quantity & price)
+    function loadCart() {
+      try {
+        const raw = JSON.parse(localStorage.getItem('cart') || '[]');
+        if (!Array.isArray(raw)) return [];
+        return raw.map(it => {
+          // normalize structure: { id, name, image, quantity, price }
+          const q = (it.quantity && Number(it.quantity) > 0) ? Number(it.quantity) : 1;
+          let price = (it.price && !isNaN(Number(it.price))) ? Number(it.price) : null;
+          if (!price && it.id && priceLookup[it.id]) price = priceLookup[it.id];
+          if (!price) {
+            // try to parse price from string like "₹85 / sq.ft." if provided
+            if (it.price && typeof it.price === 'string') {
+              const digits = it.price.replace(/[^\d.]/g, '');
+              if (digits) price = Number(digits);
             }
-            if (toggleBtnCart) {
-                 toggleBtnCart.classList.toggle("text-cyan-600", menuCartVisible);
-                 toggleBtnCart.setAttribute('aria-expanded', menuCartVisible);
-            }
-        }
-        if (toggleBtnCart) {
-            toggleBtnCart.addEventListener('click', toggleMenuCart);
-        }
-        document.addEventListener("click", (e) => {
-             if (menuCartVisible && navbarCart && toggleBtnCart) {
-                 if (!navbarCart.contains(e.target) && e.target !== toggleBtnCart && !toggleBtnCart.contains(e.target) ) {
-                    toggleMenuCart();
-                }
-            }
+          }
+          price = price || 0;
+          return { id: it.id || null, name: it.name || 'Unknown Tile', image: it.image || 'images/placeholder.jpg', quantity: q, price };
         });
-         document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape' && menuCartVisible) {
-                toggleMenuCart();
-            }
+      } catch (e) {
+        console.warn('cart parse failed', e);
+        return [];
+      }
+    }
+
+    function saveCart(cart) {
+      localStorage.setItem('cart', JSON.stringify(cart.map(it => ({ id: it.id, name: it.name, image: it.image, quantity: it.quantity, price: it.price })) ));
+      // header.js listens for storage events in other tabs, but we also call its update method directly
+      if (window.headerShared && typeof window.headerShared.updateCartCount === 'function') window.headerShared.updateCartCount();
+      // also trigger UI update
+      renderCart();
+    }
+
+    // Render cart items
+    function renderCart() {
+      const cart = loadCart();
+      itemsContainer.innerHTML = '';
+      if (cart.length === 0) {
+        emptyMsg.classList.remove('hidden');
+        itemsContainer.classList.add('hidden');
+        checkoutBtn.disabled = true;
+        subtotalEl.textContent = fmt(0);
+        summaryItemsCount.textContent = '0';
+        summarySubtotal.textContent = fmt(0);
+        summaryTotal.textContent = fmt(0);
+        return;
+      }
+      emptyMsg.classList.add('hidden');
+      itemsContainer.classList.remove('hidden');
+      checkoutBtn.disabled = false;
+
+      cart.forEach((item, idx) => {
+        const row = document.createElement('div');
+        row.className = 'cart-grid';
+        row.innerHTML = `
+          <div style="display:flex;gap:1rem;align-items:center;flex:1">
+            <img class="cart-thumb" src="${item.image}" alt="${escapeHtml(item.name)}" loading="lazy">
+            <div style="min-width:0">
+              <div class="font-semibold text-indigo-300">${escapeHtml(item.name)}</div>
+              <div class="muted text-sm">Price: <span class="price">${fmt(item.price)}</span></div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:0.6rem">
+            <div style="display:flex;align-items:center;gap:0.4rem">
+              <button class="btn-ghost qty-decr" data-idx="${idx}" aria-label="Decrease quantity">−</button>
+              <input class="qty-input" type="number" min="1" value="${item.quantity}" data-idx="${idx}" />
+              <button class="btn-ghost qty-incr" data-idx="${idx}" aria-label="Increase quantity">+</button>
+            </div>
+            <div style="min-width:90px;text-align:right">
+              <div class="price" data-line-total>${fmt(item.price * item.quantity)}</div>
+              <button class="btn-ghost remove-btn mt-2" data-idx="${idx}">Remove</button>
+            </div>
+          </div>
+        `;
+        itemsContainer.appendChild(row);
+      });
+
+      updateTotals();
+      attachItemListeners();
+    }
+
+    // Update subtotal / summary
+    function updateTotals() {
+      const cart = loadCart();
+      let subtotal = 0;
+      let totalItems = 0;
+      cart.forEach(it => { subtotal += (it.price * it.quantity); totalItems += it.quantity; });
+      subtotal = Math.round((subtotal + Number.EPSILON) * 100) / 100;
+      subtotalEl.textContent = fmt(subtotal);
+      summaryItemsCount.textContent = String(totalItems);
+      summarySubtotal.textContent = fmt(subtotal);
+      // for now delivery is variable; we copy subtotal to total
+      summaryTotal.textContent = fmt(subtotal);
+      // update line totals shown per row
+      itemsContainer.querySelectorAll('[data-line-total]').forEach((el, i) => {
+        const cartNow = loadCart();
+        const v = (cartNow[i] && cartNow[i].price * cartNow[i].quantity) || 0;
+        el.textContent = fmt(Math.round((v + Number.EPSILON) * 100) / 100);
+      });
+    }
+
+    // attach buttons and inputs listeners for each row
+    function attachItemListeners() {
+      itemsContainer.querySelectorAll('.qty-decr').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const i = Number(btn.getAttribute('data-idx'));
+          changeQty(i, -1);
         });
-
-        const cartItemsContainer = document.getElementById("cart-items-container");
-        const cartEmptyMessage = document.getElementById("cart-empty-message");
-        const openCheckoutBtn = document.getElementById("checkout-btn"); 
-        const checkoutStatusEl = document.getElementById("checkout-status"); 
-
-        function updateCartDisplay() {
-            const cart = JSON.parse(localStorage.getItem("cart")) || [];
-            if (cartItemsContainer) cartItemsContainer.innerHTML = ""; 
-            if (cart.length === 0) {
-                if (cartEmptyMessage) cartEmptyMessage.classList.remove("hidden");
-                if (cartItemsContainer) cartItemsContainer.classList.add("hidden");
-                if (openCheckoutBtn) openCheckoutBtn.disabled = true;
-            } else {
-                if (cartEmptyMessage) cartEmptyMessage.classList.add("hidden");
-                if (cartItemsContainer) cartItemsContainer.classList.remove("hidden");
-                if (openCheckoutBtn) openCheckoutBtn.disabled = false;
-                cart.forEach((item, index) => {
-                    const div = document.createElement("div");
-                    div.className = "cart-item flex flex-col sm:flex-row items-center justify-between bg-gray-800/70 rounded-lg shadow-lg p-3 sm:p-4 transition-shadow duration-300 hover:shadow-xl gap-3 sm:gap-4 border border-gray-700 hover:border-cyan-500/50";
-                    div.innerHTML = `
-                        <img src="${item.image || 'images/placeholder.jpg'}" alt="${item.name || 'Tile image'}" class="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-md border-2 border-gray-600">
-                        <span class="flex-1 text-base sm:text-lg text-indigo-300 text-center sm:text-left">${item.name || 'Unknown Tile'}</span>
-                        <button class="remove-btn bg-red-600 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-50 transition-all duration-300 ease-in-out transform hover:scale-105 text-xs sm:text-sm font-semibold" onclick="removeFromCart(${index})" aria-label="Remove ${item.name || 'tile'} from cart">Remove</button>
-                    `;
-                    if (cartItemsContainer) cartItemsContainer.appendChild(div);
-                });
-            }
-            updateCartCountCart();
-        }
-
-        function removeFromCart(index) {
-            let cart = JSON.parse(localStorage.getItem("cart")) || [];
-            cart.splice(index, 1);
-            localStorage.setItem("cart", JSON.stringify(cart));
-            updateCartDisplay(); 
-            populateCartSummaryInModal(); 
-        }
-
-        function updateCartCountCart() {
-            const cart = JSON.parse(localStorage.getItem("cart")) || [];
-            const cartCountSpan = document.getElementById("cart-count-cart");
-            if (cartCountSpan) cartCountSpan.textContent = cart.length;
-            const cartCountIndex = document.getElementById("cart-count-index");
-            if(cartCountIndex) cartCountIndex.textContent = cart.length;
-            const cartCountDetail = document.getElementById("cart-count-detail");
-            if(cartCountDetail) cartCountDetail.textContent = cart.length;
-        }
-        
-        const checkoutModal = document.getElementById('checkout-modal');
-        const closeCheckoutModalBtn = document.getElementById('close-checkout-modal-btn');
-        const checkoutForm = document.getElementById('checkoutForm');
-        const modalFormStatusEl = document.getElementById('modal-form-status');
-        const submitOrderBtn = document.getElementById('submitOrderBtn');
-
-        const steps = ['checkout-step-1', 'checkout-step-2', 'checkout-step-3'];
-        const stepIndicators = ['step-1-indicator', 'step-2-indicator', 'step-3-indicator'];
-        let currentStep = 0;
-
-        function updateStepperUI() {
-            stepIndicators.forEach((indicatorId, index) => {
-                const indicator = document.getElementById(indicatorId);
-                if (!indicator) return;
-                const circle = indicator.querySelector('.step-circle');
-                if (!circle) return;
-
-                indicator.classList.remove('active', 'completed', 'text-gray-500', 'text-indigo-200', 'text-green-400');
-                circle.classList.remove('bg-gray-600', 'bg-indigo-500', 'bg-green-500');
-                
-                if (index < currentStep) {
-                    indicator.classList.add('completed', 'text-green-400');
-                    circle.classList.add('bg-green-500');
-                    circle.innerHTML = '✓';
-                } else if (index === currentStep) {
-                    indicator.classList.add('active', 'text-indigo-200');
-                    circle.classList.add('bg-indigo-500');
-                    circle.textContent = index + 1;
-                } else {
-                    indicator.classList.add('text-gray-500');
-                    circle.classList.add('bg-gray-600');
-                    circle.textContent = index + 1;
-                }
-            });
-        }
-
-        function showStep(stepIndex) {
-            steps.forEach((stepId, index) => {
-                const stepElement = document.getElementById(stepId);
-                if (stepElement) stepElement.classList.toggle('hidden', index !== stepIndex);
-            });
-            currentStep = stepIndex;
-            updateStepperUI();
-            const scrollableContent = checkoutModal.querySelector('.modal-scrollable-content');
-            if (scrollableContent) scrollableContent.scrollTop = 0;
-        }
-
-        function populateCartSummaryInModal() {
-            const cart = JSON.parse(localStorage.getItem("cart")) || [];
-            const summaryContainer = document.getElementById('modal-cart-items-summary');
-            if (!summaryContainer) return;
-            summaryContainer.innerHTML = ''; 
-
-            const nextToStep2Button = document.getElementById('next-to-step-2');
-
-            if (cart.length === 0) {
-                summaryContainer.innerHTML = '<p class="text-gray-400 p-2">Your cart is empty.</p>';
-                if (nextToStep2Button) nextToStep2Button.disabled = true;
-                return;
-            }
-            if (nextToStep2Button) nextToStep2Button.disabled = false;
-
-            cart.forEach(item => {
-                const itemDiv = document.createElement('div');
-                itemDiv.className = 'flex items-center justify-between text-sm p-2 bg-gray-700/50 rounded gap-3';
-                itemDiv.innerHTML = `
-                    <img src="${item.image || 'images/placeholder.jpg'}" alt="${item.name || 'Tile Image'}" class="w-10 h-10 sm:w-12 sm:h-12 object-cover rounded-md border border-gray-600">
-                    <span class="flex-grow text-gray-300 text-left truncate">${item.name || 'Unknown Tile'}</span>
-                `;
-                // If you had "数量" (quantity) and want to add it back:
-                // <span class="text-gray-400 text-xs ml-2">Qty: ${item.quantity || 1}</span>
-                summaryContainer.appendChild(itemDiv);
-            });
-        }
-
-        function openCheckoutModal() {
-             if (checkoutModal) {
-                const cart = JSON.parse(localStorage.getItem("cart")) || [];
-                if (cart.length === 0) {
-                    if(checkoutStatusEl) {
-                        checkoutStatusEl.textContent = 'Your cart is empty. Please add items to proceed.';
-                        checkoutStatusEl.className = 'mt-4 text-sm sm:text-base text-red-400';
-                        setTimeout(() => {if(checkoutStatusEl) checkoutStatusEl.textContent = '';}, 3000);
-                    }
-                    return; 
-                }
-                populateCartSummaryInModal();
-                showStep(0); 
-                const uploadcareWidgetInput = document.getElementById('measurementPhotoUploadcare');
-                if (uploadcareWidgetInput && uploadcareWidgetInput.value) {
-                    const widget = uploadcare.Widget(uploadcareWidgetInput);
-                    widget.value(null); 
-                }
-                const uploadcareFeedbackDiv = document.getElementById('uploadcareFeedback');
-                if(uploadcareFeedbackDiv) uploadcareFeedbackDiv.textContent = '';
-
-
-                checkoutModal.classList.remove('hidden');
-                setTimeout(() => {
-                    checkoutModal.classList.remove('opacity-0');
-                    const modalContent = checkoutModal.querySelector('.modal-inner-content');
-                    if (modalContent) modalContent.classList.remove('scale-95');
-                }, 10);
-                if(closeCheckoutModalBtn) closeCheckoutModalBtn.focus();
-            }
-        }
-
-        function closeCheckoutModal() {
-            if (checkoutModal) {
-                checkoutModal.classList.add('opacity-0');
-                const modalContent = checkoutModal.querySelector('.modal-inner-content');
-                if (modalContent) modalContent.classList.add('scale-95');
-                
-                setTimeout(() => {
-                    checkoutModal.classList.add('hidden');
-                    if (checkoutForm) checkoutForm.reset(); 
-                    
-                    const uploadcareWidgetInput = document.getElementById('measurementPhotoUploadcare');
-                    if (uploadcareWidgetInput && uploadcareWidgetInput.value) {
-                        const widget = uploadcare.Widget(uploadcareWidgetInput);
-                        widget.value(null); 
-                    }
-                    const uploadcareFeedbackDiv = document.getElementById('uploadcareFeedback');
-                    if(uploadcareFeedbackDiv) uploadcareFeedbackDiv.textContent = '';
-
-                    if (modalFormStatusEl) {
-                        modalFormStatusEl.textContent = '';
-                        modalFormStatusEl.className = 'mt-6 text-center text-sm min-h-[1.2em]';
-                    }
-                }, 300);
-                 if(openCheckoutBtn) openCheckoutBtn.focus();
-            }
-        }
-
-        if (openCheckoutBtn) {
-             openCheckoutBtn.addEventListener('click', openCheckoutModal);
-        }
-        if (closeCheckoutModalBtn) {
-            closeCheckoutModalBtn.addEventListener('click', closeCheckoutModal);
-        }
-        if (checkoutModal) {
-            checkoutModal.addEventListener('click', (event) => {
-                if (event.target === checkoutModal) closeCheckoutModal();
-            });
-        }
-        document.addEventListener('keydown', (event) => {
-            if (event.key === 'Escape' && checkoutModal && !checkoutModal.classList.contains('hidden')) {
-                closeCheckoutModal();
-            }
+      });
+      itemsContainer.querySelectorAll('.qty-incr').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const i = Number(btn.getAttribute('data-idx'));
+          changeQty(i, +1);
         });
-
-        const nextToStep2Btn = document.getElementById('next-to-step-2');
-        if(nextToStep2Btn) nextToStep2Btn.addEventListener('click', () => showStep(1));
-        
-        const backToStep1Btn = document.getElementById('back-to-step-1');
-        if(backToStep1Btn) backToStep1Btn.addEventListener('click', () => showStep(0));
-
-        const nextToStep3Btn = document.getElementById('next-to-step-3');
-        if(nextToStep3Btn) {
-            nextToStep3Btn.addEventListener('click', () => {
-                const customerNameInput = document.getElementById('customerName');
-                const customerPhoneInput = document.getElementById('customerPhone');
-                const customerAddressInput = document.getElementById('customerAddress');
-                let isValid = true;
-
-                if (modalFormStatusEl) modalFormStatusEl.textContent = '';
-
-                if (!customerNameInput.checkValidity()) { customerNameInput.reportValidity(); isValid = false; }
-                if (isValid && !customerPhoneInput.checkValidity()) { customerPhoneInput.reportValidity(); isValid = false; }
-                if (isValid && !customerAddressInput.checkValidity()) { customerAddressInput.reportValidity(); isValid = false; }
-
-                if (isValid) {
-                    showStep(2);
-                } else {
-                    if (modalFormStatusEl) {
-                        modalFormStatusEl.textContent = 'Please fill in all required fields in "Your Details".';
-                        modalFormStatusEl.className = 'mt-6 text-center text-sm min-h-[1.2em] text-red-400';
-                    }
-                }
-            });
-        }
-        
-        const backToStep2Btn = document.getElementById('back-to-step-2');
-        if(backToStep2Btn) backToStep2Btn.addEventListener('click', () => showStep(1));
-
-        const uploadcareWidgetInput = document.getElementById('measurementPhotoUploadcare');
-        const uploadcareFeedbackDiv = document.getElementById('uploadcareFeedback');
-
-        if (uploadcareWidgetInput) {
-            const widget = uploadcare.Widget(uploadcareWidgetInput);
-            widget.onUploadComplete(fileInfo => {
-                console.log('Uploadcare upload complete:', fileInfo);
-                if (uploadcareFeedbackDiv) {
-                    uploadcareFeedbackDiv.textContent = `File "${fileInfo.name}" uploaded.`;
-                    uploadcareFeedbackDiv.classList.remove('text-red-400');
-                    uploadcareFeedbackDiv.classList.add('text-green-400');
-                }
-            });
-            widget.onChange(file => { // Handles file selection and removal
-                if (file) {
-                    // File selected, onUploadComplete will handle the rest
-                    if (uploadcareFeedbackDiv) uploadcareFeedbackDiv.textContent = 'Uploading...';
-                } else { // File was removed by user (cleared)
-                    if (uploadcareFeedbackDiv) {
-                        uploadcareFeedbackDiv.textContent = 'File removed.';
-                        uploadcareFeedbackDiv.classList.remove('text-green-400', 'text-red-400');
-                        uploadcareFeedbackDiv.classList.add('text-gray-500');
-                    }
-                }
-            });
-        }
-
-        if (checkoutForm) {
-            checkoutForm.addEventListener('submit', function(event) {
-                event.preventDefault();
-                if (modalFormStatusEl) {
-                    modalFormStatusEl.textContent = '';
-                    modalFormStatusEl.className = 'mt-6 text-center text-sm min-h-[1.2em]';
-                }
-                if (uploadcareFeedbackDiv) { // Clear previous upload feedback
-                     uploadcareFeedbackDiv.textContent = '';
-                     uploadcareFeedbackDiv.classList.remove('text-red-400', 'text-green-400');
-                }
-
-
-                const submitBtnText = submitOrderBtn.querySelector('.button-text');
-                const submitBtnLoader = submitOrderBtn.querySelector('.button-loader');
-
-                if (submitBtnLoader) submitBtnText.classList.add('hidden');
-                if (submitBtnLoader) submitBtnLoader.classList.remove('hidden');
-                submitOrderBtn.disabled = true;
-
-                const formData = new FormData(checkoutForm); 
-                const cart = JSON.parse(localStorage.getItem("cart")) || [];
-                formData.set("cartItemsData", JSON.stringify(cart.map(item => ({name: item.name, id: item.id, image: item.image })))); // Added image to cart data
-
-                const uploadedPhotoURL = formData.get('measurementPhotoURL'); 
-
-                console.log("Submitting form. Uploadcare Photo URL/UUID:", uploadedPhotoURL);
-                // for (let [key, value] of formData.entries()) { // Detailed FormData log
-                //    console.log("FormData entry:", key, value);
-                // }
-
-                if (!uploadedPhotoURL || uploadedPhotoURL.trim() === '') {
-                    if (modalFormStatusEl) {
-                        modalFormStatusEl.textContent = 'Please upload a measurement photo.';
-                        modalFormStatusEl.className = 'mt-6 text-center text-sm min-h-[1.2em] text-red-400';
-                    }
-                     if (uploadcareFeedbackDiv) { 
-                        uploadcareFeedbackDiv.textContent = 'Photo is required for submission.';
-                        uploadcareFeedbackDiv.classList.add('text-red-400');
-                    }
-                    if (submitBtnLoader) submitBtnText.classList.remove('hidden');
-                    if (submitBtnLoader) submitBtnLoader.classList.add('hidden');
-                    submitOrderBtn.disabled = false;
-                    return;
-                }
-                
-                const orderFormSpreeEndpoint = 'https://formspree.io/f/movwvnvq'; // !!! REPLACE YOUR ID !!!
-
-                fetch(orderFormSpreeEndpoint, {
-                    method: 'POST',
-                    body: formData, 
-                    headers: { 'Accept': 'application/json' }
-                }).then(response => {
-                    if (response.ok) {
-                        if (modalFormStatusEl) {
-                            modalFormStatusEl.textContent = 'Order inquiry submitted successfully! We will contact you soon.';
-                            modalFormStatusEl.classList.add('text-green-400');
-                        }
-                        localStorage.removeItem("cart");
-                        updateCartDisplay(); 
-                        updateCartCountCart(); 
-                        setTimeout(() => { closeCheckoutModal(); }, 3500);
-                    } else {
-                        response.json().then(data => {
-                           if (modalFormStatusEl) {
-                             modalFormStatusEl.textContent = (data.errors ? data.errors.map(e => e.message).join(', ') : 'Submission failed.');
-                             if (data.error && typeof data.error === 'string') { 
-                                modalFormStatusEl.textContent = data.error;
-                             }
-                             modalFormStatusEl.classList.add('text-red-400');
-                           }
-                        }).catch(() => { 
-                            if (modalFormStatusEl) {
-                                modalFormStatusEl.textContent = 'Submission failed. Invalid server response.';
-                                modalFormStatusEl.classList.add('text-red-400');
-                            }
-                        });
-                    }
-                }).catch(error => {
-                    console.error("Order submission error:", error);
-                    if (modalFormStatusEl) {
-                        modalFormStatusEl.textContent = 'Network error. Please check connection.';
-                        modalFormStatusEl.classList.add('text-red-400');
-                    }
-                }).finally(() => {
-                    if (submitBtnLoader) submitBtnText.classList.remove('hidden');
-                    if (submitBtnLoader) submitBtnLoader.classList.add('hidden');
-                    submitOrderBtn.disabled = false;
-                });
-            });
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            createStarsGlobal();
-            updateCartDisplay(); 
-            
-            const header = document.getElementById('main-header');
-            let headerHeight = 0;
-            if (header) {
-                headerHeight = header.offsetHeight;
-            }
-            
-            const navMenu = document.querySelector('#main-navbar-cart .nav-menu');
-            if (navMenu && headerHeight > 0) {
-                 navMenu.style.paddingTop = `calc(${headerHeight}px + 1rem)`;
-            }
+      });
+      itemsContainer.querySelectorAll('.qty-input').forEach(input => {
+        input.addEventListener('change', () => {
+          let v = Number(input.value);
+          if (isNaN(v) || v < 1) v = 1;
+          const i = Number(input.getAttribute('data-idx'));
+          setQty(i, v);
         });
-        window.addEventListener('storage', (event) => {
-            if (event.key === 'cart') {
-                updateCartDisplay();
-                updateCartCountCart();
-                if (checkoutModal && !checkoutModal.classList.contains('hidden')) {
-                    populateCartSummaryInModal(); 
-                }
-            }
+        input.addEventListener('keydown', (ev) => {
+          if (ev.key === 'Enter') input.blur();
         });
-    </script>
+      });
+      itemsContainer.querySelectorAll('.remove-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const i = Number(btn.getAttribute('data-idx'));
+          removeFromCart(i);
+        });
+      });
+    }
+
+    function changeQty(idx, delta) {
+      const cart = loadCart();
+      if (!cart[idx]) return;
+      cart[idx].quantity = Math.max(1, Number(cart[idx].quantity) + delta);
+      saveCart(cart);
+    }
+
+    function setQty(idx, value) {
+      const cart = loadCart();
+      if (!cart[idx]) return;
+      cart[idx].quantity = Math.max(1, Number(value));
+      saveCart(cart);
+    }
+
+    function removeFromCart(idx) {
+      if (!confirm('Remove this item from the cart?')) return;
+      const cart = loadCart();
+      cart.splice(idx, 1);
+      saveCart(cart);
+    }
+
+    function clearCart() {
+      if (!confirm('Clear the entire cart?')) return;
+      localStorage.removeItem('cart');
+      if (window.headerShared && typeof window.headerShared.updateCartCount === 'function') window.headerShared.updateCartCount();
+      renderCart();
+    }
+
+    // Modal / checkout flow handlers
+    function openModal() {
+      const cart = loadCart();
+      if (cart.length === 0) {
+        alert('Your cart is empty.');
+        return;
+      }
+      // populate modal summary
+      modalSummary.innerHTML = '';
+      cart.forEach(it => {
+        const d = document.createElement('div');
+        d.className = 'flex items-center gap-3 p-2 bg-gray-800/40 rounded';
+        d.innerHTML = `<img src="${it.image}" alt="${escapeHtml(it.name)}" style="width:48px;height:48px;object-fit:cover;border-radius:6px"><div class="flex-1"><div class="font-semibold text-sm">${escapeHtml(it.name)}</div><div class="muted text-xs">${it.quantity} × ${fmt(it.price)}</div></div><div class="price">${fmt(it.quantity * it.price)}</div>`;
+        modalSummary.appendChild(d);
+      });
+      modalStatus.textContent = '';
+      showModalStep(1);
+      modal.classList.remove('hidden');
+    }
+    function closeModal() { modal.classList.add('hidden'); }
+
+    // show specific step in modal (1,2,3)
+    function showModalStep(stepNo) {
+      const s1 = document.getElementById('checkout-step-1');
+      const s2 = document.getElementById('checkout-step-2');
+      const s3 = document.getElementById('checkout-step-3');
+      [s1,s2,s3].forEach(s => s && s.classList.add('hidden'));
+      if (stepNo === 1) s1 && s1.classList.remove('hidden');
+      if (stepNo === 2) s2 && s2.classList.remove('hidden');
+      if (stepNo === 3) s3 && s3.classList.remove('hidden');
+    }
+
+    // INITIALIZE UPLOADCARE WIDGET
+    const uploadcareInput = document.getElementById('measurementPhotoUploadcare');
+    let uploadcareWidget = null;
+    if (uploadcare && uploadcare.Widget) {
+      try {
+        uploadcareWidget = uploadcare.Widget(uploadcareInput);
+        uploadcareWidget.onChange(file => {
+          const fb = document.getElementById('uploadcareFeedback');
+          if (!file) {
+            if (fb) { fb.textContent = 'No file selected.'; fb.classList.remove('text-green-400'); fb.classList.add('muted'); }
+            return;
+          }
+          if (fb) fb.textContent = 'Uploading...';
+          file.done(info => {
+            if (fb) { fb.textContent = `Uploaded: ${info.name || info.uuid}`; fb.classList.remove('muted'); fb.classList.add('text-green-400'); }
+            // set hidden value is handled by widget - it stores uuid in the input value
+          }, err => {
+            if (fb) { fb.textContent = 'Upload failed.'; fb.classList.add('text-red-400'); }
+          });
+        });
+      } catch (e) {
+        console.warn('Uploadcare init failed', e);
+      }
+    }
+
+    // Submit final order -> Formspree (or any endpoint)
+    const ORDER_FORMSPREE_ENDPOINT = 'https://formspree.io/f/movwvnvq'; // <<--- REPLACE WITH YOUR FORMSPREE ID
+    const submitBtn = document.getElementById('submitOrderBtn');
+    if (submitBtn) {
+      submitBtn.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        // simple validation: ensure uploadcare has value
+        const uploaded = (uploadcareWidget && uploadcareWidget.value()) || (uploadcareInput && uploadcareInput.value);
+        if (!uploaded) {
+          modalStatus.textContent = 'Please upload a measurement photo.';
+          modalStatus.classList.add('text-red-400');
+          return;
+        }
+
+        // gather data
+        const cart = loadCart();
+        const name = document.getElementById('customerName').value || '';
+        const phone = document.getElementById('customerPhone').value || '';
+        const address = document.getElementById('customerAddress').value || '';
+        if (!name || !phone || !address) {
+          modalStatus.textContent = 'Please fill in your details in Step 2.';
+          modalStatus.classList.add('text-red-400');
+          return;
+        }
+
+        const formPayload = new FormData();
+        formPayload.append('name', name);
+        formPayload.append('phone', phone);
+        formPayload.append('address', address);
+        formPayload.append('measurementPhotoURL', uploaded);
+        formPayload.append('cartItemsData', JSON.stringify(cart.map(i => ({ id:i.id, name:i.name, qty:i.quantity, price:i.price }))));
+
+        // UI feedback
+        const txt = submitBtn.querySelector('.btn-text');
+        const loader = submitBtn.querySelector('.btn-loader');
+        if (txt) txt.classList.add('hidden');
+        if (loader) loader.classList.remove('hidden');
+        submitBtn.disabled = true;
+        modalStatus.textContent = 'Submitting...';
+        modalStatus.classList.remove('text-red-400', 'text-green-400');
+
+        try {
+          const res = await fetch(ORDER_FORMSPREE_ENDPOINT, { method:'POST', body: formPayload, headers:{ 'Accept':'application/json' } });
+          if (res.ok) {
+            modalStatus.textContent = 'Order submitted. We will contact you shortly!';
+            modalStatus.classList.remove('text-red-400');
+            modalStatus.classList.add('text-green-400');
+            // clear cart
+            localStorage.removeItem('cart');
+            if (window.headerShared && typeof window.headerShared.updateCartCount === 'function') window.headerShared.updateCartCount();
+            renderCart();
+            setTimeout(closeModal, 2500);
+          } else {
+            const data = await res.json().catch(()=>null);
+            modalStatus.textContent = (data && data.error) ? data.error : 'Submission failed.';
+            modalStatus.classList.add('text-red-400');
+          }
+        } catch (err) {
+          console.error(err);
+          modalStatus.textContent = 'Network error. Please try again.';
+          modalStatus.classList.add('text-red-400');
+        } finally {
+          if (txt) txt.classList.remove('hidden');
+          if (loader) loader.classList.add('hidden');
+          submitBtn.disabled = false;
+        }
+      });
+    }
+
+    // Buttons: top-level actions
+    document.getElementById('checkout-btn').addEventListener('click', openModal);
+    document.getElementById('close-checkout-modal').addEventListener('click', closeModal);
+    document.getElementById('to-step-2').addEventListener('click', () => showModalStep(2));
+    document.getElementById('back-to-step-1').addEventListener('click', () => showModalStep(1));
+    document.getElementById('to-step-3').addEventListener('click', () => {
+      // validate step 2 fields
+      const name = document.getElementById('customerName');
+      const phone = document.getElementById('customerPhone');
+      const addr = document.getElementById('customerAddress');
+      if (!name.value || !phone.value || !addr.value) {
+        modalStatus.textContent = 'Please fill in required details.';
+        modalStatus.classList.add('text-red-400');
+        return;
+      }
+      modalStatus.textContent = '';
+      showModalStep(3);
+    });
+    document.getElementById('back-to-step-2').addEventListener('click', () => showModalStep(2));
+    clearCartBtn.addEventListener('click', clearCart);
+
+    // helper: escape HTML for small places
+    function escapeHtml(str) { return String(str).replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s])); }
+
+    // initial render & storage listener
+    function init() {
+      renderCart();
+      // ensure headerShared count is updated
+      if (window.headerShared && typeof window.headerShared.updateCartCount === 'function') window.headerShared.updateCartCount();
+
+      // respond to localStorage change (other tabs)
+      window.addEventListener('storage', (ev) => {
+        if (ev.key === 'cart') renderCart();
+      });
+
+      // keyboard escape to close modal
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !modal.classList.contains('hidden')) closeModal();
+      });
+
+      // click outside modal content closes
+      document.getElementById('checkout-modal')?.addEventListener('click', (ev) => {
+        if (ev.target === document.getElementById('checkout-modal')) closeModal();
+      });
+    }
+
+    init();
+  })();
+  </script>
 </body>
 </html>
