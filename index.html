@@ -6,86 +6,158 @@
     <title>Sai Balaji Tiles Home</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css"> 
+    <link rel="stylesheet" href="style.css">
     <style>
-        html, body { height: 100%; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
-        body.main-content-visible { 
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        body.main-content-visible {
             background: linear-gradient(270deg, #0d0320, #1a094b, #000000, #8e2de2, #000000);
             background-size: 300% 300%;
             animation: gradientBG 20s ease infinite;
-            overflow-x: hidden; 
+            overflow-x: hidden;
         }
-        @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
 
-        .stars-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; overflow: hidden; z-index: 0; }
-        .star { position: absolute; background-color: rgba(255, 255, 255, 0.7); border-radius: 50%; animation: twinkle 6s infinite ease-in-out; }
-        @keyframes twinkle { 0%, 100% { opacity: 0.1; transform: scale(0.6); } 50% { opacity: 0.7; transform: scale(1); } }
+        .stars-container {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none; overflow: hidden;
+            z-index: 0;
+        }
+        .star {
+            position: absolute; background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 50%; animation: twinkle 6s infinite ease-in-out;
+        }
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.1; transform: scale(0.6); }
+            50% { opacity: 0.7; transform: scale(1); }
+        }
 
         .navbar.translate-x-0 { transform: translateX(0%); }
         .navbar.-translate-x-full { transform: translateX(-100%); }
 
-        @keyframes fadeInSlow { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .animate-fade-in-slow { animation: fadeInSlow 1.2s ease-out forwards; }
+        @keyframes fadeInSlow {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in-slow {
+            animation: fadeInSlow 1.2s ease-out forwards;
+        }
         .delay-500ms { animation-delay: 0.5s; }
 
         #home .splash-content-animation { opacity: 0; }
-        #home .splash-content-animation.start-animation { animation: fadeInMainHomeContent 1.5s ease-out forwards; }
-        @keyframes fadeInMainHomeContent { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        #home .splash-content-animation.start-animation {
+            animation: fadeInMainHomeContent 1.5s ease-out forwards;
+        }
+        @keyframes fadeInMainHomeContent {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-        .animate-on-scroll { opacity: 0; transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
+        .animate-on-scroll {
+            opacity: 0;
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
         .init-slide-up { transform: translateY(40px); }
         .init-fade-in { transform: translateY(20px); }
-        .animate-on-scroll.is-visible { opacity: 1; transform: translateY(0); }
+        .animate-on-scroll.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
 
         @supports not (backdrop-filter: blur(1px)) {
-          #main-header, #main-navbar-index { background-color: rgba(17, 24, 39, 0.95) !important; }
-          .needs-blur-fallback { background-color: rgba(31, 41, 55, 0.90) !important; }
+          #main-header, #main-navbar-index {
+            background-color: rgba(17, 24, 39, 0.95) !important;
+          }
+          .needs-blur-fallback {
+            background-color: rgba(31, 41, 55, 0.90) !important;
+          }
         }
-        #page-main-content { position: relative; z-index: 1; }
+        #page-main-content {
+             position: relative;
+             z-index: 1;
+        }
 
-        /* --- Button styles (plain CSS so it works without Tailwind build) --- */
+        /* --- NEW Custom Button Styles --- */
         .btn-theme-primary {
-            display: inline-block;
-            padding: 0.75rem 1.75rem;
-            border-radius: 0.75rem;
-            font-weight: 600;
-            font-size: 0.95rem;
-            box-shadow: 0 6px 18px rgba(0,0,0,0.35);
-            border: 2px solid rgba(6,182,212,0.9); /* cyan-500 */
-            color: rgba(34,211,238,0.95); /* cyan-300-ish */
-            background: rgba(31,41,55,0.6);
-            transition: all 0.3s ease-in-out;
-            transform-origin: center;
-            text-decoration: none;
+            @apply inline-block px-7 py-3.5 rounded-lg font-semibold text-sm sm:text-base shadow-md
+                   border-2 border-cyan-500 text-cyan-400
+                   bg-gray-800/60 hover:bg-cyan-500/20
+                   transition-all duration-300 ease-in-out transform
+                   focus:outline-none focus:ring-4 focus:ring-cyan-500/50 active:scale-95;
         }
         .btn-theme-primary:hover {
-            box-shadow: 0 0 15px rgba(34,211,238,0.4), 0 0 25px rgba(34,211,238,0.2);
-            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 0 15px rgba(34, 211, 238, 0.4), 0 0 25px rgba(34, 211, 238, 0.2);
+            transform: translateY(-1px) scale(1.02);
         }
+
         .btn-theme-secondary {
-            display: inline-block;
-            padding: 0.5rem 1.25rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            border: 1px solid rgba(99,102,241,0.7); /* indigo-500-ish */
-            color: rgba(129,140,248,0.95);
-            background: transparent;
-            transition: all 0.25s ease-in-out;
-            text-decoration: none;
+            @apply inline-block px-5 py-2.5 rounded-md font-semibold
+                   border border-indigo-500 text-indigo-400
+                   bg-transparent hover:bg-indigo-500/20 hover:text-indigo-300
+                   transition-all duration-300 ease-in-out transform
+                   focus:outline-none focus:ring-2 focus:ring-indigo-500/50 active:scale-95;
         }
         .btn-theme-secondary:hover {
-            box-shadow: 0 0 10px rgba(129,140,248,0.22);
+            box-shadow: 0 0 10px rgba(129, 140, 248, 0.3);
             transform: scale(1.03);
         }
-        /* End buttons */
 
-        /* Contact form text color when inside inputs */
+        /* Brand section styles */
+        #brands { padding: 3.5rem 1rem; }
+        .brand-card {
+            background: rgba(17,24,39,0.65);
+            border-radius: 12px;
+            padding: 1rem;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content:center;
+            gap:0.75rem;
+            transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+            border: 1px solid rgba(148,163,184,0.06);
+        }
+        .brand-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 28px rgba(2,6,23,0.6);
+            border-color: rgba(34,211,238,0.18);
+        }
+        .brand-thumb {
+            width: 92px; height: 92px; object-fit:cover; border-radius: 8px; border:2px solid rgba(148,163,184,0.06);
+        }
+        .brand-title { color: #c7d2fe; font-weight:700; text-align:center; }
+
+        /* Modal for brand catalogs */
+        #brandCatalogModal { position: fixed; inset:0; display:flex; align-items:center; justify-content:center; background: rgba(0,0,0,0.6); backdrop-filter: blur(6px); z-index:50; padding:1rem; }
+        #brandCatalogModal.hidden { display:none; }
+        #brandCatalogModal .modal-inner { width:100%; max-width:960px; border-radius:12px; background: rgba(15,23,42,0.96); border: 1px solid rgba(148,163,184,0.06); padding:1rem; box-shadow: 0 20px 60px rgba(2,6,23,0.75); }
+        #brandCatalogModal .modal-head { display:flex; justify-content:space-between; align-items:center; gap:1rem; padding-bottom:0.5rem; border-bottom:1px solid rgba(148,163,184,0.03); margin-bottom:0.75rem; }
+        .catalog-grid { display:grid; grid-template-columns: repeat(3, 1fr); gap:1rem; }
+        .catalog-card { background: rgba(31,41,55,0.6); border-radius:10px; padding:0.75rem; display:flex; gap:0.75rem; align-items:center; border:1px solid rgba(148,163,184,0.04); }
+        .catalog-thumb { width:84px; height:64px; object-fit:cover; border-radius:8px; border:2px solid rgba(148,163,184,0.06); }
+        .catalog-info { flex:1; }
+        .catalog-title { font-weight:700; color:#c7d2fe; }
+        .catalog-open { color: var(--accent, #22d3ee); font-weight:600; cursor:pointer; }
+
+        @media (max-width: 768px) {
+            .catalog-grid { grid-template-columns: repeat(1, 1fr); }
+            .brand-thumb { width:72px; height:72px; }
+        }
+
+        /* Contact Form Input Text Color */
         #contactForm input[type="text"],
         #contactForm input[type="email"],
-        #contactForm textarea { color: #000 !important; }
+        #contactForm textarea {
+            color: #000000 !important;
+        }
 
-        /* small helpers */
-        .hidden { display: none !important; }
     </style>
 </head>
 <body class="bg-black text-gray-200 font-poppins">
@@ -96,11 +168,12 @@
     </div>
 
     <div id="page-container" style="display: none; position: relative; min-height: 100vh;">
+
         <div class="stars-container" id="stars-bg-global"></div>
 
         <header id="main-header" class="fixed w-full top-0 left-0 bg-gray-900/80 backdrop-blur-md shadow-2xl flex items-center justify-between p-3 sm:p-4 z-30 border-b border-cyan-500/30">
             <div class="flex-none">
-                <button id="toggle-btn-index" aria-label="Toggle menu" aria-expanded="false" aria-controls="main-navbar-index" class="text-xl sm:text-2xl text-cyan-400 hover:text-cyan-300 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-cyan-300 rounded">☰</button>
+                <button id="toggle-btn-index" aria-label="Toggle menu" aria-expanded="false" aria-controls="main-navbar-index" class="text-xl sm:text-2xl text-cyan-400 hover:text-cyan-300 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-cyan-300 rounded" onclick="toggleMenuIndex()">☰</button>
             </div>
             <div class="flex-grow text-center px-2">
                 <a href="index.html" class="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-cyan-400 truncate hover:text-cyan-300">SAI BALAJI TILES</a>
@@ -119,7 +192,7 @@
             </ul>
         </nav>
 
-        <main id="page-main-content" class="relative z-10"> 
+        <main id="page-main-content" class="relative z-10">
             <section id="home" class="min-h-screen flex items-center justify-center text-center bg-transparent px-4">
                 <div class="splash-content-animation">
                     <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold text-cyan-400 mb-4">Welcome to Sai Balaji Tiles</h1>
@@ -128,28 +201,35 @@
                 </div>
             </section>
 
-            <!-- rest of content unchanged (catalog, about, collections, contact) -->
-            <!-- I kept your original markup for these sections for brevity; it's the same as your version. -->
-            <!-- ... (catalog, about, collections, contact sections here) ... -->
+            <!-- NEW BRANDS SECTION (placed above the Catalog) -->
+            <section id="brands" class="bg-gray-900/60 needs-blur-fallback">
+                <div class="container mx-auto px-4">
+                    <h2 class="animate-on-scroll init-slide-up text-2xl sm:text-3xl md:text-4xl font-bold mb-6 sm:mb-8 text-cyan-400 text-center">Our Brands</h2>
+                    <p class="animate-on-scroll init-fade-in text-base sm:text-lg text-gray-300 max-w-2xl mx-auto text-center mb-8">Choose a brand to view its catalogs. Click a catalog to open product details.</p>
 
-            <section id="catalog" class="py-16 sm:py-20 bg-gray-800/70 backdrop-blur-sm needs-blur-fallback"> 
+                    <div id="brands-list" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+                        <!-- Brand cards will be injected here by JS -->
+                    </div>
+                </div>
+            </section>
+
+            <section id="catalog" class="py-16 sm:py-20 bg-gray-800/70 backdrop-blur-sm needs-blur-fallback">
                 <div class="container mx-auto px-4 text-center">
                     <h2 class="animate-on-scroll init-slide-up text-2xl sm:text-3xl md:text-4xl font-bold mb-10 sm:mb-12 text-cyan-400">Our Tile Catalog</h2>
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-                        <!-- three tile cards as in your original file -->
-                        <div class="animate-on-scroll init-slide-up tile-card bg-gray-900/80 p-5 rounded-xl shadow-2xl border border-gray-700/50 hover:border-cyan-500/70 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-cyan-500/30" style="transition-delay: 0.1s;">
+                        <div class="animate-on-scroll init-slide-up tile-card bg-gray-900/80 p-5 rounded-xl shadow-2xl border border-gray-700/50 hover:border-cyan-500/70 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-cyan-500/30" style="transition-delay: 0.1s;" data-catalog-id="polished">
                             <img src="images/tiles1.jpg" alt="Polished Vitrified Tiles" class="w-full h-48 sm:h-56 object-cover rounded-lg mb-4 border-2 border-gray-600">
                             <h3 class="text-xl sm:text-2xl font-semibold text-indigo-300 mb-2">Polished Vitrified</h3>
                             <p class="text-gray-400 text-sm sm:text-base mb-4">High gloss, durable, and perfect for luxurious interiors.</p>
                             <a href="tile-detail.html?id=polished" class="btn-theme-secondary">View Details</a>
                         </div>
-                        <div class="animate-on-scroll init-slide-up tile-card bg-gray-900/80 p-5 rounded-xl shadow-2xl border border-gray-700/50 hover:border-cyan-500/70 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-cyan-500/30" style="transition-delay: 0.2s;">
+                        <div class="animate-on-scroll init-slide-up tile-card bg-gray-900/80 p-5 rounded-xl shadow-2xl border border-gray-700/50 hover:border-cyan-500/70 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-cyan-500/30" style="transition-delay: 0.2s;" data-catalog-id="ceramic">
                             <img src="images/tiles2.jpg" alt="Ceramic Tiles" class="w-full h-48 sm:h-56 object-cover rounded-lg mb-4 border-2 border-gray-600">
                             <h3 class="text-xl sm:text-2xl font-semibold text-indigo-300 mb-2">Ceramic Tiles</h3>
                             <p class="text-gray-400 text-sm sm:text-base mb-4">Versatile, affordable, and great for walls and floors.</p>
                             <a href="tile-detail.html?id=ceramic" class="btn-theme-secondary">View Details</a>
                         </div>
-                        <div class="animate-on-scroll init-slide-up tile-card bg-gray-900/80 p-5 rounded-xl shadow-2xl border border-gray-700/50 hover:border-cyan-500/70 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-cyan-500/30" style="transition-delay: 0.3s;">
+                        <div class="animate-on-scroll init-slide-up tile-card bg-gray-900/80 p-5 rounded-xl shadow-2xl border border-gray-700/50 hover:border-cyan-500/70 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-cyan-500/30" style="transition-delay: 0.3s;" data-catalog-id="glazed">
                             <img src="images/tiles3.jpg" alt="Glazed Vitrified Tiles (GVT)" class="w-full h-48 sm:h-56 object-cover rounded-lg mb-4 border-2 border-gray-600">
                             <h3 class="text-xl sm:text-2xl font-semibold text-indigo-300 mb-2">Glazed Vitrified (GVT)</h3>
                             <p class="text-gray-400 text-sm sm:text-base mb-4">Wide range of designs, superior finish and strength.</p>
@@ -159,7 +239,6 @@
                 </div>
             </section>
 
-            <!-- about -->
             <section id="about" class="py-16 sm:py-20 bg-gray-900/60 backdrop-blur-sm needs-blur-fallback">
                 <div class="container mx-auto px-4 text-center">
                     <h2 class="animate-on-scroll init-slide-up text-2xl sm:text-3xl md:text-4xl font-bold mb-8 sm:mb-10 text-cyan-400">About Sai Balaji Tiles</h2>
@@ -172,7 +251,6 @@
                 </div>
             </section>
 
-            <!-- collections -->
             <section id="collections" class="relative py-12 sm:py-16 bg-gray-900/70 backdrop-blur-md needs-blur-fallback">
                 <div class="container mx-auto px-4">
                     <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-8 sm:mb-12 text-cyan-400 animate-on-scroll init-slide-up">Featured Collections</h2>
@@ -205,7 +283,6 @@
                 </div>
             </section>
 
-            <!-- contact (unchanged markup) -->
             <section id="contact" class="contact py-16 sm:py-20 bg-gray-900/60 backdrop-blur-sm needs-blur-fallback">
                 <div class="container mx-auto px-4">
                     <h2 class="animate-on-scroll init-slide-up text-2xl sm:text-3xl md:text-4xl font-bold mb-8 sm:mb-10 text-cyan-400 text-center">Get in Touch</h2>
@@ -219,7 +296,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start max-w-5xl mx-auto">
                             <div class="map-container rounded-lg overflow-hidden shadow-xl border border-gray-700/50">
                                 <iframe
-                                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3887.332740258326!2d79.0926736742076!3d13.212896009265012!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bad5da1ba26771d%3A0xba39ee157f4edca4!2sKajaria%20Eternity%20Boutique%20-%20Tiles%20Showroom%20in%20Palamaner%20Road%2C%20Chittor!5e0!3m2!1sen!2sin!4v1714905193732!5m2!1sen!2sin" 
+                                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3887.332740258326!2d79.0926736742076!3d13.212896009265012!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bad5da1ba26771d%3A0xba39ee157f4edca4!2sKajaria%20Eternity%20Boutique%20-%20Tiles%20Showroom%20in%20Palamaner%20Road%2C%20Chittor!5e0!3m2!1sen!2sin!4v1714905193732!5m2!1sen!2sin"
                                     width="100%" height="350" style="border:0;" allowfullscreen="" loading="lazy"
                                     referrerpolicy="no-referrer-when-downgrade" title="Sai Balaji Tiles Home Location - Replace with your map">
                                 </iframe>
@@ -232,9 +309,11 @@
                                     <p><strong class="text-indigo-300">Email:</strong> <a href="mailto:info@saibalajitiles.com" class="hover:text-cyan-300 transition-colors">info@saibalajitiles.com</a></p>
                                     <p><strong class="text-indigo-300">Hours:</strong><br>Mon - Sat: 9:00 AM - 8:00 PM<br>Sunday: 9:00 AM - 1:00 PM</p>
                                 </address>
-                                <a href="https://maps.app.goo.gl/ePv4dAQ9iEprLneLA" 
+                                <a href="https://maps.app.goo.gl/ePv4dAQ9iEprLneLA"
                                    target="_blank" rel="noopener noreferrer"
-                                   class="btn-theme-primary mt-6 self-start">Get Directions</a>
+                                   class="btn-theme-primary mt-6 self-start">
+                                    Get Directions
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -245,39 +324,40 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-6">
                             <div>
                                 <label for="name" class="block text-sm sm:text-base font-medium text-indigo-300 text-left mb-1">Full Name</label>
-                                <input type="text" name="name" id="name" required 
-                                       class="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-gray-200 border border-gray-500 rounded-md text-black 
+                                <input type="text" name="name" id="name" required
+                                       class="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-gray-200 border border-gray-500 rounded-md text-black
                                               focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400 outline-none transition-colors
-                                              placeholder-gray-500" 
+                                              placeholder-gray-500"
                                        placeholder="e.g., John Doe">
                             </div>
                             <div>
                                 <label for="email" class="block text-sm sm:text-base font-medium text-indigo-300 text-left mb-1">Email Address</label>
-                                <input type="email" name="email" id="email" required 
-                                       class="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-gray-200 border border-gray-500 rounded-md text-black 
+                                <input type="email" name="email" id="email" required
+                                       class="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-gray-200 border border-gray-500 rounded-md text-black
                                               focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400 outline-none transition-colors
-                                              placeholder-gray-500" 
+                                              placeholder-gray-500"
                                        placeholder="e.g., john.doe@example.com">
                             </div>
                         </div>
                         <div class="mb-4 sm:mb-6">
                             <label for="subject" class="block text-sm sm:text-base font-medium text-indigo-300 text-left mb-1">Subject (Optional)</label>
-                            <input type="text" name="subject" id="subject" 
-                                   class="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-gray-200 border border-gray-500 rounded-md text-black 
+                            <input type="text" name="subject" id="subject"
+                                   class="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-gray-200 border border-gray-500 rounded-md text-black
                                           focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400 outline-none transition-colors
-                                          placeholder-gray-500" 
+                                          placeholder-gray-500"
                                    placeholder="e.g., Inquiry about Polished Tiles">
                         </div>
                         <div class="mb-6 sm:mb-8">
                             <label for="message" class="block text-sm sm:text-base font-medium text-indigo-300 text-left mb-1">Message</label>
-                            <textarea name="message" id="message" rows="4" required 
-                                      class="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-gray-200 border border-gray-500 rounded-md text-black 
-                                             focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400 outline-none transition-colors 
-                                             resize-none placeholder-gray-500" 
+                            <textarea name="message" id="message" rows="4" required
+                                      class="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-gray-200 border border-gray-500 rounded-md text-black
+                                             focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400 outline-none transition-colors
+                                             resize-none placeholder-gray-500"
                                       placeholder="Your message here..."></textarea>
                         </div>
                         <div>
-                            <button type="submit" id="sendMessageBtn" class="btn-theme-primary w-full sm:w-auto text-lg">
+                            <button type="submit" id="sendMessageBtn"
+                                    class="btn-theme-primary w-full sm:w-auto text-lg">
                                 <span class="button-text">Send Message</span>
                                 <span class="button-loader hidden">Sending...</span>
                             </button>
@@ -291,6 +371,22 @@
         <footer class="bg-gray-900 text-gray-400 text-center py-6 border-t border-cyan-500/30 relative z-10">
             <p class="text-sm sm:text-base">© 2025 Sai Balaji Tiles Home. All Rights Reserved.</p>
         </footer>
+    </div>
+
+    <!-- Brand Catalog Modal (hidden by default) -->
+    <div id="brandCatalogModal" class="hidden" role="dialog" aria-modal="true" aria-labelledby="brandCatalogTitle">
+        <div class="modal-inner">
+            <div class="modal-head">
+                <h3 id="brandCatalogTitle" class="text-xl font-bold text-cyan-400"></h3>
+                <div>
+                    <button id="closeBrandCatalogBtn" class="btn-theme-secondary">Close</button>
+                </div>
+            </div>
+            <div id="brandCatalogBody">
+                <p class="muted mb-2 text-gray-300">Select a catalog to view product details.</p>
+                <div id="brandCatalogGrid" class="catalog-grid"></div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -324,7 +420,7 @@
                     }, splashFadeOutDuration);
                 }, splashDuration);
             } else {
-                if (pageContainer) pageContainer.style.display = 'block';
+                if(pageContainer) pageContainer.style.display = 'block';
                 document.body.classList.add('main-content-visible');
                 if (mainPageContentArea && headerElement) {
                     const headerHeight = headerElement.offsetHeight;
@@ -360,11 +456,6 @@
                     toggleBtnIndex.setAttribute('aria-expanded', menuIndexVisible);
                 }
             }
-
-            if (toggleBtnIndex) {
-                toggleBtnIndex.addEventListener('click', toggleMenuIndex);
-            }
-
             document.addEventListener("click", (e) => {
                 if (menuIndexVisible && navbarIndex && toggleBtnIndex) {
                     if (!navbarIndex.contains(e.target) && e.target !== toggleBtnIndex && !toggleBtnIndex.contains(e.target)) {
@@ -391,19 +482,20 @@
                         const offsetPosition = elementPosition - headerHeight;
 
                         setTimeout(() => {
-                            window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                            window.scrollTo({
+                                top: offsetPosition,
+                                behavior: 'smooth'
+                            });
                         }, menuIndexVisible ? 300 : 0);
                     }
                 });
             });
 
-            // Stars
             function createStarsGlobal() {
                 const container = document.getElementById('stars-bg-global');
                 if (!container) return;
-                // reasonable limit to avoid too many DOM nodes
-                const numStars = Math.min(200, Math.floor(window.innerWidth / 18));
                 container.innerHTML = '';
+                const numStars = Math.floor(window.innerWidth / 20);
                 for (let i = 0; i < numStars; i++) {
                     const star = document.createElement('div');
                     star.classList.add('star');
@@ -417,16 +509,14 @@
                 }
             }
             createStarsGlobal();
-            window.addEventListener('resize', () => { createStarsGlobal(); });
 
             function updateCartCountIndex() {
-                const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+                const cart = JSON.parse(localStorage.getItem("cart")) || [];
                 const cartCountSpan = document.getElementById("cart-count-index");
                 if (cartCountSpan) cartCountSpan.textContent = cart.length;
             }
             updateCartCountIndex();
 
-            // Contact form logic (fixed loader/text toggling)
             const contactForm = document.getElementById('contactForm');
             const sendMessageBtn = document.getElementById('sendMessageBtn');
             const formStatusEl = document.getElementById('form-status');
@@ -437,7 +527,7 @@
                     const buttonText = sendMessageBtn.querySelector('.button-text');
                     const buttonLoader = sendMessageBtn.querySelector('.button-loader');
 
-                    if (buttonText) buttonText.classList.add('hidden');
+                    if (buttonLoader) buttonText.classList.add('hidden');
                     if (buttonLoader) buttonLoader.classList.remove('hidden');
                     sendMessageBtn.disabled = true;
                     formStatusEl.textContent = '';
@@ -475,7 +565,7 @@
                         formStatusEl.textContent = 'Network problem. Please check connection and try again.';
                         formStatusEl.classList.add('text-red-400');
                     }).finally(() => {
-                        if (buttonText) buttonText.classList.remove('hidden');
+                        if (buttonLoader) buttonText.classList.remove('hidden');
                         if (buttonLoader) buttonLoader.classList.add('hidden');
                         sendMessageBtn.disabled = false;
                         setTimeout(() => { formStatusEl.textContent = ''; }, 7000);
@@ -483,7 +573,6 @@
                 });
             }
 
-            // Intersection observer for scroll animations
             const animatedElements = document.querySelectorAll('.animate-on-scroll');
             if ("IntersectionObserver" in window) {
                 const observer = new IntersectionObserver((entries, obs) => {
@@ -495,17 +584,123 @@
                     });
                 }, { threshold: 0.1 });
                 animatedElements.forEach(el => { observer.observe(el); });
-            } else { animatedElements.forEach(el => { el.classList.add('is-visible'); }); }
+            } else {
+                animatedElements.forEach(el => { el.classList.add('is-visible'); });
+            }
 
-            // Sync cart count when localStorage changes (multiple tabs)
             window.addEventListener('storage', (event) => {
                 if (event.key === 'cart') {
                     updateCartCountIndex();
                 }
             });
+
+            /* -----------------------
+               Brands UI logic
+               - update brandsData below with the real names & images you provide
+               - each brand has an array of catalogs that link to tile-detail.html?id=...
+               ----------------------- */
+            const brandsData = {
+                // Example placeholder data — replace image paths with real ones you will provide
+                "sai-balaji": {
+                    id: "sai-balaji",
+                    name: "Sai Balaji",
+                    image: "images/brands/brand1.png",
+                    catalogs: [
+                        { id: "polished", title: "Polished Vitrified", thumb: "images/tiles1.jpg", link: "tile-detail.html?id=polished" },
+                        { id: "glazed", title: "Glazed Vitrified (GVT)", thumb: "images/tiles3.jpg", link: "tile-detail.html?id=glazed" }
+                    ]
+                },
+                "imperial-tiles": {
+                    id: "imperial-tiles",
+                    name: "Imperial Tiles",
+                    image: "images/brands/brand2.png",
+                    catalogs: [
+                        { id: "ceramic", title: "Ceramic Tiles", thumb: "images/tiles2.jpg", link: "tile-detail.html?id=ceramic" },
+                        { id: "polished", title: "Polished Vitrified", thumb: "images/tiles1.jpg", link: "tile-detail.html?id=polished" }
+                    ]
+                },
+                "homestyle": {
+                    id: "homestyle",
+                    name: "HomeStyle",
+                    image: "images/brands/brand3.png",
+                    catalogs: [
+                        { id: "glazed", title: "Glazed Vitrified (GVT)", thumb: "images/tiles3.jpg", link: "tile-detail.html?id=glazed" },
+                        { id: "ceramic", title: "Ceramic Tiles", thumb: "images/tiles2.jpg", link: "tile-detail.html?id=ceramic" }
+                    ]
+                }
+            };
+
+            const brandsListEl = document.getElementById('brands-list');
+            const brandModal = document.getElementById('brandCatalogModal');
+            const brandModalTitle = document.getElementById('brandCatalogTitle');
+            const brandCatalogGrid = document.getElementById('brandCatalogGrid');
+            const closeBrandCatalogBtn = document.getElementById('closeBrandCatalogBtn');
+
+            function createBrandCard(brand) {
+                const div = document.createElement('div');
+                div.className = 'brand-card';
+                div.setAttribute('role', 'button');
+                div.style.cursor = 'pointer';
+                div.innerHTML = `
+                    <img src="${brand.image}" alt="${brand.name} logo" class="brand-thumb" loading="lazy">
+                    <div class="brand-title">${brand.name}</div>
+                `;
+                div.addEventListener('click', () => {
+                    showBrandCatalogs(brand.id);
+                });
+                return div;
+            }
+
+            function renderBrands() {
+                if (!brandsListEl) return;
+                brandsListEl.innerHTML = '';
+                Object.values(brandsData).forEach(brand => {
+                    brandsListEl.appendChild(createBrandCard(brand));
+                });
+            }
+
+            function showBrandCatalogs(brandId) {
+                const brand = brandsData[brandId];
+                if (!brand) return;
+                // set modal title
+                brandModalTitle.textContent = `${brand.name} Catalogs`;
+                // populate grid
+                brandCatalogGrid.innerHTML = '';
+                (brand.catalogs || []).forEach(cat => {
+                    const card = document.createElement('div');
+                    card.className = 'catalog-card';
+                    card.innerHTML = `
+                        <img src="${cat.thumb}" alt="${cat.title}" class="catalog-thumb">
+                        <div class="catalog-info">
+                            <div class="catalog-title">${cat.title}</div>
+                            <div class="muted text-sm text-gray-300">Click to open</div>
+                        </div>
+                        <div>
+                            <a href="${cat.link}" class="catalog-open btn-theme-primary" data-link="${cat.link}">Open</a>
+                        </div>
+                    `;
+                    brandCatalogGrid.appendChild(card);
+                });
+                // show modal
+                brandModal.classList.remove('hidden');
+            }
+
+            function closeBrandModal() {
+                brandModal.classList.add('hidden');
+            }
+
+            if (closeBrandCatalogBtn) closeBrandCatalogBtn.addEventListener('click', closeBrandModal);
+            // close on outside click
+            brandModal.addEventListener('click', (e) => {
+                if (e.target === brandModal) closeBrandModal();
+            });
+
+            // render brands now
+            renderBrands();
         }
     </script>
-    <script src="header.js"></script>
 
+    <!-- include shared header utilities (header.js) if you have it -->
+    <script src="header.js"></script>
 </body>
 </html>
