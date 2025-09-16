@@ -1,291 +1,432 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Sai Balaji Tiles Home</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-  <style>
-    html,body{height:100%;margin:0;font-family:'Poppins',sans-serif}
-    body.main-content-visible{
-      background: linear-gradient(270deg,#0d0320,#1a094b,#000,#8e2de2,#000);
-      background-size:300% 300%; animation:gradientBG 20s linear infinite; overflow-x:hidden;
-    }
-    @keyframes gradientBG{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
-    .stars-container{position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:0;overflow:hidden}
-    .star{position:absolute;background:rgba(255,255,255,0.75);border-radius:50%;animation:twinkle 6s infinite}
-    @keyframes twinkle{0%,100%{opacity:.12;transform:scale(.6)}50%{opacity:.75;transform:scale(1)}}
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Sai Balaji Tiles Home</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        html, body { height:100%; margin:0; padding:0; font-family:'Poppins',sans-serif; }
+        body.main-content-visible { background: linear-gradient(270deg,#0d0320,#1a094b,#000,#8e2de2,#000); background-size:300% 300%; animation: gradientBG 20s ease infinite; overflow-x:hidden; }
+        @keyframes gradientBG { 0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%} }
 
-    .navbar.translate-x-0{transform:translateX(0)}.navbar.-translate-x-full{transform:translateX(-100%)}
+        .stars-container { position: fixed; top:0; left:0; width:100vw; height:100vh; pointer-events:none; overflow:hidden; z-index:0; }
+        .star { position:absolute; background-color: rgba(255,255,255,0.7); border-radius:50%; animation:twinkle 6s infinite ease-in-out; }
+        @keyframes twinkle { 0%,100%{opacity:.1;transform:scale(.6)}50%{opacity:.7;transform:scale(1)} }
 
-    /* helper */
-    .hidden{display:none!important}
+        .navbar.translate-x-0 { transform: translateX(0%); }
+        .navbar.-translate-x-full { transform: translateX(-100%); }
 
-    /* Brands */
-    #brands{padding:3.5rem 1rem}
-    .brand-card{
-      background:rgba(17,24,39,0.65);
-      border-radius:12px;padding:1rem;display:flex;flex-direction:column;align-items:center;gap:.6rem;
-      border:1px solid rgba(148,163,184,0.06);cursor:pointer;transition:transform .18s,box-shadow .18s,border-color .18s
-    }
-    .brand-card:hover{transform:translateY(-6px);box-shadow:0 12px 28px rgba(2,6,23,0.6);border-color:rgba(34,211,238,0.18)}
-    .brand-thumb{width:92px;height:92px;object-fit:cover;border-radius:8px;border:2px solid rgba(148,163,184,0.06)}
-    .brand-title{color:#c7d2fe;font-weight:700;text-align:center}
+        /* Brand section */
+        #brands { padding:3.5rem 1rem; }
+        .brand-card { background: rgba(17,24,39,0.65); border-radius:12px; padding:1rem; display:flex; flex-direction:column; align-items:center; gap:.75rem; transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease; border:1px solid rgba(148,163,184,0.06); cursor:pointer; }
+        .brand-card:hover { transform: translateY(-6px); box-shadow: 0 12px 28px rgba(2,6,23,0.6); border-color: rgba(34,211,238,0.18); }
+        .brand-thumb { width:92px; height:92px; object-fit:cover; border-radius:8px; border:2px solid rgba(148,163,184,0.06); }
+        .brand-title { color:#c7d2fe; font-weight:700; text-align:center; }
 
-    /* Modal */
-    #brandCatalogModal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);z-index:60;padding:1rem}
-    #brandCatalogModal .modal-inner{width:100%;max-width:980px;border-radius:12px;background:rgba(15,23,42,0.98);border:1px solid rgba(148,163,184,0.06);padding:1rem;box-shadow:0 20px 60px rgba(2,6,23,.75)}
-    .modal-head{display:flex;justify-content:space-between;align-items:center;padding-bottom:.5rem;border-bottom:1px solid rgba(148,163,184,0.03);margin-bottom:.75rem;color:#e6f3ff}
-    .catalog-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
-    .catalog-card{background:rgba(31,41,55,0.6);padding:.6rem;border-radius:10px;display:flex;gap:.75rem;align-items:center;border:1px solid rgba(148,163,184,0.04)}
-    .catalog-thumb{width:90px;height:64px;object-fit:cover;border-radius:6px;border:2px solid rgba(148,163,184,0.06)}
-    .catalog-info{flex:1;min-width:0}
-    .catalog-title{font-weight:700;color:#c7d2fe}
-    .catalog-actions{display:flex;flex-direction:column;gap:.4rem;align-items:flex-end}
-    .btn-open{background:linear-gradient(90deg,#22d3ee,#7c3aed);padding:.4rem .7rem;border-radius:8px;color:#051023;font-weight:700;text-decoration:none}
-    .btn-download{background:transparent;color:#c7d2fe;border:1px solid rgba(255,255,255,0.06);padding:.35rem .6rem;border-radius:8px;font-weight:600;text-decoration:none}
-    .btn-disabled{opacity:.45;pointer-events:none}
+        /* Modal */
+        #brandCatalogModal { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.6); backdrop-filter: blur(6px); z-index:60; padding:1rem; }
+        #brandCatalogModal.hidden { display:none !important; }
+        .modal-inner { width:100%; max-width:980px; border-radius:12px; background: rgba(15,23,42,0.96); border:1px solid rgba(148,163,184,0.06); padding:1rem; box-shadow: 0 20px 60px rgba(2,6,23,0.75); color: #e6eef7; }
+        .modal-head { display:flex; justify-content:space-between; align-items:center; gap:1rem; padding-bottom:.5rem; border-bottom:1px solid rgba(148,163,184,0.03); margin-bottom:.75rem; }
+        .catalog-grid { display:grid; grid-template-columns: repeat(3, 1fr); gap:1rem; }
+        .catalog-card { background: rgba(31,41,55,0.6); border-radius:10px; padding:.75rem; display:flex; gap:.75rem; align-items:center; border:1px solid rgba(148,163,184,0.04); }
+        .catalog-thumb { width:90px; height:64px; object-fit:cover; border-radius:6px; border:2px solid rgba(148,163,184,0.06); }
+        .catalog-info { flex:1; min-width:0; }
+        .catalog-title { font-weight:700; color:#c7d2fe; }
+        .catalog-actions { display:flex; flex-direction:column; gap:.4rem; align-items:flex-end; }
+        .btn-pdf { background: linear-gradient(90deg,#22d3ee,#7c3aed); color:#051023; padding:.42rem .7rem; border-radius:8px; font-weight:700; text-decoration:none; font-size:.9rem; }
+        .btn-download { background: transparent; color:#c7d2fe; border:1px solid rgba(255,255,255,0.06); padding:.35rem .6rem; border-radius:8px; font-weight:600; text-decoration:none; font-size:.85rem; }
+        .btn-disabled { opacity:.45; pointer-events:none; }
 
-    @media (max-width:900px){.catalog-grid{grid-template-columns:repeat(2,1fr)}.brand-thumb{width:72px;height:72px}}
-    @media (max-width:640px){.catalog-grid{grid-template-columns:repeat(1,1fr)}}
-  </style>
+        @media (max-width:900px) { .catalog-grid { grid-template-columns: repeat(2, 1fr); } .brand-thumb{width:72px;height:72px;} }
+        @media (max-width:640px) { .catalog-grid { grid-template-columns: repeat(1, 1fr); } }
+
+        /* small helpers */
+        .muted { color:#9CA3AF; }
+    </style>
 </head>
-<body class="bg-black text-gray-200">
+<body class="bg-black text-gray-200 font-poppins">
 
-  <div id="splash-screen" class="fixed inset-0 bg-black flex items-center justify-center z-50 p-4">
-    <img src="images/logo1.jpg" alt="logo" style="width:220px;opacity:.98">
-  </div>
+    <div id="splash-screen" class="fixed inset-0 bg-black flex flex-col items-center justify-center z-50 transition-opacity duration-700 ease-out p-4">
+        <img src="images/logo1.jpg" alt="Sai Balaji Tiles Home Logo" class="w-3/4 sm:w-1/2 md:w-1/3 lg:w-1/4 h-auto opacity-0 animate-fade-in-slow">
+        <h1 class="text-2xl sm:text-3xl md:text-4xl text-white font-bold mt-4 sm:mt-6 text-center opacity-0 animate-fade-in-slow delay-500ms">SAI BALAJI TILES</h1>
+    </div>
 
-  <div id="page-container" style="display:none;min-height:100vh;position:relative">
-    <div class="stars-container" id="stars-bg-global"></div>
+    <div id="page-container" style="display:none; position:relative; min-height:100vh;">
+        <div class="stars-container" id="stars-bg-global"></div>
 
-    <header id="main-header" class="fixed w-full top-0 left-0 bg-gray-900/80 backdrop-blur-md p-3 z-30 border-b border-cyan-500/30 flex items-center justify-between">
-      <div><button id="toggle-btn-index" class="text-cyan-400">☰</button></div>
-      <div><a href="index.html" class="text-cyan-400 font-bold">SAI BALAJI TILES</a></div>
-      <div style="width:40px"></div>
-    </header>
+        <header id="main-header" class="fixed w-full top-0 left-0 bg-gray-900/80 backdrop-blur-md shadow-2xl flex items-center justify-between p-3 sm:p-4 z-30 border-b border-cyan-500/30">
+            <div class="flex-none">
+                <button id="toggle-btn-index" aria-label="Toggle menu" aria-expanded="false" aria-controls="main-navbar-index" class="text-xl sm:text-2xl text-cyan-400 hover:text-cyan-300 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-cyan-300 rounded">☰</button>
+            </div>
+            <div class="flex-grow text-center px-2">
+                <a href="index.html" class="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-cyan-400 truncate hover:text-cyan-300">SAI BALAJI TILES</a>
+            </div>
+            <div class="flex-none w-6 sm:w-8 h-6 sm:h-8"></div>
+        </header>
 
-    <nav id="main-navbar-index" class="navbar fixed top-0 left-0 w-64 h-screen bg-gray-900/80 transform -translate-x-full transition-transform z-40 p-4">
-      <ul class="mt-16 space-y-3 text-indigo-300">
-        <li><a href="#home">Home</a></li>
-        <li><a href="#catalog">Catalog</a></li>
-        <li><a href="#contact">Contact</a></li>
-      </ul>
-    </nav>
+        <nav id="main-navbar-index" class="navbar fixed top-0 left-0 w-64 sm:w-72 h-screen bg-gray-900/80 backdrop-blur-md shadow-lg transform -translate-x-full transition-transform duration-300 z-40 border-r border-cyan-500/30">
+            <ul class="nav-menu mt-16 sm:mt-20 space-y-3 sm:space-y-4 p-4">
+                <li><a href="#home" class="block py-2 px-2 text-indigo-300 hover:text-indigo-200 hover:bg-gray-800/60 rounded transition-colors duration-300 text-sm sm:text-base">Home</a></li>
+                <li><a href="#catalog" class="block py-2 px-2 text-indigo-300 hover:text-indigo-200 hover:bg-gray-800/60 rounded transition-colors duration-300 text-sm sm:text-base">Catalog</a></li>
+                <li><a href="#about" class="block py-2 px-2 text-indigo-300 hover:text-indigo-200 hover:bg-gray-800/60 rounded transition-colors duration-300 text-sm sm:text-base">About Us</a></li>
+                <li><a href="#collections" class="block py-2 px-2 text-indigo-300 hover:text-indigo-200 hover:bg-gray-800/60 rounded transition-colors duration-300 text-sm sm:text-base">Collections</a></li>
+                <li><a href="#contact" class="block py-2 px-2 text-indigo-300 hover:text-indigo-200 hover:bg-gray-800/60 rounded transition-colors duration-300 text-sm sm:text-base">Contact</a></li>
+                <li><a href="cart.html" class="block py-2 px-2 text-indigo-300 hover:text-indigo-200 hover:bg-gray-800/60 rounded transition-colors duration-300 text-sm sm:text-base">Cart (<span id="cart-count-index">0</span>)</a></li>
+            </ul>
+        </nav>
 
-    <main id="page-main-content" style="padding-top:70px">
-      <section id="home" style="min-height:40vh;display:flex;align-items:center;justify-content:center">
-        <div class="text-center">
-          <h1 style="font-size:32px;color:#22d3ee">Welcome to Sai Balaji Tiles</h1>
-          <p style="color:#9CA3AF">Discover elegance & durability.</p>
-        </div>
-      </section>
+        <main id="page-main-content" class="relative z-10 pt-20">
+            <section id="home" class="min-h-screen flex items-center justify-center text-center bg-transparent px-4">
+                <div class="splash-content-animation">
+                    <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold text-cyan-400 mb-4">Welcome to Sai Balaji Tiles</h1>
+                    <p class="text-lg sm:text-xl md:text-2xl text-indigo-300 mb-8">Discover Elegance & Durability for Your Spaces</p>
+                    <a href="#catalog" class="btn-theme-primary text-lg inline-block px-6 py-3 rounded-md bg-cyan-500 font-semibold text-gray-900">Explore Our Catalog</a>
+                </div>
+            </section>
 
-      <!-- BRANDS -->
-      <section id="brands" class="bg-gray-900/60">
-        <div style="max-width:1100px;margin:0 auto;padding:0 1rem">
-          <h2 style="text-align:center;color:#22d3ee;font-size:22px;margin-bottom:.5rem">Our Brands</h2>
-          <p style="text-align:center;color:#9CA3AF;margin-bottom:1rem">Click a brand to view its catalogs (PDFs).</p>
-          <div id="brands-list" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem"></div>
-        </div>
-      </section>
+            <!-- BRANDS SECTION (above Catalog) -->
+            <section id="brands" class="bg-gray-900/60 needs-blur-fallback">
+                <div class="container mx-auto px-4">
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 text-cyan-400 text-center">Our Brands</h2>
+                    <p class="text-base sm:text-lg text-gray-300 max-w-2xl mx-auto text-center mb-8">Click a brand to view its catalogs (PDFs). Choose a catalog to view or download.</p>
 
-      <!-- CATALOG (kept for browse) -->
-      <section id="catalog" style="padding:2rem 0;background:transparent">
-        <div style="max-width:1100px;margin:0 auto;padding:0 1rem">
-          <h2 style="color:#22d3ee;text-align:center">Our Tile Catalog</h2>
-          <!-- sample tiles -->
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin-top:1rem">
-            <div style="background:#0f1724;padding:1rem;border-radius:12px"><img src="images/tiles1.jpg" alt="" style="width:100%;height:160px;object-fit:cover;border-radius:8px"><h3 style="color:#c7d2fe">Polished Vitrified</h3></div>
-            <div style="background:#0f1724;padding:1rem;border-radius:12px"><img src="images/tiles2.jpg" alt="" style="width:100%;height:160px;object-fit:cover;border-radius:8px"><h3 style="color:#c7d2fe">Ceramic</h3></div>
-            <div style="background:#0f1724;padding:1rem;border-radius:12px"><img src="images/tiles3.jpg" alt="" style="width:100%;height:160px;object-fit:cover;border-radius:8px"><h3 style="color:#c7d2fe">Glazed Vitrified</h3></div>
+                    <div id="brands-list" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+                        <!-- JS injects brand cards here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Remaining content unchanged... (catalog, about, etc.) -->
+            <section id="catalog" class="py-16 sm:py-20 bg-gray-800/70 backdrop-blur-sm needs-blur-fallback">
+                <div class="container mx-auto px-4 text-center">
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-10 text-cyan-400">Our Tile Catalog</h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                        <div class="tile-card bg-gray-900/80 p-5 rounded-xl shadow-2xl border border-gray-700/50 hover:border-cyan-500/70 transition-all duration-300 transform hover:-translate-y-2" data-catalog-id="polished">
+                            <img src="images/tiles1.jpg" alt="Polished Vitrified Tiles" class="w-full h-48 sm:h-56 object-cover rounded-lg mb-4 border-2 border-gray-600">
+                            <h3 class="text-xl sm:text-2xl font-semibold text-indigo-300 mb-2">Polished Vitrified</h3>
+                            <p class="text-gray-400 text-sm sm:text-base mb-4">High gloss, durable, and perfect for luxurious interiors.</p>
+                            <a href="tile-detail.html?id=polished" class="inline-block px-4 py-2 rounded-md border border-indigo-500 text-indigo-300">View Details</a>
+                        </div>
+                        <div class="tile-card bg-gray-900/80 p-5 rounded-xl shadow-2xl border border-gray-700/50 hover:border-cyan-500/70 transition-all duration-300 transform hover:-translate-y-2" data-catalog-id="ceramic">
+                            <img src="images/tiles2.jpg" alt="Ceramic Tiles" class="w-full h-48 sm:h-56 object-cover rounded-lg mb-4 border-2 border-gray-600">
+                            <h3 class="text-xl sm:text-2xl font-semibold text-indigo-300 mb-2">Ceramic Tiles</h3>
+                            <p class="text-gray-400 text-sm sm:text-base mb-4">Versatile, affordable, and great for walls and floors.</p>
+                            <a href="tile-detail.html?id=ceramic" class="inline-block px-4 py-2 rounded-md border border-indigo-500 text-indigo-300">View Details</a>
+                        </div>
+                        <div class="tile-card bg-gray-900/80 p-5 rounded-xl shadow-2xl border border-gray-700/50 hover:border-cyan-500/70 transition-all duration-300 transform hover:-translate-y-2" data-catalog-id="glazed">
+                            <img src="images/tiles3.jpg" alt="Glazed Vitrified Tiles (GVT)" class="w-full h-48 sm:h-56 object-cover rounded-lg mb-4 border-2 border-gray-600">
+                            <h3 class="text-xl sm:text-2xl font-semibold text-indigo-300 mb-2">Glazed Vitrified (GVT)</h3>
+                            <p class="text-gray-400 text-sm sm:text-base mb-4">Wide range of designs, superior finish and strength.</p>
+                            <a href="tile-detail.html?id=glazed" class="inline-block px-4 py-2 rounded-md border border-indigo-500 text-indigo-300">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="about" class="py-16 sm:py-20 bg-gray-900/60 backdrop-blur-sm needs-blur-fallback">
+                <div class="container mx-auto px-4 text-center">
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-8 text-cyan-400">About Sai Balaji Tiles</h2>
+                    <p class="text-base sm:text-lg text-gray-300 max-w-xl sm:max-w-2xl mx-auto leading-relaxed">At Sai Balaji Tiles, we are passionate about providing high-quality tiles that transform spaces. Explore our collections and let us help you find the perfect tiles for your project.</p>
+                </div>
+            </section>
+
+            <section id="collections" class="relative py-12 sm:py-16 bg-gray-900/70 backdrop-blur-md needs-blur-fallback">
+                <div class="container mx-auto px-4">
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-8 text-cyan-400">Featured Collections</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
+                      <div class="bg-gray-800/80 rounded-lg p-3"><img src="images/tile1.jpg" class="w-full h-40 object-cover rounded-t-lg"><div class="p-3 text-center text-indigo-300 font-bold">Modern Minimalist</div></div>
+                      <div class="bg-gray-800/80 rounded-lg p-3"><img src="images/tile2.jpg" class="w-full h-40 object-cover rounded-t-lg"><div class="p-3 text-center text-indigo-300 font-bold">Rustic Charm</div></div>
+                      <div class="bg-gray-800/80 rounded-lg p-3"><img src="images/tiles3.jpg" class="w-full h-40 object-cover rounded-t-lg"><div class="p-3 text-center text-indigo-300 font-bold">Luxury Marble</div></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="contact" class="py-16 sm:py-20 bg-gray-900/60 needs-blur-fallback">
+                <div class="container mx-auto px-4">
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-8 text-cyan-400 text-center">Get in Touch</h2>
+                    <p class="text-gray-300 max-w-xl mx-auto text-center mb-6">Have questions? Reach out to us using the form below or visit our showroom.</p>
+                    <form id="contactForm" class="max-w-xl mx-auto bg-gray-800/70 p-6 rounded-lg">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <input type="text" id="name" placeholder="Full name" class="p-2 rounded bg-gray-200 text-black" required>
+                            <input type="email" id="email" placeholder="Email" class="p-2 rounded bg-gray-200 text-black" required>
+                        </div>
+                        <textarea id="message" rows="4" placeholder="Message" class="w-full p-2 rounded bg-gray-200 text-black" required></textarea>
+                        <div class="mt-4 text-center">
+                            <button id="sendMessageBtn" class="px-6 py-2 rounded bg-cyan-500 font-semibold text-gray-900">Send Message</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </main>
+
+        <footer class="bg-gray-900 text-gray-400 text-center py-6 border-t border-cyan-500/30 relative z-10">
+            <p class="text-sm sm:text-base">© 2025 Sai Balaji Tiles Home. All Rights Reserved.</p>
+        </footer>
+    </div>
+
+    <!-- Brand catalog modal (PDF list) -->
+    <div id="brandCatalogModal" class="hidden" role="dialog" aria-modal="true" aria-labelledby="brandCatalogTitle">
+      <div class="modal-inner" role="document">
+        <div class="modal-head">
+          <h3 id="brandCatalogTitle" class="text-xl font-bold text-cyan-400">Brand Catalogs</h3>
+          <div>
+            <button id="closeBrandCatalogBtn" class="btn-download">Close</button>
           </div>
         </div>
-      </section>
-
-      <section id="contact" style="padding:2rem 0;background:#0b1020;color:#9CA3AF">
-        <div style="max-width:1100px;margin:0 auto;padding:0 1rem;text-align:center">
-          <h3 style="color:#22d3ee">Get in Touch</h3>
-          <p>Email: info@saibalajitiles.com | Phone: +91 7680943539</p>
+        <div id="brandCatalogBody">
+          <p class="muted mb-2">Select a catalog PDF to view (opens in a new tab) or download.</p>
+          <div id="brandCatalogGrid" class="catalog-grid" aria-live="polite"></div>
         </div>
-      </section>
-    </main>
-
-    <footer style="text-align:center;padding:1rem;background:#081022;color:#94a3b8">© 2025 Sai Balaji Tiles Home</footer>
-  </div>
-
-  <!-- Modal: Brand → PDFs -->
-  <div id="brandCatalogModal" class="hidden" role="dialog" aria-modal="true" aria-labelledby="brandCatalogTitle">
-    <div class="modal-inner" role="document">
-      <div class="modal-head">
-        <div id="brandCatalogTitle">Brand Catalogs</div>
-        <div>
-          <button id="closeBrandCatalogBtn" class="btn-download" style="background:transparent;border:1px solid rgba(255,255,255,.06);padding:.4rem .6rem;border-radius:8px;color:#c7d2fe">Close</button>
-        </div>
-      </div>
-      <div id="brandCatalogBody">
-        <p style="color:#9CA3AF;margin-bottom:.5rem">Select a catalog to view (opens in a new tab) or download.</p>
-        <div id="brandCatalogGrid" class="catalog-grid" style="margin-top:0.5rem"></div>
       </div>
     </div>
-  </div>
 
-  <script>
-  // ---------- Utility & init ----------
-  document.addEventListener('DOMContentLoaded', () => {
-    // show page
-    const pageContainer = document.getElementById('page-container');
-    if (pageContainer) pageContainer.style.display = 'block';
-    document.body.classList.add('main-content-visible');
-    // basic navbar toggle
-    const toggleBtn = document.getElementById('toggle-btn-index');
-    const nav = document.getElementById('main-navbar-index');
-    if (toggleBtn && nav) {
-      toggleBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        nav.classList.toggle('translate-x-0');
-        nav.classList.toggle('-translate-x-full');
-      });
-      document.addEventListener('click', (ev) => {
-        if (!nav.contains(ev.target) && !toggleBtn.contains(ev.target)) {
-          nav.classList.remove('translate-x-0');
-          nav.classList.add('-translate-x-full');
+    <script>
+      // Helper to safely build URLs (encode spaces etc.)
+      function safeUrl(u){ try{ return encodeURI(u); }catch(e){ return u; } }
+
+      // Splash & init
+      const splashScreen = document.getElementById('splash-screen');
+      const pageContainer = document.getElementById('page-container');
+      const headerElement = document.getElementById('main-header');
+
+      window.addEventListener('load', () => {
+        if (splashScreen && pageContainer) {
+          setTimeout(() => {
+            splashScreen.style.opacity = '0';
+            setTimeout(() => {
+              splashScreen.style.display = 'none';
+              pageContainer.style.display = 'block';
+              document.body.classList.add('main-content-visible');
+              if (headerElement) {
+                const headerHeight = headerElement.offsetHeight;
+                document.getElementById('page-main-content').style.paddingTop = `${headerHeight}px`;
+              }
+              initializeMainContentScripts();
+            }, 600);
+          }, 900);
+        } else {
+          if (pageContainer) pageContainer.style.display = 'block';
+          document.body.classList.add('main-content-visible');
+          initializeMainContentScripts();
         }
       });
-    }
 
-    // create stars
-    (function createStars() {
-      const container = document.getElementById('stars-bg-global');
-      if (!container) return;
-      container.innerHTML = '';
-      const count = Math.max(20, Math.floor(window.innerWidth / 22));
-      for (let i=0;i<count;i++){
-        const s = document.createElement('div');
-        s.className = 'star';
-        const size = Math.random()*2.6 + 0.6;
-        s.style.width = `${size}px`; s.style.height = `${size}px`;
-        s.style.left = `${Math.random()*100}%`; s.style.top = `${Math.random()*100}%`;
-        s.style.animationDuration = `${(Math.random()*3 + 3.5).toFixed(2)}s`;
-        container.appendChild(s);
+      function initializeMainContentScripts() {
+        // navbar toggle
+        let menuIndexVisible = false;
+        const navbarIndex = document.getElementById("main-navbar-index");
+        const toggleBtnIndex = document.getElementById("toggle-btn-index");
+        function toggleMenuIndex() {
+          menuIndexVisible = !menuIndexVisible;
+          if (navbarIndex) {
+            navbarIndex.classList.toggle("translate-x-0", menuIndexVisible);
+            navbarIndex.classList.toggle("-translate-x-full", !menuIndexVisible);
+          }
+          if (toggleBtnIndex) toggleBtnIndex.setAttribute('aria-expanded', menuIndexVisible);
+        }
+        if (toggleBtnIndex) toggleBtnIndex.addEventListener('click', (e)=>{ e.stopPropagation(); toggleMenuIndex(); });
+        document.addEventListener('click', (ev)=>{ if (menuIndexVisible && navbarIndex && !navbarIndex.contains(ev.target) && ev.target !== toggleBtnIndex) toggleMenuIndex(); });
+        document.addEventListener('keydown', (ev)=>{ if (ev.key === 'Escape' && menuIndexVisible) toggleMenuIndex(); });
+
+        // stars background
+        (function createStars() {
+          const container = document.getElementById('stars-bg-global');
+          if (!container) return;
+          container.innerHTML = '';
+          const count = Math.floor(window.innerWidth / 20);
+          for (let i=0;i<count;i++){
+            const s = document.createElement('div');
+            s.className = 'star';
+            const size = Math.random()*2.5 + 0.5;
+            s.style.width = `${size}px`; s.style.height = `${size}px`;
+            s.style.left = `${Math.random()*100}%`; s.style.top = `${Math.random()*100}%`;
+            s.style.animationDuration = `${Math.random()*3 + 3.5}s`;
+            container.appendChild(s);
+          }
+        })();
+
+        // update cart count (if using cart)
+        (function updateCartCount() {
+          const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+          const el = document.getElementById('cart-count-index');
+          if (el) el.textContent = (Array.isArray(cart) ? cart.length : 0);
+          window.addEventListener('storage', (e)=>{ if (e.key === 'cart') { const c = JSON.parse(localStorage.getItem('cart')||'[]'); if (el) el.textContent = Array.isArray(c)?c.length:0; }});
+        })();
+
+        // ---------- BRANDS data (edit paths/names to match your files) ----------
+        // Put your PDFs into e.g. assets/catalogs/<brand-folder>/<file.pdf>
+        // Put brand images into images/brands/<name>.png (or change path below)
+        const brands = [
+          {
+            key: 'kajaria',
+            id: 'kajaria',
+            name: 'Kajaria',
+            image: 'images/brand1.png',
+            catalogs: [
+              { id:'kaj-1', title:'Kajaria - General Catalog', pdfUrl:'Qutone Catalogue.pdf', thumb:'images/brand1.png' },
+              { id:'kaj-2', title:'Kajaria - Polished Series',  pdfUrl:'Qutone Catalogue.pdf', thumb:'images/brand1.png' },
+              { id:'kaj-3', title:'Kajaria - Rustic Collection', pdfUrl:'Qutone Catalogue.pdf', thumb:'images/brand1.png' },
+              { id:'kaj-4', title:'Kajaria - GVT Collection',     pdfUrl:'Qutone Catalogue.pdf', thumb:'images/brand1.png' }
+            ]
+          },
+          {
+            key: 'qutone',
+            id: 'qutone',
+            name: 'QUTONE',
+            image: 'images/brand2.png',
+            catalogs: [
+              { id:'qut-1', title:'QUTONE - Full Catalog', pdfUrl:'Qutone Catalogue.pdf', thumb:'images/brand2.png' },
+              { id:'qut-2', title:'QUTONE - Tiles A',       pdfUrl:'Qutone Catalogue.pdf',       thumb:'images/brand2.png' }
+            ]
+          },
+          {
+            key: 'somany',
+            id: 'somany',
+            name: 'SOMANY',
+            image: 'images/brand3.png',
+            catalogs: [
+              { id:'som-1', title:'SOMANY - Collection', pdfUrl:'Qutone Catalogue.pdf', thumb:'images/brand3.png' }
+            ]
+          }
+        ];
+
+        // DOM refs for brands modal
+        const brandsListEl = document.getElementById('brands-list');
+        const brandModal = document.getElementById('brandCatalogModal');
+        const brandModalTitle = document.getElementById('brandCatalogTitle');
+        const brandCatalogGrid = document.getElementById('brandCatalogGrid');
+        const closeBrandCatalogBtn = document.getElementById('closeBrandCatalogBtn');
+        const placeholder = 'images/placeholder.jpg';
+
+        // Render brand cards
+        function createBrandCard(brand){
+          const el = document.createElement('div');
+          el.className = 'brand-card';
+          el.setAttribute('role','button');
+          el.setAttribute('tabindex','0');
+          const img = document.createElement('img');
+          img.className = 'brand-thumb';
+          img.loading = 'lazy';
+          img.alt = `${brand.name} logo`;
+          img.src = brand.image;
+          img.onerror = function(){ this.onerror = null; this.src = placeholder; };
+          const title = document.createElement('div');
+          title.className = 'brand-title';
+          title.textContent = brand.name;
+          el.appendChild(img);
+          el.appendChild(title);
+          el.addEventListener('click', ()=> showBrandCatalogs(brand.key));
+          el.addEventListener('keydown', (ev)=> { if (ev.key === 'Enter' || ev.key === ' ') showBrandCatalogs(brand.key); });
+          return el;
+        }
+
+        function renderBrands(){
+          if (!brandsListEl) return;
+          brandsListEl.innerHTML = '';
+          brands.forEach(b => brandsListEl.appendChild(createBrandCard(b)));
+        }
+
+        function showBrandCatalogs(key){
+          const brand = brands.find(b => b.key === key);
+          if (!brand) return;
+          brandModalTitle.textContent = `${brand.name} — Catalogs`;
+          brandCatalogGrid.innerHTML = '';
+
+          if (!Array.isArray(brand.catalogs) || brand.catalogs.length === 0) {
+            brandCatalogGrid.innerHTML = `<div class="muted p-4">No catalogs available for this brand.</div>`;
+          } else {
+            brand.catalogs.forEach(cat => {
+              const card = document.createElement('div');
+              card.className = 'catalog-card';
+
+              const thumb = document.createElement('img');
+              thumb.className = 'catalog-thumb';
+              thumb.src = cat.thumb || placeholder;
+              thumb.alt = cat.title;
+              thumb.onerror = function(){ this.onerror = null; this.src = placeholder; };
+
+              const info = document.createElement('div');
+              info.className = 'catalog-info';
+              const title = document.createElement('div');
+              title.className = 'catalog-title';
+              title.textContent = cat.title;
+              const meta = document.createElement('div');
+              meta.style.color = '#9CA3AF';
+              meta.style.fontSize = '.85rem';
+              meta.textContent = cat.pdfUrl ? 'PDF Catalog' : 'File not uploaded';
+
+              info.appendChild(title);
+              info.appendChild(meta);
+
+              const actions = document.createElement('div');
+              actions.className = 'catalog-actions';
+
+              // Open link
+              const open = document.createElement('a');
+              open.className = cat.pdfUrl ? 'btn-pdf' : 'btn-pdf btn-disabled';
+              open.target = '_blank';
+              open.rel = 'noopener noreferrer';
+              if (cat.pdfUrl) {
+                open.href = safeUrl(cat.pdfUrl);
+                open.textContent = 'Open';
+              } else {
+                open.href = '#';
+                open.textContent = 'Open';
+                open.setAttribute('aria-disabled', 'true');
+              }
+
+              // Download link
+              const download = document.createElement('a');
+              download.className = cat.pdfUrl ? 'btn-download' : 'btn-download btn-disabled';
+              if (cat.pdfUrl) {
+                const fileName = (cat.title || 'catalog').replace(/[^a-z0-9_\-\.]/gi,'_') + '.pdf';
+                download.href = safeUrl(cat.pdfUrl);
+                download.setAttribute('download', fileName);
+                download.textContent = 'Download';
+              } else {
+                download.href = '#';
+                download.textContent = 'Download';
+                download.setAttribute('aria-disabled', 'true');
+              }
+
+              actions.appendChild(open);
+              actions.appendChild(download);
+
+              card.appendChild(thumb);
+              card.appendChild(info);
+              card.appendChild(actions);
+
+              brandCatalogGrid.appendChild(card);
+            });
+          }
+
+          // show modal
+          brandModal.classList.remove('hidden');
+          setTimeout(()=>{
+            const first = brandCatalogGrid.querySelector('.btn-pdf:not(.btn-disabled)');
+            if (first) first.focus();
+          }, 100);
+        }
+
+        function closeBrandModal(){
+          brandModal.classList.add('hidden');
+        }
+
+        // wire modal close
+        if (closeBrandCatalogBtn) closeBrandCatalogBtn.addEventListener('click', closeBrandModal);
+        brandModal.addEventListener('click', (e)=> { if (e.target === brandModal) closeBrandModal(); });
+        document.addEventListener('keydown', (e)=> { if (e.key === 'Escape' && !brandModal.classList.contains('hidden')) closeBrandModal(); });
+
+        // initial render
+        renderBrands();
       }
-    })();
+    </script>
 
-    // ---------- Brands & PDF catalogs data ----------
-    // Update these paths to match the actual files you upload
-    const brandsData = {
-      "kajaria": {
-        id: "kajaria",
-        name: "kajaria",
-        image: "imagesbrand1.png",
-        catalogs: [
-          { id:"sb-1", title:"General Catalog", pdfUrl:"Qutone Catalogue.pdf", thumb:"images/brand1.png" },
-          { id:"sb-2", title:"Polished Series", pdfUrl:"Qutone Catalogue.pdf", thumb:"images/brand1.png"},
-          { id:"sb-3", title:"Rustic & Ceramic", pdfUrl:"Qutone Catalogue.pdf", thumb:"images/brand1.png" },
-          { id:"sb-4", title:"Glazed Vitrified", pdfUrl:"Qutone Catalogue.pdf", thumb:"images/brand1.png" }
-        ]
-      },
-      "Somany": {
-        id: "Somany",
-        name: "Somany",
-        image: "images/brand2.png",
-        catalogs: [
-          { id:"it-1", title:"Imperial Collection A", pdfUrl:"Qutone Catalogue.pdf", thumb:"images/brand1.png" },
-          { id:"it-2", title:"Imperial Collection B", pdfUrl:"Qutone Catalogue.pdf", thumb:"images/brand1.png" }
-        ]
-      },
-      "Itaca": {
-        id: "Itaca",
-        name: "Itaca",
-        image: "images/brand1.png",
-        catalogs: [
-          { id:"hs-1", title:"HomeStyle Marble & Stone", pdfUrl:"Qutone Catalogue.pdf", thumb:"images/brand1.png" }
-        ]
-      }
-    };
-
-    const brandsListEl = document.getElementById('brands-list');
-    const brandModal = document.getElementById('brandCatalogModal');
-    const brandModalTitle = document.getElementById('brandCatalogTitle');
-    const brandCatalogGrid = document.getElementById('brandCatalogGrid');
-    const closeBrandCatalogBtn = document.getElementById('closeBrandCatalogBtn');
-
-    // fallback placeholder — create images/placeholder.jpg in your project
-    const placeholder = 'images/placeholder.jpg';
-
-    function createBrandCard(brand){
-      const item = document.createElement('div');
-      item.className = 'brand-card';
-      item.setAttribute('role','button');
-      item.setAttribute('tabindex','0');
-      // use onerror fallback
-      const imgHtml = `<img src="${brand.image}" alt="${brand.name} logo" class="brand-thumb" loading="lazy" onerror="this.onerror=null;this.src='${placeholder}'">`;
-      item.innerHTML = `${imgHtml}<div class="brand-title">${brand.name}</div>`;
-      item.addEventListener('click', ()=> showBrandCatalogs(brand.id));
-      item.addEventListener('keydown', (ev)=> { if(ev.key==='Enter' || ev.key===' ') showBrandCatalogs(brand.id); });
-      return item;
-    }
-
-    function renderBrands(){
-      if(!brandsListEl) return;
-      brandsListEl.innerHTML = '';
-      Object.values(brandsData).forEach(b=>{
-        brandsListEl.appendChild(createBrandCard(b));
-      });
-    }
-
-    function showBrandCatalogs(brandId){
-      const brand = brandsData[brandId];
-      if(!brand) return;
-      brandModalTitle.textContent = brand.name + ' — Catalogs';
-      brandCatalogGrid.innerHTML = '';
-      if(!Array.isArray(brand.catalogs) || brand.catalogs.length === 0){
-        brandCatalogGrid.innerHTML = `<div style="padding:1rem;color:#9CA3AF">No catalogs available for this brand.</div>`;
-      } else {
-        brand.catalogs.forEach(cat=>{
-          const card = document.createElement('div');
-          card.className = 'catalog-card';
-          const thumb = cat.thumb || placeholder;
-          const pdfUrl = cat.pdfUrl || '';
-          const openClass = pdfUrl ? 'btn-open' : 'btn-open btn-disabled';
-          const downloadAttrs = pdfUrl ? `download="${(cat.title||'catalog').replace(/\s+/g,'_')}.pdf" href="${pdfUrl}"` : `href="#" aria-disabled="true"`;
-          // build inner
-          card.innerHTML = `
-            <img src="${thumb}" alt="${cat.title}" class="catalog-thumb" onerror="this.onerror=null;this.src='${placeholder}'">
-            <div class="catalog-info">
-              <div class="catalog-title">${cat.title}</div>
-              <div style="color:#9CA3AF;font-size:.85rem">${pdfUrl ? 'PDF Catalog' : 'File not uploaded'}</div>
-            </div>
-            <div class="catalog-actions">
-              <a class="${openClass}" target="_blank" rel="noopener noreferrer" ${pdfUrl ? `href="${pdfUrl}"` : 'href="#" aria-disabled="true"'}>${pdfUrl ? 'Open' : 'Open'}</a>
-              <a class="btn-download ${pdfUrl ? '' : 'btn-disabled'}" ${downloadAttrs}>Download</a>
-            </div>
-          `;
-          brandCatalogGrid.appendChild(card);
-        });
-      }
-      brandModal.classList.remove('hidden');
-      // focus first actionable open link
-      setTimeout(()=> {
-        const first = brandCatalogGrid.querySelector('.btn-open:not(.btn-disabled)');
-        if(first) first.focus();
-      }, 120);
-    }
-
-    function closeBrandModal(){ brandModal.classList.add('hidden'); }
-
-    // wire modal close
-    if(closeBrandCatalogBtn) closeBrandCatalogBtn.addEventListener('click', closeBrandModal);
-    brandModal.addEventListener('click', (e)=>{ if(e.target === brandModal) closeBrandModal(); });
-    document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape' && !brandModal.classList.contains('hidden')) closeBrandModal(); });
-
-    // initial render
-    renderBrands();
-  });
-  </script>
-
-  <!-- optionally include your header.js after this file if used -->
-  <!-- <script src="header.js"></script> -->
+    <!-- include shared header utilities if you have it -->
+    <script src="header.js"></script>
 </body>
 </html>
