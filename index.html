@@ -258,7 +258,41 @@
           window.addEventListener('storage', (e) => { if (e.key === 'cart') { const c = JSON.parse(localStorage.getItem('cart')||'[]'); if (el) el.textContent = Array.isArray(c)?c.length:0; }});
         })();
 
-        
+        // --------------------------
+        // BRANDS → PDF catalogs logic
+        // Replace the example PDF paths with the actual paths you upload to your site.
+        // Example: assets/catalogs/sai-balaji/catalog-01.pdf
+        // --------------------------
+        const brandsData = {
+          "Kajaria": {
+            id: "sai-balaji",
+            name: "Sai Balaji",
+            image: "images/brand1.png",
+            catalogs: [
+              { id: "sb-catalog-1", title: "Sai Balaji - General Catalog", pdfUrl: "images\Qutone Catalogue .pdf", thumb: "images/brand1.png" },
+              { id: "sb-catalog-2", title: "Sai Balaji - Polished Series", pdfUrl: "aimages\Qutone Catalogue .pdf", thumb: "images/brand1.png" },
+              { id: "sb-catalog-3", title: "Sai Balaji - Rustic & Ceramic", pdfUrl: "assets/catalogs/sai-balaji/sai-balaji-rustic.pdf", thumb: "images/brand1.png" },
+              { id: "sb-catalog-4", title: "Sai Balaji - Glazed Vitrified", pdfUrl: "assets/catalogs/sai-balaji/sai-balaji-gvt.pdf", thumb: "images/brand1.png" }
+            ]
+          },
+          "QUTONE": {
+            id: "imperial-tiles",
+            name: "Imperial Tiles",
+            image: "images/brands/brand2.jpg",
+            catalogs: [
+              { id: "it-catalog-1", title: "Imperial - Collection A", pdfUrl: "assets/catalogs/imperial/imperial-a.pdf", thumb: "images/brands/brand2-thumb1.jpg" },
+              { id: "it-catalog-2", title: "Imperial - Collection B", pdfUrl: "assets/catalogs/imperial/imperial-b.pdf", thumb: "images/brands/brand2-thumb2.jpg" }
+            ]
+          },
+          "SOMANY": {
+            id: "homestyle",
+            name: "HomeStyle",
+            image: "images/brands/brand3.jpg",
+            catalogs: [
+              { id: "hs-catalog-1", title: "HomeStyle - Marble & Stone", pdfUrl: "assets/catalogs/homestyle/homestyle-marble.pdf", thumb: "images/brands/brand3-thumb1.jpg" }
+            ]
+          }
+        };
 
         const brandsListEl = document.getElementById('brands-list');
         const brandModal = document.getElementById('brandCatalogModal');
