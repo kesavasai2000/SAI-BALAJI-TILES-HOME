@@ -2,15 +2,35 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>AR Tile Viewer (three.js)</title>
+    <title>AR Tile Viewer</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <style>
-        body { margin: 0; font-family: 'Poppins', sans-serif; }
-        #ar-button {
+        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        canvas { display: block; } /* The 3D view */
+        
+        /* This container provides feedback to the user and holds the AR button */
+        #ui-container {
             position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            z-index: 1; /* Sits on top of the canvas until AR starts */
+        }
+        #status-message {
+            font-size: 18px;
+            font-weight: 500;
+            padding: 20px;
+            background-color: rgba(0,0,0,0.7);
+            color: white;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        #ar-button {
             padding: 12px 24px;
             border: none;
             background-color: white;
@@ -20,177 +40,150 @@
             font-weight: 600;
             cursor: pointer;
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-        }
-        #instructions {
-            position: absolute;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: rgba(0,0,0,0.75);
-            color: white;
-            padding: 12px 22px;
-            border-radius: 25px;
-            text-align: center;
-            font-size: 14px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            display: none; /* Hidden until AR session starts */
+            display: none; /* Hidden until ready */
         }
     </style>
 </head>
 <body>
-    <div id="instructions">Scanning for floor... Move phone slowly.</div>
 
+    <div id="ui-container">
+        <div id="status-message">Initializing AR Experience...</div>
+        <!-- The ARButton library will create and place the button here -->
+    </div>
+    
     <script type="module">
-        // Import necessary libraries from CDN
         import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.module.js';
         import { ARButton } from 'https://cdn.jsdelivr.net/npm/three@0.158.0/examples/jsm/webxr/ARButton.js';
         import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.158.0/examples/jsm/loaders/GLTFLoader.js';
 
-        // Declare variables that will be used across functions
         let camera, scene, renderer;
         let controller;
-        let reticle; // The aiming ring on the floor
+        let reticle;
         let hitTestSource = null;
         let hitTestSourceRequested = false;
-        let tileModel = null; // This will hold our pre-loaded tile model
+        let tileModel = null;
+        const statusMessage = document.getElementById('status-message');
 
-        init();
-        animate();
+        async function init() {
+            try {
+                // Basic Three.js Scene Setup
+                scene = new THREE.Scene();
+                camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 20);
+                
+                const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1.5);
+                light.position.set(0.5, 1, 0.25);
+                scene.add(light);
+                
+                renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+                renderer.setPixelRatio(window.devicePixelRatio);
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                renderer.xr.enabled = true;
+                document.body.appendChild(renderer.domElement);
 
-        function init() {
-            const container = document.createElement('div');
-            document.body.appendChild(container);
-
-            scene = new THREE.Scene();
-            camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 20);
-            
-            // Add lighting for realistic model rendering
-            const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
-            light.position.set(0.5, 1, 0.25);
-            scene.add(light);
-            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-            directionalLight.position.set(0, 2, -1);
-            scene.add(directionalLight);
-
-            // Setup the renderer
-            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-            renderer.setPixelRatio(window.devicePixelRatio);
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.xr.enabled = true;
-            container.appendChild(renderer.domElement);
-            
-            // Setup the AR Button
-            const arButton = ARButton.createButton(renderer, {
-                requiredFeatures: ['hit-test'],
-                optionalFeatures: ['dom-overlay'],
-                domOverlay: { root: document.body }
-            });
-            // Customize the button to fit our style
-            arButton.id = 'ar-button';
-            arButton.textContent = 'ENTER AR';
-            document.body.appendChild(arButton);
-            
-            // Show instructions when AR starts
-            renderer.xr.addEventListener('sessionstart', () => {
-                document.getElementById('instructions').style.display = 'block';
-            });
-            renderer.xr.addEventListener('sessionend', () => {
-                document.getElementById('instructions').style.display = 'none';
-            });
-
-            // --- THIS IS THE CORE LOGIC FOR PLACING TILES ---
-            controller = renderer.xr.getController(0);
-            controller.addEventListener('select', onSelect);
-            scene.add(controller);
-
-            // Create the Reticle (the aiming ring)
-            reticle = new THREE.Mesh(
-                new THREE.RingGeometry(0.08, 0.1, 32).rotateX(-Math.PI / 2),
-                new THREE.MeshBasicMaterial()
-            );
-            reticle.matrixAutoUpdate = false;
-            reticle.visible = false; // It's invisible until we find a surface
-            scene.add(reticle);
-            
-            // Pre-load the 3D tile model
-            const urlParams = new URLSearchParams(window.location.search);
-            const modelPath = urlParams.get('model');
-            if(modelPath) {
-                const loader = new GLTFLoader();
-                loader.load(modelPath, (gltf) => {
-                    tileModel = gltf.scene;
-                    tileModel.scale.set(0.3, 0.3, 0.3); // Adjust scale if needed
-                    console.log("Tile model loaded successfully!");
-                }, undefined, (error) => {
-                    console.error("An error happened while loading the model:", error);
-                    document.getElementById('instructions').innerText = 'Error: Could not load 3D model.';
-                    document.getElementById('instructions').style.display = 'block';
+                // Check for WebXR support and create the button
+                statusMessage.innerText = "Checking for AR support...";
+                const arButton = ARButton.createButton(renderer, {
+                    requiredFeatures: ['hit-test']
                 });
-            } else {
-                 document.getElementById('instructions').innerText = 'Error: No model specified in URL.';
-                 document.getElementById('instructions').style.display = 'block';
-            }
+                arButton.id = 'ar-button';
+                document.getElementById('ui-container').appendChild(arButton);
+                
+                // If the button's text indicates lack of support, update status.
+                // The ARButton library automatically checks `navigator.xr`.
+                if (arButton.textContent.includes("NOT SUPPORTED") || arButton.textContent.includes("NOT AVAILABLE")) {
+                    statusMessage.innerText = "AR is not supported on this browser.";
+                    statusMessage.innerHTML += "<br><small>Please use Safari on iOS or Chrome on Android.</small>";
+                    return; // Stop initialization
+                }
+                statusMessage.innerText = "AR supported! Loading 3D model...";
 
-            window.addEventListener('resize', onWindowResize, false);
+                // Load the 3D model from the URL parameter
+                const urlParams = new URLSearchParams(window.location.search);
+                const modelPath = urlParams.get('model');
+                if (!modelPath) {
+                    statusMessage.innerText = "Error: No 3D model specified in the URL.";
+                    return;
+                }
+                const loader = new GLTFLoader();
+                tileModel = await loader.loadAsync(modelPath);
+                tileModel.scene.scale.set(0.3, 0.3, 0.3); // Adjust scale if needed
+
+                // Model is loaded, everything is ready.
+                statusMessage.innerText = "Ready to start AR!";
+                arButton.style.display = 'block'; // Show the "ENTER AR" button
+                
+                // --- AR Interaction Setup ---
+                renderer.xr.addEventListener('sessionstart', () => {
+                    // Hide the initial UI when AR starts
+                    document.getElementById('ui-container').style.display = 'none';
+                });
+
+                controller = renderer.xr.getController(0);
+                controller.addEventListener('select', onSelect);
+                scene.add(controller);
+
+                reticle = new THREE.Mesh(
+                    new THREE.RingGeometry(0.08, 0.1, 32).rotateX(-Math.PI / 2),
+                    new THREE.MeshBasicMaterial({ color: 0x00ffff })
+                );
+                reticle.matrixAutoUpdate = false;
+                reticle.visible = false;
+                scene.add(reticle);
+
+                window.addEventListener('resize', onWindowResize);
+                renderer.setAnimationLoop(render);
+
+            } catch (error) {
+                console.error("Initialization failed:", error);
+                statusMessage.innerText = `An error occurred: ${error.message}`;
+            }
         }
 
         function onSelect() {
-            // This function is called when the user taps the screen
             if (reticle.visible && tileModel) {
-                // Create a clone of the pre-loaded model
-                const newTile = tileModel.clone();
-                // Position the new tile at the reticle's location
+                const newTile = tileModel.scene.clone();
                 newTile.position.setFromMatrixPosition(reticle.matrix);
                 scene.add(newTile);
             }
         }
-
+        
         function onWindowResize() {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
         }
 
-        // This is the main animation loop, called every frame
-        function animate() {
-            renderer.setAnimationLoop(render);
-        }
-
         function render(timestamp, frame) {
-            // This is where we check for floors every frame
             if (frame) {
                 const referenceSpace = renderer.xr.getReferenceSpace();
                 const session = renderer.xr.getSession();
 
-                if (hitTestSourceRequested === false) {
-                    session.requestReferenceSpace('viewer').then((referenceSpace) => {
-                        session.requestHitTestSource({ space: referenceSpace }).then((source) => {
+                if (!hitTestSourceRequested) {
+                    session.requestReferenceSpace('viewer').then((refSpace) => {
+                        session.requestHitTestSource({ space: refSpace }).then((source) => {
                             hitTestSource = source;
                         });
                     });
-                    session.addEventListener('end', () => {
-                        hitTestSourceRequested = false;
-                        hitTestSource = null;
-                    });
+                    session.addEventListener('end', () => { hitTestSourceRequested = false; hitTestSource = null; });
                     hitTestSourceRequested = true;
                 }
 
                 if (hitTestSource) {
                     const hitTestResults = frame.getHitTestResults(hitTestSource);
-                    if (hitTestResults.length) {
-                        // A surface was found
+                    if (hitTestResults.length > 0) {
                         const hit = hitTestResults[0];
                         reticle.visible = true;
                         reticle.matrix.fromArray(hit.getPose(referenceSpace).transform.matrix);
-                        document.getElementById('instructions').innerText = 'Surface found! Tap to place a tile.';
                     } else {
-                        // No surface found
                         reticle.visible = false;
                     }
                 }
             }
             renderer.render(scene, camera);
         }
+
+        // Start the whole process
+        init();
 
     </script>
 </body>
