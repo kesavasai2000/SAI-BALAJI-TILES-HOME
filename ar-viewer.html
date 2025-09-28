@@ -4,12 +4,10 @@
     <meta charset="utf-8">
     <title>AR Tile Viewer</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <!-- The SINGLE script dependency. A-Frame handles all the 3D and AR setup. -->
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
     <style>
         body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
         
-        /* This UI container is ALWAYS visible and provides feedback. It is never blank. */
         #ui-container {
             position: fixed;
             top: 0; left: 0;
@@ -17,23 +15,13 @@
             height: 100%;
             z-index: 10000;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
-            background: #111; /* Dark background so it's always visible */
+            background: #111;
             color: white;
-            padding: 20px;
-            box-sizing: border-box;
         }
-        .message {
-            background-color: rgba(0,0,0,0.5);
-            padding: 20px;
-            border-radius: 12px;
-        }
-        .message h2 { margin-top: 0; font-size: 22px; }
-        .message p { font-size: 16px; line-height: 1.5; max-width: 350px; opacity: 0.9; }
-        .message small { display: block; margin-top: 15px; font-size: 13px; opacity: 0.7; }
+        .message h2 { margin-top: 0; }
         .ui-button {
             display: inline-block;
             margin-top: 20px;
@@ -47,8 +35,6 @@
             cursor: pointer;
             text-decoration: none;
         }
-
-        /* This is the instruction text that shows up INSIDE the AR session */
         #ar-instructions {
             position: absolute;
             bottom: 20px;
@@ -58,27 +44,20 @@
             color: white;
             padding: 12px 22px;
             border-radius: 25px;
-            text-align: center;
-            font-size: 14px;
             z-index: 10;
         }
     </style>
 </head>
 <body>
-    <!-- This UI provides initial feedback and fallback messages. -->
     <div id="ui-container">
         <div class="message">
-            <h2 id="ui-title">Initializing...</h2>
-            <p id="ui-message">Please wait while we check your device for AR capabilities.</p>
-            <small id="ui-pro-tip"></small>
-            <a id="back-button" href="#" onclick="window.history.back(); return false;" class="ui-button" style="display: none;">Go Back</a>
+            <h2 id="ui-title">Loading AR...</h2>
+            <p id="ui-message">Please wait, starting the best available experience for your device.</p>
         </div>
     </div>
 
-    <!-- The instruction text for when AR is active -->
     <div id="ar-instructions" style="display: none;">Scanning for floor... Move phone slowly.</div>
 
-    <!-- The A-Frame scene. It's hidden by default until we know AR is supported. -->
     <a-scene 
         id="ar-scene"
         style="display: none;"
@@ -88,19 +67,12 @@
         vr-mode-ui="enabled: false">
         
         <a-assets>
-            <a-asset-item id="tile-model" src=""></a-asset-item>
+            <a-asset-item id="tile-model-glb" src=""></a-asset-item>
         </a-assets>
-
         <a-camera></a-camera>
         <a-light type="ambient" color="#FFF" intensity="0.7"></a-light>
         <a-light type="directional" color="#FFF" intensity="0.6" position="-1 2 1"></a-light>
-        
-        <a-entity id="reticle"
-            geometry="primitive: ring; radiusInner: 0.08; radiusOuter: 0.1;"
-            material="color: #00ffff; shader: flat;"
-            rotation="-90 0 0"
-            visible="false">
-        </a-entity>
+        <a-entity id="reticle" geometry="primitive: ring; radiusInner: 0.08; radiusOuter: 0.1;" material="color: #00ffff; shader: flat;" rotation="-90 0 0" visible="false"></a-entity>
     </a-scene>
 
     <script>
@@ -108,87 +80,80 @@
             const uiContainer = document.getElementById('ui-container');
             const uiTitle = document.getElementById('ui-title');
             const uiMessage = document.getElementById('ui-message');
-            const uiProTip = document.getElementById('ui-pro-tip');
-            const backButton = document.getElementById('back-button');
             const sceneEl = document.getElementById('ar-scene');
             const arInstructions = document.getElementById('ar-instructions');
             const reticle = document.getElementById('reticle');
 
-            // --- STEP 1: Check for AR Support ---
-            if (!navigator.xr || !AFRAME.utils.device.isMobile()) {
-                uiTitle.innerText = "AR Not Supported";
-                uiMessage.innerText = "Your device or browser does not support WebXR.";
-                uiProTip.innerText = "Please use Safari on a modern iPhone, or Chrome on a modern Android device.";
-                backButton.style.display = 'block';
-                return;
-            }
+            const urlParams = new URLSearchParams(window.location.search);
+            const glbPath = urlParams.get('model');
+            const usdzPath = urlParams.get('iosmodel');
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
-            try {
-                const supported = await navigator.xr.isSessionSupported('immersive-ar');
-                if (!supported) {
-                    uiTitle.innerText = "AR Not Supported";
-                    uiMessage.innerText = "Your browser does not have AR features enabled.";
-                    uiProTip.innerHTML = "<strong>On iPhone:</strong> Please go to Settings > Safari > Advanced > Experimental Features and turn ON 'WebXR Device API' and 'WebXR AR Module'.";
-                    backButton.style.display = 'block';
-                    return;
+            let isWebXRSupported = false;
+            if (navigator.xr) {
+                try {
+                    isWebXRSupported = await navigator.xr.isSessionSupported('immersive-ar');
+                } catch (e) {
+                    isWebXRSupported = false;
                 }
-            } catch (e) {
-                uiTitle.innerText = "Error";
-                uiMessage.innerText = "An error occurred while checking for AR support.";
-                backButton.style.display = 'block';
-                return;
             }
-
-            // --- STEP 2: If Supported, Prepare the Scene ---
-            uiTitle.innerText = "AR Ready";
-            uiMessage.innerText = "Click the button below to start the AR experience.";
-
-            const enterArButton = document.createElement('button');
-            enterArButton.innerText = "🚀 ENTER AR";
-            enterArButton.classList.add('ui-button');
-            backButton.parentElement.insertBefore(enterArButton, backButton);
             
-            enterArButton.addEventListener('click', () => {
-                // --- STEP 3: Start the AR Session ---
-                uiContainer.style.display = 'none'; // Hide the UI
-                sceneEl.style.display = 'block';    // Show the AR scene
-                arInstructions.style.display = 'block';
+            // --- THIS IS THE NEW "GUARANTEED AR" LOGIC ---
+            if (isWebXRSupported) {
+                // --- PATH A: ADVANCED, MULTI-TILE EXPERIENCE ---
+                setupWebXR();
+            } else if (isIOS && usdzPath) {
+                // --- PATH B: SIMPLE, NATIVE IOS EXPERIENCE (FALLBACK) ---
+                // It will automatically redirect to the working single-tile viewer.
+                const anchor = document.createElement('a');
+                anchor.setAttribute('rel', 'ar');
+                anchor.setAttribute('href', usdzPath);
+                anchor.appendChild(document.createElement('img')); // Required for auto-activation
+                anchor.click();
+            } else {
+                // --- PATH C: TRULY NOT SUPPORTED (e.g., old Android) ---
+                uiTitle.innerText = "AR Not Supported";
+                uiMessage.innerText = "Sorry, your device does not support this AR feature.";
+                const backButton = document.createElement('a');
+                backButton.innerText = "Go Back";
+                backButton.href = "#";
+                backButton.classList.add('ui-button');
+                backButton.onclick = () => { window.history.back(); return false; };
+                uiMessage.parentElement.appendChild(backButton);
+            }
 
-                const urlParams = new URLSearchParams(window.location.search);
-                const modelPath = urlParams.get('model');
-                if (!modelPath) {
-                    arInstructions.innerText = "Error: No model specified in URL.";
-                    return;
-                }
+            function setupWebXR() {
+                uiTitle.innerText = "AR Ready";
+                uiMessage.innerText = "Click the button below to start placing multiple tiles.";
                 
-                document.getElementById('tile-model').setAttribute('src', modelPath);
-
-                sceneEl.addEventListener('ar-hit-test-found', () => {
-                    reticle.setAttribute('visible', 'true');
-                    arInstructions.innerText = 'Surface found! Tap to place a tile.';
-                });
-
-                sceneEl.addEventListener('ar-hit-test-lost', () => {
-                    reticle.setAttribute('visible', 'false');
-                });
+                const enterArButton = document.createElement('button');
+                enterArButton.innerText = "🚀 ENTER AR";
+                enterArButton.classList.add('ui-button');
+                uiMessage.parentElement.appendChild(enterArButton);
                 
-                // This is the core logic for MULTIPLE TILE PLACEMENT
-                sceneEl.addEventListener('click', () => {
-                    if (reticle.getAttribute('visible')) {
-                        const newTile = document.createElement('a-gltf-model');
-                        newTile.setAttribute('src', '#tile-model');
-                        
-                        const position = reticle.getAttribute('position');
-                        newTile.setAttribute('position', `${position.x} ${position.y} ${position.z}`);
-                        newTile.setAttribute('scale', '0.3 0.3 0.3'); // Adjust scale if needed
+                enterArButton.addEventListener('click', () => {
+                    uiContainer.style.display = 'none';
+                    sceneEl.style.display = 'block';
+                    arInstructions.style.display = 'block';
 
-                        sceneEl.appendChild(newTile);
-                    }
+                    document.getElementById('tile-model-glb').setAttribute('src', glbPath);
+
+                    sceneEl.addEventListener('ar-hit-test-found', () => { reticle.setAttribute('visible', 'true'); arInstructions.innerText = 'Surface found! Tap to place a tile.'; });
+                    sceneEl.addEventListener('ar-hit-test-lost', () => { reticle.setAttribute('visible', 'false'); });
+                    
+                    sceneEl.addEventListener('click', () => {
+                        if (reticle.getAttribute('visible')) {
+                            const newTile = document.createElement('a-gltf-model');
+                            newTile.setAttribute('src', '#tile-model-glb');
+                            const position = reticle.getAttribute('position');
+                            newTile.setAttribute('position', position);
+                            newTile.setAttribute('scale', '0.3 0.3 0.3');
+                            sceneEl.appendChild(newTile);
+                        }
+                    });
+                    sceneEl.enterVR();
                 });
-
-                // Finally, enter AR mode
-                sceneEl.enterVR();
-            });
+            }
         });
     </script>
 </body>
