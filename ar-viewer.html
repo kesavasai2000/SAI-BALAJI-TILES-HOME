@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>AR Tile Viewer</title>
+    <title>AR Tile Viewer - Multi Placement</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
     <style>
@@ -18,70 +18,199 @@
             justify-content: center;
             align-items: center;
             text-align: center;
-            background: #111;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
+            padding: 20px;
         }
-        .message h2 { margin-top: 0; }
+        .message { max-width: 500px; }
+        .message h2 { margin-top: 0; font-size: 28px; }
+        .message p { font-size: 16px; line-height: 1.5; margin: 15px 0; }
         .ui-button {
             display: inline-block;
             margin-top: 20px;
-            padding: 12px 24px;
+            padding: 14px 32px;
             background: #fff;
             color: #333;
             border: none;
-            border-radius: 25px;
-            font-size: 16px;
+            border-radius: 30px;
+            font-size: 18px;
             font-weight: 600;
             cursor: pointer;
             text-decoration: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
         }
+        .ui-button:hover { transform: scale(1.05); }
+        .ui-button:active { transform: scale(0.98); }
+        
         #ar-instructions {
             position: absolute;
-            bottom: 20px;
+            bottom: 30px;
             left: 50%;
             transform: translateX(-50%);
-            background-color: rgba(0,0,0,0.75);
+            background-color: rgba(0,0,0,0.85);
             color: white;
-            padding: 12px 22px;
-            border-radius: 25px;
+            padding: 15px 25px;
+            border-radius: 30px;
             z-index: 10;
+            font-size: 14px;
+            max-width: 80%;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
+
+        #tile-counter {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: rgba(0,0,0,0.85);
+            color: #22d3ee;
+            padding: 12px 20px;
+            border-radius: 20px;
+            z-index: 10;
+            font-size: 16px;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        #clear-tiles-btn {
+            position: absolute;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(220, 38, 38, 0.9);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            border: none;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            z-index: 10;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            display: none;
+        }
+        #clear-tiles-btn:active { transform: translateX(-50%) scale(0.95); }
     </style>
 </head>
 <body>
     <div id="ui-container">
         <div class="message">
-            <h2 id="ui-title">Loading AR...</h2>
-            <p id="ui-message">Please wait, starting the best available experience for your device.</p>
+            <h2 id="ui-title">🚀 Loading AR...</h2>
+            <p id="ui-message">Preparing the best AR experience for your device...</p>
         </div>
     </div>
 
-    <div id="ar-instructions" style="display: none;">Scanning for floor... Move phone slowly.</div>
+    <div id="ar-instructions" style="display: none;">
+        📱 Move your phone slowly to scan the floor
+    </div>
+
+    <div id="tile-counter" style="display: none;">
+        Tiles Placed: <span id="tile-count">0</span>
+    </div>
+
+    <button id="clear-tiles-btn">🗑️ Clear All Tiles</button>
 
     <a-scene 
         id="ar-scene"
         style="display: none;"
-        webxr="requiredFeatures: hit-test; overlayElement: #ar-instructions;"
+        webxr="requiredFeatures: hit-test,local-floor;
+               optionalFeatures: dom-overlay,dom-overlay-for-handheld-ar;
+               overlayElement: #overlay-container;"
         ar-hit-test="target: #reticle;"
-        renderer="colorManagement: true"
+        renderer="colorManagement: true; antialias: true;"
         vr-mode-ui="enabled: false">
         
         <a-assets>
             <a-asset-item id="tile-model-glb" src=""></a-asset-item>
         </a-assets>
+
         <a-camera></a-camera>
-        <a-light type="ambient" color="#FFF" intensity="0.7"></a-light>
-        <a-light type="directional" color="#FFF" intensity="0.6" position="-1 2 1"></a-light>
-        <a-entity id="reticle" geometry="primitive: ring; radiusInner: 0.08; radiusOuter: 0.1;" material="color: #00ffff; shader: flat;" rotation="-90 0 0" visible="false"></a-entity>
+        
+        <a-light type="ambient" color="#FFF" intensity="0.8"></a-light>
+        <a-light type="directional" color="#FFF" intensity="0.7" position="-1 2 1"></a-light>
+        
+        <a-entity 
+            id="reticle" 
+            geometry="primitive: ring; radiusInner: 0.12; radiusOuter: 0.15;" 
+            material="color: #22d3ee; shader: flat; opacity: 0.8;" 
+            rotation="-90 0 0" 
+            visible="false">
+        </a-entity>
     </a-scene>
 
+    <div id="overlay-container" style="position: fixed; inset: 0; pointer-events: none; z-index: 5;">
+        <!-- Overlay elements go here if needed -->
+    </div>
+
     <script>
+        // AR Hit Test Component for A-Frame
+        AFRAME.registerComponent('ar-hit-test', {
+            schema: {
+                target: { type: 'selector' }
+            },
+            init: function() {
+                this.xrHitTestSource = null;
+                this.viewerSpace = null;
+                this.refSpace = null;
+
+                this.el.sceneEl.renderer.xr.addEventListener('sessionstart', async () => {
+                    const session = this.el.sceneEl.renderer.xr.getSession();
+                    
+                    this.viewerSpace = await session.requestReferenceSpace('viewer');
+                    this.refSpace = await session.requestReferenceSpace('local-floor');
+                    
+                    this.xrHitTestSource = await session.requestHitTestSource({
+                        space: this.viewerSpace
+                    });
+
+                    this.el.sceneEl.emit('ar-hit-test-start');
+                });
+
+                this.el.sceneEl.renderer.xr.addEventListener('sessionend', () => {
+                    this.xrHitTestSource = null;
+                    this.el.sceneEl.emit('ar-hit-test-end');
+                });
+            },
+            tick: function() {
+                if (!this.xrHitTestSource) return;
+
+                const frame = this.el.sceneEl.frame;
+                if (!frame) return;
+
+                const hitTestResults = frame.getHitTestResults(this.xrHitTestSource);
+                
+                if (hitTestResults.length > 0) {
+                    const hit = hitTestResults[0];
+                    const pose = hit.getPose(this.refSpace);
+
+                    if (pose && this.data.target) {
+                        const reticle = this.data.target;
+                        reticle.setAttribute('position', pose.transform.position);
+                        
+                        if (!reticle.getAttribute('visible')) {
+                            reticle.setAttribute('visible', 'true');
+                            this.el.sceneEl.emit('ar-hit-test-found');
+                        }
+                    }
+                } else {
+                    if (this.data.target && this.data.target.getAttribute('visible')) {
+                        this.data.target.setAttribute('visible', 'false');
+                        this.el.sceneEl.emit('ar-hit-test-lost');
+                    }
+                }
+            }
+        });
+
         document.addEventListener('DOMContentLoaded', async () => {
             const uiContainer = document.getElementById('ui-container');
             const uiTitle = document.getElementById('ui-title');
             const uiMessage = document.getElementById('ui-message');
             const sceneEl = document.getElementById('ar-scene');
             const arInstructions = document.getElementById('ar-instructions');
+            const tileCounter = document.getElementById('tile-counter');
+            const tileCountSpan = document.getElementById('tile-count');
+            const clearTilesBtn = document.getElementById('clear-tiles-btn');
             const reticle = document.getElementById('reticle');
 
             const urlParams = new URLSearchParams(window.location.search);
@@ -89,69 +218,160 @@
             const usdzPath = urlParams.get('iosmodel');
             const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
+            let tilesPlaced = 0;
+            let placedTiles = [];
+
             let isWebXRSupported = false;
             if (navigator.xr) {
                 try {
                     isWebXRSupported = await navigator.xr.isSessionSupported('immersive-ar');
                 } catch (e) {
+                    console.log('WebXR check failed:', e);
                     isWebXRSupported = false;
                 }
             }
             
-            // --- THIS IS THE NEW "GUARANTEED AR" LOGIC ---
+            // Platform-specific AR setup
             if (isWebXRSupported) {
-                // --- PATH A: ADVANCED, MULTI-TILE EXPERIENCE ---
+                // ANDROID/WEBXR - Multi-tile experience
                 setupWebXR();
             } else if (isIOS && usdzPath) {
-                // --- PATH B: SIMPLE, NATIVE IOS EXPERIENCE (FALLBACK) ---
-                // It will automatically redirect to the working single-tile viewer.
-                const anchor = document.createElement('a');
-                anchor.setAttribute('rel', 'ar');
-                anchor.setAttribute('href', usdzPath);
-                anchor.appendChild(document.createElement('img')); // Required for auto-activation
-                anchor.click();
+                // iOS - Single tile Quick Look
+                uiTitle.innerText = "📱 iOS AR Mode";
+                uiMessage.innerHTML = `<strong>Single Tile Preview</strong><br>iOS will display one tile using Quick Look.<br>For multiple tiles, use an Android device.`;
+                
+                const launchBtn = document.createElement('button');
+                launchBtn.innerText = "🚀 View Tile in AR";
+                launchBtn.classList.add('ui-button');
+                uiMessage.parentElement.appendChild(launchBtn);
+                
+                launchBtn.addEventListener('click', () => {
+                    const anchor = document.createElement('a');
+                    anchor.setAttribute('rel', 'ar');
+                    anchor.setAttribute('href', usdzPath);
+                    const img = document.createElement('img');
+                    anchor.appendChild(img);
+                    document.body.appendChild(anchor);
+                    anchor.click();
+                    document.body.removeChild(anchor);
+                });
             } else {
-                // --- PATH C: TRULY NOT SUPPORTED (e.g., old Android) ---
-                uiTitle.innerText = "AR Not Supported";
-                uiMessage.innerText = "Sorry, your device does not support this AR feature.";
-                const backButton = document.createElement('a');
-                backButton.innerText = "Go Back";
-                backButton.href = "#";
+                // Not supported
+                uiTitle.innerText = "❌ AR Not Supported";
+                uiMessage.innerHTML = "Sorry, your device doesn't support AR.<br>Please try:<br>• Chrome on Android 9+<br>• Safari on iOS 12+";
+                const backButton = document.createElement('button');
+                backButton.innerText = "← Go Back";
                 backButton.classList.add('ui-button');
-                backButton.onclick = () => { window.history.back(); return false; };
+                backButton.onclick = () => window.history.back();
                 uiMessage.parentElement.appendChild(backButton);
             }
 
             function setupWebXR() {
-                uiTitle.innerText = "AR Ready";
-                uiMessage.innerText = "Click the button below to start placing multiple tiles.";
+                uiTitle.innerText = "✨ Multi-Tile AR Ready!";
+                uiMessage.innerHTML = "<strong>Place multiple tiles in your space</strong><br>Tap anywhere to place tiles.<br>Move them around as needed!";
                 
                 const enterArButton = document.createElement('button');
-                enterArButton.innerText = "🚀 ENTER AR";
+                enterArButton.innerText = "🚀 Start AR Experience";
                 enterArButton.classList.add('ui-button');
                 uiMessage.parentElement.appendChild(enterArButton);
                 
-                enterArButton.addEventListener('click', () => {
+                enterArButton.addEventListener('click', async () => {
                     uiContainer.style.display = 'none';
                     sceneEl.style.display = 'block';
                     arInstructions.style.display = 'block';
+                    tileCounter.style.display = 'block';
 
+                    // Set the model source
                     document.getElementById('tile-model-glb').setAttribute('src', glbPath);
 
-                    sceneEl.addEventListener('ar-hit-test-found', () => { reticle.setAttribute('visible', 'true'); arInstructions.innerText = 'Surface found! Tap to place a tile.'; });
-                    sceneEl.addEventListener('ar-hit-test-lost', () => { reticle.setAttribute('visible', 'false'); });
-                    
-                    sceneEl.addEventListener('click', () => {
-                        if (reticle.getAttribute('visible')) {
-                            const newTile = document.createElement('a-gltf-model');
-                            newTile.setAttribute('src', '#tile-model-glb');
-                            const position = reticle.getAttribute('position');
-                            newTile.setAttribute('position', position);
-                            newTile.setAttribute('scale', '0.3 0.3 0.3');
-                            sceneEl.appendChild(newTile);
+                    // Wait for assets to load
+                    await new Promise(resolve => {
+                        const assets = sceneEl.querySelector('a-assets');
+                        if (assets.hasLoaded) {
+                            resolve();
+                        } else {
+                            assets.addEventListener('loaded', resolve);
                         }
                     });
-                    sceneEl.enterVR();
+
+                    // Event listeners for hit test
+                    sceneEl.addEventListener('ar-hit-test-found', () => {
+                        reticle.setAttribute('visible', 'true');
+                        arInstructions.innerText = '✅ Surface found! Tap to place tiles';
+                    });
+
+                    sceneEl.addEventListener('ar-hit-test-lost', () => {
+                        reticle.setAttribute('visible', 'false');
+                        arInstructions.innerText = '📱 Move phone to find surface...';
+                    });
+                    
+                    // Click to place tiles
+                    let isPlacing = false;
+                    sceneEl.addEventListener('click', (event) => {
+                        if (isPlacing) return;
+                        if (!reticle.getAttribute('visible')) return;
+
+                        isPlacing = true;
+
+                        const newTile = document.createElement('a-gltf-model');
+                        newTile.setAttribute('src', '#tile-model-glb');
+                        
+                        const position = reticle.getAttribute('position');
+                        newTile.setAttribute('position', position);
+                        newTile.setAttribute('scale', '0.3 0.3 0.3');
+                        
+                        // Add rotation animation on placement
+                        newTile.setAttribute('animation', {
+                            property: 'rotation',
+                            from: '0 0 0',
+                            to: '0 360 0',
+                            dur: 800,
+                            easing: 'easeOutQuad'
+                        });
+
+                        sceneEl.appendChild(newTile);
+                        placedTiles.push(newTile);
+                        
+                        tilesPlaced++;
+                        tileCountSpan.textContent = tilesPlaced;
+                        
+                        if (tilesPlaced > 0) {
+                            clearTilesBtn.style.display = 'block';
+                        }
+
+                        // Visual feedback
+                        const originalScale = '0.3 0.3 0.3';
+                        newTile.setAttribute('scale', '0.1 0.1 0.1');
+                        setTimeout(() => {
+                            newTile.setAttribute('scale', originalScale);
+                        }, 100);
+
+                        setTimeout(() => {
+                            isPlacing = false;
+                        }, 200);
+                    });
+
+                    // Clear all tiles
+                    clearTilesBtn.addEventListener('click', () => {
+                        placedTiles.forEach(tile => {
+                            if (tile && tile.parentNode) {
+                                tile.parentNode.removeChild(tile);
+                            }
+                        });
+                        placedTiles = [];
+                        tilesPlaced = 0;
+                        tileCountSpan.textContent = '0';
+                        clearTilesBtn.style.display = 'none';
+                        arInstructions.innerText = '✅ Tiles cleared! Tap to place new ones';
+                    });
+
+                    // Enter AR mode
+                    try {
+                        await sceneEl.enterVR();
+                    } catch (error) {
+                        console.error('Failed to enter AR:', error);
+                        alert('Failed to start AR. Please check your browser supports WebXR.');
+                    }
                 });
             }
         });
