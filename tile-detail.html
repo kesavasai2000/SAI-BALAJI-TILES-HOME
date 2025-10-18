@@ -114,12 +114,13 @@
             <h3 class="text-2xl font-semibold text-indigo-300 mb-4">View Tiles in Your Room</h3>
             <img id="ar-tile-thumbnail" src="" alt="Tile Thumbnail for AR" class="w-56 h-56 mx-auto rounded-md shadow-lg border-2 border-gray-600 mb-6 object-cover">
             <div class="text-left bg-gray-700/30 p-4 rounded-md mb-6 max-w-lg mx-auto">
-              <p class="text-sm text-indigo-200 font-semibold mb-2">How it works:</p>
+              <p class="text-sm text-indigo-200 font-semibold mb-2">📱 How it works:</p>
               <ul class="list-disc list-inside text-sm text-gray-300 space-y-1">
-                <li>We provide the best AR experience your device can handle.</li>
-                <li>Most modern phones get a fully interactive viewer where you can place multiple tiles.</li>
-                <li>Some devices may see a simpler viewer for placing a single tile.</li>
-                <li>Point your phone at a clear floor and move it slowly to begin.</li>
+                <li><strong>iOS (iPhone/iPad):</strong> Single tile preview using Quick Look</li>
+                <li><strong>Android (Chrome):</strong> Place unlimited tiles with interactive AR</li>
+                <li>Point your phone at a clear floor surface</li>
+                <li>Move slowly to scan the area</li>
+                <li>Tap to place tiles where you want them</li>
               </ul>
             </div>
             <a id="ar-launch-button" href="#" class="btn-theme-primary text-lg" target="_blank" rel="noopener noreferrer">🚀 Launch AR Viewer</a>
@@ -145,7 +146,7 @@
     <div id="site-snackbar-action" class="snack-action hidden"></div>
   </div>
 
-  <!-- Shared header script (must exist in your project) -->
+  <!-- Shared header script -->
   <script src="header.js"></script>
 
   <script>
@@ -154,21 +155,21 @@
       const tilesData = {
         polished: {
           id: "polished", title: "Polished Vitrified Tiles", main: "images/tiles1.jpg",
-          description: "Experience unparalleled shine...",
+          description: "Experience unparalleled shine and durability with our Polished Vitrified Tiles. Perfect for high-traffic areas, these tiles offer a mirror-like finish that elevates any interior space with sophistication and elegance.",
           related: ["images/tiles1.jpg", "images/tile1.jpg"],
           specifications: { size: "800x800mm", material: "Vitrified", finish: "High Gloss", price: "₹85 / sq.ft."},
           arModelGLB: "aug/modules/tilear.glb", arModelUSDZ: "aug/modules/tilear.usdz"
         },
         ceramic: {
           id: "ceramic", title: "Ceramic Tiles", main: "images/tiles2.jpg",
-          description: "Our Ceramic Tiles offer a versatile solution...",
-          related: ["images/tile2.jpg", "images/tile1.jpg"],
+          description: "Our Ceramic Tiles offer a versatile solution for both walls and floors. With a wide range of designs and finishes, they provide excellent durability at an affordable price point, making them ideal for any project.",
+          related: ["images/tiles2.jpg", "images/tile2.jpg"],
           specifications: { size: "300x600mm", material: "Ceramic", finish: "Glossy / Matte", price: "₹45 / sq.ft."},
           arModelGLB: "aug/modules/tilear.glb", arModelUSDZ: "aug/modules/tilear.usdz"
         },
         glazed: {
           id: "glazed", title: "Glazed Vitrified Tiles (GVT)", main: "images/tiles3.jpg",
-          description: "Glazed Vitrified Tiles combine strength...",
+          description: "Glazed Vitrified Tiles combine strength with beauty. Featuring a protective glaze layer, these tiles offer superior stain resistance and come in an extensive range of premium designs and textures for discerning customers.",
           related: ["images/tiles3.jpg", "images/tiles1.jpg"],
           specifications: { size: "600x1200mm", material: "GVT", finish: "Satin / Matte", price: "₹110 / sq.ft."},
           arModelGLB: "aug/modules/tilear.glb", arModelUSDZ: "aug/modules/tilear.usdz"
@@ -223,12 +224,17 @@
         setText("spec-price", selectedTile.specifications.price);
         setSrc("ar-tile-thumbnail", selectedTile.main);
 
-        // AR link
+        // AR link - UPDATED TO INCLUDE IMAGE PARAMETER
         const arLaunchButton = document.getElementById('ar-launch-button');
         if (arLaunchButton) {
           const glbPath = encodeURIComponent(selectedTile.arModelGLB);
           const usdzPath = encodeURIComponent(selectedTile.arModelUSDZ);
-          arLaunchButton.href = `ar-viewer.html?model=${glbPath}&iosmodel=${usdzPath}`;
+          const imagePath = encodeURIComponent(selectedTile.main); // NEW: Pass tile image
+          
+          // Build AR viewer URL with all parameters
+          arLaunchButton.href = `ar-viewer.html?model=${glbPath}&iosmodel=${usdzPath}&image=${imagePath}`;
+          
+          console.log('AR Viewer URL:', arLaunchButton.href);
         }
 
         // Thumbnails
@@ -274,7 +280,7 @@
 
       populateTileDetails();
 
-      // --- Add to cart handler (pushes full object)
+      // --- Add to cart handler
       const addBtn = document.getElementById('add-to-cart-btn');
       if (addBtn) {
         addBtn.addEventListener('click', () => {
@@ -310,7 +316,6 @@
             window.headerShared.updateCartCount();
           }
 
-          // small visual
           const prevText = addBtn.textContent;
           addBtn.textContent = 'Added ✓';
           addBtn.disabled = true;
@@ -326,7 +331,7 @@
         const msg = document.getElementById('site-snackbar-message');
         if (!snack || !msg) return;
         msg.textContent = message;
-        snack.className = ''; // reset classes
+        snack.className = '';
         if (type) snack.classList.add(type);
         snack.classList.add('show');
         clearTimeout(snack._hideTimer);
@@ -336,7 +341,6 @@
         }, 3200);
       }
 
-      // expose showSnackbar globally so cart page could reuse if both scripts loaded
       window.showSnackbar = showSnackbar;
     });
   </script>
