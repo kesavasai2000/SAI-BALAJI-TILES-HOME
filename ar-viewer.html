@@ -236,7 +236,7 @@
             arInstructions.textContent = '👇 Tap "PLACE TILE" button below';
         }
         
-        // Place tile function
+        // Place tile function - DIRECTLY IN FRONT OF CAMERA
         placeTileBtn.addEventListener('click', () => {
             console.log('=== Placing Tile ===');
             
@@ -246,63 +246,61 @@
                 return;
             }
             
-            const pos = camera.getAttribute('position');
-            const rot = camera.getAttribute('rotation');
+            // Create tile ATTACHED TO CAMERA - always visible!
+            const tileId = `tile-${Date.now()}`;
             
-            // Place tile VERY close and lower - easier to see
-            const distance = 1.0; // Closer than before
-            const radY = (rot.y * Math.PI) / 180;
-            
-            const x = pos.x + distance * Math.sin(radY);
-            const y = pos.y - 0.8; // Lower, near ground
-            const z = pos.z + distance * Math.cos(radY);
-            
-            console.log('Tile position:', { x, y, z });
-            
-            // Create CONTAINER for tile + border
+            // Create CONTAINER
             const container = document.createElement('a-entity');
-            container.setAttribute('position', `${x} ${y} ${z}`);
-            container.setAttribute('rotation', '-90 0 0');
+            container.setAttribute('id', tileId);
             
-            // Main tile plane - BIGGER
+            // Position: Right in front and slightly down
+            // Format: x y z (relative to camera)
+            // Random X offset so tiles don't overlap
+            const randomX = (Math.random() - 0.5) * 1.5; // -0.75 to +0.75
+            container.setAttribute('position', `${randomX} -1.2 -2`); // 2 meters forward, 1.2m down
+            
+            // Main tile plane - BIG and BRIGHT
             const tile = document.createElement('a-plane');
-            tile.setAttribute('width', '1.0'); // Bigger!
-            tile.setAttribute('height', '1.0');
-            tile.setAttribute('position', '0 0 0');
+            tile.setAttribute('width', '0.8');
+            tile.setAttribute('height', '0.8');
+            tile.setAttribute('rotation', '-90 0 0'); // Flat like floor
             
-            // Use texture OR fallback color
+            // Use texture OR fallback
             const texture = document.getElementById('tile-texture');
             if (texture.complete && texture.naturalHeight > 0) {
                 tile.setAttribute('src', '#tile-texture');
-                tile.setAttribute('material', 'side: double; shader: flat');
+                tile.setAttribute('material', 'side: double; shader: flat; opacity: 0.95');
                 console.log('✅ Using texture');
             } else {
-                tile.setAttribute('color', '#D2691E'); // Bright brown
+                tile.setAttribute('color', '#FF6B35'); // Bright orange
                 tile.setAttribute('material', 'side: double; shader: flat');
                 console.log('⚠️ Using fallback color');
             }
             
-            // Add BRIGHT BORDER for visibility
+            // GLOWING BORDER - impossible to miss!
             const border = document.createElement('a-ring');
-            border.setAttribute('radius-inner', '0.48');
-            border.setAttribute('radius-outer', '0.52');
-            border.setAttribute('color', '#00FFFF'); // Bright cyan
+            border.setAttribute('radius-inner', '0.38');
+            border.setAttribute('radius-outer', '0.42');
+            border.setAttribute('color', '#00FF00'); // Bright green
             border.setAttribute('position', '0 0 0.01');
             border.setAttribute('material', 'side: double; shader: flat');
+            border.setAttribute('animation', 'property: material.opacity; from: 0.5; to: 1; dur: 1000; dir: alternate; loop: true');
             
             container.appendChild(tile);
             container.appendChild(border);
             
-            sceneEl.appendChild(container);
+            // Attach to CAMERA so it moves with view
+            camera.appendChild(container);
             placedTiles.push(container);
             
             tilesPlaced++;
             tileCountSpan.textContent = tilesPlaced;
             clearTilesBtn.style.display = 'block';
             
-            arInstructions.textContent = `✅ Tile ${tilesPlaced} placed! Look around to see it!`;
+            arInstructions.innerHTML = `<strong>✅ Tile ${tilesPlaced} placed!</strong><br>Move phone to see from different angles`;
             
-            console.log('✅ Tile placed successfully');
+            console.log('✅ Tile placed at camera position');
+            console.log('Look down slightly to see tile on "floor"');
         });
         
         // Clear tiles
