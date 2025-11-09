@@ -249,42 +249,58 @@
             const pos = camera.getAttribute('position');
             const rot = camera.getAttribute('rotation');
             
-            const distance = 1.5;
+            // Place tile VERY close and lower - easier to see
+            const distance = 1.0; // Closer than before
             const radY = (rot.y * Math.PI) / 180;
             
             const x = pos.x + distance * Math.sin(radY);
-            const y = -0.5;
+            const y = pos.y - 0.8; // Lower, near ground
             const z = pos.z + distance * Math.cos(radY);
             
             console.log('Tile position:', { x, y, z });
             
-            // Create visible tile
+            // Create CONTAINER for tile + border
+            const container = document.createElement('a-entity');
+            container.setAttribute('position', `${x} ${y} ${z}`);
+            container.setAttribute('rotation', '-90 0 0');
+            
+            // Main tile plane - BIGGER
             const tile = document.createElement('a-plane');
-            tile.setAttribute('width', '0.6');
-            tile.setAttribute('height', '0.6');
-            tile.setAttribute('position', `${x} ${y} ${z}`);
-            tile.setAttribute('rotation', '-90 0 0');
+            tile.setAttribute('width', '1.0'); // Bigger!
+            tile.setAttribute('height', '1.0');
+            tile.setAttribute('position', '0 0 0');
             
             // Use texture OR fallback color
             const texture = document.getElementById('tile-texture');
             if (texture.complete && texture.naturalHeight > 0) {
                 tile.setAttribute('src', '#tile-texture');
+                tile.setAttribute('material', 'side: double; shader: flat');
                 console.log('✅ Using texture');
             } else {
-                tile.setAttribute('color', '#CD853F'); // Tan/brown color
+                tile.setAttribute('color', '#D2691E'); // Bright brown
+                tile.setAttribute('material', 'side: double; shader: flat');
                 console.log('⚠️ Using fallback color');
             }
             
-            tile.setAttribute('material', 'side: double; transparent: false');
+            // Add BRIGHT BORDER for visibility
+            const border = document.createElement('a-ring');
+            border.setAttribute('radius-inner', '0.48');
+            border.setAttribute('radius-outer', '0.52');
+            border.setAttribute('color', '#00FFFF'); // Bright cyan
+            border.setAttribute('position', '0 0 0.01');
+            border.setAttribute('material', 'side: double; shader: flat');
             
-            sceneEl.appendChild(tile);
-            placedTiles.push(tile);
+            container.appendChild(tile);
+            container.appendChild(border);
+            
+            sceneEl.appendChild(container);
+            placedTiles.push(container);
             
             tilesPlaced++;
             tileCountSpan.textContent = tilesPlaced;
             clearTilesBtn.style.display = 'block';
             
-            arInstructions.textContent = `✅ Tile ${tilesPlaced} placed! Keep going!`;
+            arInstructions.textContent = `✅ Tile ${tilesPlaced} placed! Look around to see it!`;
             
             console.log('✅ Tile placed successfully');
         });
