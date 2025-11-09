@@ -4,7 +4,8 @@
     <meta charset="utf-8">
     <title>AR Tile Viewer</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
     <style>
         body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
         
@@ -18,14 +19,16 @@
             justify-content: center;
             align-items: center;
             text-align: center;
-            background: #111;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
+            padding: 20px;
         }
-        .message h2 { margin-top: 0; }
+        .message h2 { margin-top: 0; font-size: 24px; }
+        .message p { font-size: 16px; margin: 10px 0; }
         .ui-button {
             display: inline-block;
-            margin-top: 20px;
-            padding: 12px 24px;
+            margin: 10px 5px;
+            padding: 14px 28px;
             background: #fff;
             color: #333;
             border: none;
@@ -35,16 +38,26 @@
             cursor: pointer;
             text-decoration: none;
         }
+        #ar-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 5;
+            pointer-events: none;
+            display: none;
+        }
         #ar-instructions {
             position: absolute;
-            bottom: 20px;
+            bottom: 30px;
             left: 50%;
             transform: translateX(-50%);
-            background-color: rgba(0,0,0,0.75);
+            background-color: rgba(0,0,0,0.85);
             color: white;
-            padding: 12px 22px;
-            border-radius: 25px;
-            z-index: 10;
+            padding: 15px 25px;
+            border-radius: 30px;
+            font-size: 14px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            max-width: 85%;
         }
         #tile-counter {
             position: absolute;
@@ -52,26 +65,42 @@
             right: 20px;
             background-color: rgba(34, 211, 238, 0.95);
             color: #000;
-            padding: 10px 18px;
+            padding: 12px 20px;
             border-radius: 20px;
-            z-index: 10;
-            font-size: 15px;
+            font-size: 16px;
             font-weight: 700;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+        }
+        #place-tile-btn {
+            position: absolute;
+            bottom: 110px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(34, 211, 238, 0.95);
+            color: #000;
+            padding: 16px 32px;
+            border-radius: 30px;
+            border: none;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            pointer-events: auto;
         }
         #clear-tiles-btn {
             position: absolute;
-            bottom: 90px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: rgba(220, 38, 38, 0.9);
+            top: 70px;
+            right: 20px;
+            background-color: rgba(239, 68, 68, 0.95);
             color: white;
             padding: 10px 20px;
             border-radius: 20px;
             border: none;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             cursor: pointer;
-            z-index: 10;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            pointer-events: auto;
             display: none;
         }
     </style>
@@ -79,193 +108,204 @@
 <body>
     <div id="ui-container">
         <div class="message">
-            <h2 id="ui-title">Loading AR...</h2>
-            <p id="ui-message">Please wait, starting the best available experience for your device.</p>
+            <h2 id="ui-title">🚀 AR Tile Viewer</h2>
+            <p id="ui-message">Checking device compatibility...</p>
+            <div id="ui-actions"></div>
         </div>
     </div>
 
-    <div id="ar-instructions" style="display: none;">Scanning for floor... Move phone slowly.</div>
-    <div id="tile-counter" style="display: none;">Tiles: <span id="tile-count">0</span></div>
-    <button id="clear-tiles-btn">🗑️ Clear All Tiles</button>
+    <div id="ar-overlay">
+        <div id="ar-instructions">Point at floor and tap the button below</div>
+        <div id="tile-counter">Tiles: <span id="tile-count">0</span></div>
+        <button id="place-tile-btn">📍 PLACE TILE</button>
+        <button id="clear-tiles-btn">🗑️ Clear</button>
+    </div>
 
     <a-scene 
         id="ar-scene"
-        style="display: none;"
         embedded
         arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3;"
         vr-mode-ui="enabled: false"
-        renderer="logarithmicDepthBuffer: true; antialias: true; colorManagement: true;">
+        renderer="logarithmicDepthBuffer: true; antialias: true; alpha: true;"
+        style="display: none;">
         
         <a-assets>
-            <img id="tile-texture" src="" crossorigin="anonymous">
+            <img id="tile-texture" crossorigin="anonymous">
         </a-assets>
 
         <a-camera gps-camera rotation-reader look-controls="enabled: false"></a-camera>
         
-        <a-light type="ambient" color="#FFF" intensity="1"></a-light>
-        <a-light type="directional" color="#FFF" intensity="0.7" position="-1 2 1"></a-light>
+        <a-entity light="type: ambient; intensity: 1;"></a-entity>
+        <a-entity light="type: directional; intensity: 0.5;" position="1 2 1"></a-entity>
     </a-scene>
 
     <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-            const uiContainer = document.getElementById('ui-container');
-            const uiTitle = document.getElementById('ui-title');
-            const uiMessage = document.getElementById('ui-message');
-            const sceneEl = document.getElementById('ar-scene');
-            const arInstructions = document.getElementById('ar-instructions');
-            const tileCounter = document.getElementById('tile-counter');
-            const tileCountSpan = document.getElementById('tile-count');
-            const clearTilesBtn = document.getElementById('clear-tiles-btn');
-
-            const urlParams = new URLSearchParams(window.location.search);
-            const glbPath = urlParams.get('model');
-            const usdzPath = urlParams.get('iosmodel');
-            const tileImage = urlParams.get('image') || 'images/tiles1.jpg';
-            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-
-            let tilesPlaced = 0;
-            let placedTiles = [];
-
-            console.log('Device:', isIOS ? 'iOS' : 'Android');
-            console.log('Image path:', tileImage);
-
-            if (isIOS && usdzPath) {
-                // ==================== iOS ONLY - KEEP ORIGINAL ====================
-                uiTitle.innerText = "iOS AR Ready";
-                uiMessage.innerText = "Single tile preview using Quick Look.";
+        console.log('=== AR Viewer Starting ===');
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const usdzPath = urlParams.get('iosmodel');
+        const tileImage = urlParams.get('image') || 'images/tiles1.jpg';
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        
+        console.log('Device:', isIOS ? 'iOS' : 'Android');
+        console.log('Tile image:', tileImage);
+        
+        const uiContainer = document.getElementById('ui-container');
+        const uiTitle = document.getElementById('ui-title');
+        const uiMessage = document.getElementById('ui-message');
+        const uiActions = document.getElementById('ui-actions');
+        const sceneEl = document.getElementById('ar-scene');
+        const arOverlay = document.getElementById('ar-overlay');
+        const arInstructions = document.getElementById('ar-instructions');
+        const tileCountSpan = document.getElementById('tile-count');
+        const placeTileBtn = document.getElementById('place-tile-btn');
+        const clearTilesBtn = document.getElementById('clear-tiles-btn');
+        
+        let tilesPlaced = 0;
+        let placedTiles = [];
+        
+        // ==================== iOS - UNCHANGED ====================
+        if (isIOS && usdzPath) {
+            console.log('iOS mode - Quick Look');
+            uiTitle.textContent = '📱 iOS AR Ready';
+            uiMessage.textContent = 'Single tile preview using Quick Look';
+            
+            const launchBtn = document.createElement('button');
+            launchBtn.className = 'ui-button';
+            launchBtn.textContent = '🚀 View in AR';
+            launchBtn.onclick = () => {
+                console.log('Launching Quick Look');
+                const anchor = document.createElement('a');
+                anchor.setAttribute('rel', 'ar');
+                anchor.setAttribute('href', usdzPath);
+                anchor.appendChild(document.createElement('img'));
+                document.body.appendChild(anchor);
+                anchor.click();
+                setTimeout(() => document.body.removeChild(anchor), 100);
+            };
+            uiActions.appendChild(launchBtn);
+        } 
+        // ==================== Android - FIXED ====================
+        else {
+            console.log('Android mode - Multi-tile');
+            setupAndroid();
+        }
+        
+        async function setupAndroid() {
+            try {
+                // Check camera
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { facingMode: 'environment' } 
+                });
+                stream.getTracks().forEach(track => track.stop());
+                console.log('✅ Camera permission OK');
                 
-                const launchBtn = document.createElement('button');
-                launchBtn.innerText = "🚀 View in AR";
-                launchBtn.classList.add('ui-button');
-                launchBtn.onclick = () => {
-                    const anchor = document.createElement('a');
-                    anchor.setAttribute('rel', 'ar');
-                    anchor.setAttribute('href', usdzPath);
-                    anchor.appendChild(document.createElement('img'));
-                    document.body.appendChild(anchor);
-                    anchor.click();
-                    setTimeout(() => document.body.removeChild(anchor), 100);
-                };
-                uiMessage.parentElement.appendChild(launchBtn);
+                uiTitle.textContent = '✨ Multi-Tile AR';
+                uiMessage.innerHTML = '<strong>Place unlimited tiles!</strong><br>Use the button to place tiles on the floor.';
+                
+                const startBtn = document.createElement('button');
+                startBtn.className = 'ui-button';
+                startBtn.textContent = '🚀 START AR';
+                startBtn.onclick = startAR;
+                uiActions.appendChild(startBtn);
+                
+            } catch (error) {
+                console.error('❌ Camera error:', error);
+                uiTitle.textContent = '❌ Camera Required';
+                uiMessage.textContent = 'Please enable camera permissions and refresh.';
+            }
+        }
+        
+        function startAR() {
+            console.log('=== Starting AR ===');
+            
+            // Load texture
+            const texture = document.getElementById('tile-texture');
+            texture.src = tileImage;
+            console.log('Loading texture:', tileImage);
+            
+            texture.onload = () => console.log('✅ Texture loaded');
+            texture.onerror = () => console.error('❌ Texture load failed');
+            
+            // Hide UI, show AR
+            uiContainer.style.display = 'none';
+            sceneEl.style.display = 'block';
+            arOverlay.style.display = 'block';
+            
+            console.log('✅ AR Scene ready');
+            arInstructions.textContent = '👇 Tap "PLACE TILE" button below';
+        }
+        
+        // Place tile function
+        placeTileBtn.addEventListener('click', () => {
+            console.log('=== Placing Tile ===');
+            
+            const camera = sceneEl.querySelector('a-camera');
+            if (!camera) {
+                console.error('❌ Camera not found');
+                return;
+            }
+            
+            const pos = camera.getAttribute('position');
+            const rot = camera.getAttribute('rotation');
+            
+            const distance = 1.5;
+            const radY = (rot.y * Math.PI) / 180;
+            
+            const x = pos.x + distance * Math.sin(radY);
+            const y = -0.5;
+            const z = pos.z + distance * Math.cos(radY);
+            
+            console.log('Tile position:', { x, y, z });
+            
+            // Create visible tile
+            const tile = document.createElement('a-plane');
+            tile.setAttribute('width', '0.6');
+            tile.setAttribute('height', '0.6');
+            tile.setAttribute('position', `${x} ${y} ${z}`);
+            tile.setAttribute('rotation', '-90 0 0');
+            
+            // Use texture OR fallback color
+            const texture = document.getElementById('tile-texture');
+            if (texture.complete && texture.naturalHeight > 0) {
+                tile.setAttribute('src', '#tile-texture');
+                console.log('✅ Using texture');
             } else {
-                // ==================== ANDROID AR.js - FIXED VERSION ====================
-                setupAndroidAR();
+                tile.setAttribute('color', '#CD853F'); // Tan/brown color
+                console.log('⚠️ Using fallback color');
             }
-
-            async function setupAndroidAR() {
-                console.log('Setting up Android AR...');
-                
-                // Check camera permission
-                try {
-                    const stream = await navigator.mediaDevices.getUserMedia({ 
-                        video: { facingMode: 'environment' } 
-                    });
-                    stream.getTracks().forEach(track => track.stop());
-                    console.log('Camera permission OK');
-                } catch (error) {
-                    console.error('Camera error:', error);
-                    uiTitle.innerText = "Camera Access Required";
-                    uiMessage.innerText = "Please enable camera permissions and refresh.";
-                    return;
+            
+            tile.setAttribute('material', 'side: double; transparent: false');
+            
+            sceneEl.appendChild(tile);
+            placedTiles.push(tile);
+            
+            tilesPlaced++;
+            tileCountSpan.textContent = tilesPlaced;
+            clearTilesBtn.style.display = 'block';
+            
+            arInstructions.textContent = `✅ Tile ${tilesPlaced} placed! Keep going!`;
+            
+            console.log('✅ Tile placed successfully');
+        });
+        
+        // Clear tiles
+        clearTilesBtn.addEventListener('click', () => {
+            console.log('=== Clearing Tiles ===');
+            
+            placedTiles.forEach(tile => {
+                if (tile && tile.parentNode) {
+                    tile.parentNode.removeChild(tile);
                 }
-
-                uiTitle.innerText = "Android Multi-Tile AR Ready";
-                uiMessage.innerText = "Click Start to place multiple tiles in your space!";
-                
-                const enterArButton = document.createElement('button');
-                enterArButton.innerText = "🚀 START AR";
-                enterArButton.classList.add('ui-button');
-                uiMessage.parentElement.appendChild(enterArButton);
-                
-                enterArButton.addEventListener('click', async () => {
-                    console.log('Starting AR...');
-                    
-                    // Load tile image texture
-                    const tileTexture = document.getElementById('tile-texture');
-                    tileTexture.setAttribute('src', tileImage);
-                    
-                    // Hide UI
-                    uiContainer.style.display = 'none';
-                    
-                    // Show AR scene
-                    sceneEl.style.display = 'block';
-                    arInstructions.style.display = 'block';
-                    tileCounter.style.display = 'block';
-                    
-                    arInstructions.innerText = 'Point camera at floor. Tap screen to place tiles.';
-                    
-                    // Wait for scene to initialize
-                    await new Promise(resolve => setTimeout(resolve, 1000));
-                    
-                    console.log('AR Scene ready');
-                });
-            }
-
-            // Place tiles on screen tap (Android only)
-            if (!isIOS) {
-                window.addEventListener('click', (event) => {
-                    // Don't place if clicking UI buttons
-                    if (event.target.tagName === 'BUTTON') return;
-                    if (uiContainer.style.display !== 'none') return;
-                    
-                    console.log('Placing tile...');
-                    
-                    const camera = sceneEl.querySelector('a-camera');
-                    if (!camera) return;
-                    
-                    const cameraPos = camera.getAttribute('position');
-                    const cameraRot = camera.getAttribute('rotation');
-                    
-                    // Calculate position 1.5 meters in front of camera
-                    const distance = 1.5;
-                    const radY = (cameraRot.y * Math.PI) / 180;
-                    
-                    const x = cameraPos.x + distance * Math.sin(radY);
-                    const y = -0.4; // Floor level
-                    const z = cameraPos.z + distance * Math.cos(radY);
-                    
-                    // Create tile plane with texture
-                    const tile = document.createElement('a-plane');
-                    tile.setAttribute('src', '#tile-texture');
-                    tile.setAttribute('width', '0.6');
-                    tile.setAttribute('height', '0.6');
-                    tile.setAttribute('position', `${x} ${y} ${z}`);
-                    tile.setAttribute('rotation', '-90 0 0'); // Flat on ground
-                    tile.setAttribute('material', 'side: double');
-                    
-                    // Add to scene
-                    sceneEl.appendChild(tile);
-                    placedTiles.push(tile);
-                    
-                    tilesPlaced++;
-                    tileCountSpan.textContent = tilesPlaced;
-                    
-                    if (tilesPlaced > 0) {
-                        clearTilesBtn.style.display = 'block';
-                    }
-                    
-                    arInstructions.innerText = `✅ Tile ${tilesPlaced} placed! Tap to add more.`;
-                    
-                    console.log('Tile placed at:', { x, y, z });
-                });
-
-                // Clear all tiles
-                clearTilesBtn.addEventListener('click', () => {
-                    console.log('Clearing tiles...');
-                    
-                    placedTiles.forEach(tile => {
-                        if (tile && tile.parentNode) {
-                            tile.parentNode.removeChild(tile);
-                        }
-                    });
-                    
-                    placedTiles = [];
-                    tilesPlaced = 0;
-                    tileCountSpan.textContent = '0';
-                    clearTilesBtn.style.display = 'none';
-                    arInstructions.innerText = '🗑️ Cleared! Tap screen to place new tiles.';
-                });
-            }
+            });
+            
+            placedTiles = [];
+            tilesPlaced = 0;
+            tileCountSpan.textContent = '0';
+            clearTilesBtn.style.display = 'none';
+            
+            arInstructions.textContent = '🗑️ Cleared! Place new tiles';
+            console.log('✅ All tiles cleared');
         });
     </script>
 </body>
