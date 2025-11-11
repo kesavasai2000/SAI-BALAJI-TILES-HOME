@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Brand Tiles - Sai Balaji Tiles</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        html, body { height: 100%; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+        body { 
+            background: linear-gradient(270deg, #0d0320, #1a094b, #000000, #8e2de2, #000000);
+            background-size: 300% 300%;
+            animation: gradientBG 20s ease infinite;
+        }
+        @keyframes gradientBG { 
+            0% { background-position: 0% 50%; } 
+            50% { background-position: 100% 50%; } 
+            100% { background-position: 0% 50%; } 
+        }
+
+        .stars-container { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+        .star { position: absolute; background-color: rgba(255, 255, 255, 0.7); border-radius: 50%; animation: twinkle 6s infinite ease-in-out; }
+        @keyframes twinkle { 0%, 100% { opacity: 0.1; } 50% { opacity: 0.7; } }
+
+        .tile-card {
+            background: rgba(17, 24, 39, 0.8);
+            border: 2px solid rgba(148, 163, 184, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .tile-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(34, 211, 238, 0.5);
+            box-shadow: 0 15px 30px rgba(34, 211, 238, 0.2);
+        }
+
+        .tile-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .tile-card:hover .tile-image {
+            transform: scale(1.05);
+        }
+
+        .btn-theme-primary {
+            padding: 0.6rem 1rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            border: 2px solid rgba(6,182,212,0.9);
+            color: rgba(7,17,38,1);
+            background: #22d3ee;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-theme-secondary {
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid rgba(99,102,241,0.7);
+            color: #c7d2fe;
+            background: transparent;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .filter-section {
+            background: rgba(17, 24, 39, 0.7);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            background: rgba(31, 41, 55, 0.6);
+            color: #94a3b8;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn.active {
+            background: rgba(34, 211, 238, 0.2);
+            border-color: #22d3ee;
+            color: #22d3ee;
+        }
+
+        .filter-btn:hover {
+            border-color: #22d3ee;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="stars-container" id="stars-bg-global"></div>
+
+    <header class="fixed w-full top-0 left-0 bg-gray-900/80 backdrop-blur-md shadow-2xl flex items-center justify-between p-3 sm:p-4 z-40 border-b border-cyan-500/30">
+        <div class="flex items-center gap-3">
+            <a href="brands.html" class="text-cyan-400 hover:text-cyan-300 text-xl">←</a>
+            <div class="flex-grow text-center px-2">
+                <span id="brand-title" class="text-xl font-bold text-cyan-400">Brand Tiles</span>
+            </div>
+        </div>
+        <div class="flex-none">
+            <a href="cart.html" class="text-cyan-400 hover:text-cyan-300">
+                🛒 <span id="cart-count">0</span>
+            </a>
+        </div>
+    </header>
+
+    <main style="padding-top: 6rem; position: relative; z-index: 1; min-height: 100vh;">
+        <div class="container mx-auto px-4 pb-12">
+            
+            <!-- Brand Header -->
+            <div class="text-center mb-8">
+                <div class="bg-white/95 inline-block p-6 rounded-xl mb-4">
+                    <img id="brand-logo" src="" alt="Brand Logo" class="h-20 mx-auto" 
+                         onerror="this.style.display='none'">
+                </div>
+                <h1 id="brand-name" class="text-4xl font-bold text-cyan-400 mb-2"></h1>
+                <p id="brand-description" class="text-gray-300 max-w-2xl mx-auto"></p>
+            </div>
+
+            <!-- Filters -->
+            <div class="filter-section">
+                <h3 class="text-lg font-semibold text-indigo-300 mb-3">Filter by Category</h3>
+                <div id="filter-buttons" class="flex flex-wrap gap-3">
+                    <button class="filter-btn active" data-filter="all">All Tiles</button>
+                    <button class="filter-btn" data-filter="polished">Polished Vitrified</button>
+                    <button class="filter-btn" data-filter="ceramic">Ceramic</button>
+                    <button class="filter-btn" data-filter="glazed">Glazed Vitrified</button>
+                    <button class="filter-btn" data-filter="outdoor">Outdoor</button>
+                    <button class="filter-btn" data-filter="marble">Marble Finish</button>
+                </div>
+            </div>
+
+            <!-- Tiles Grid -->
+            <div id="tiles-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <!-- Tiles will be populated here -->
+            </div>
+
+            <!-- Empty State -->
+            <div id="empty-state" class="text-center py-12 hidden">
+                <p class="text-gray-400 text-lg">No tiles found for this filter</p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-gray-900 text-gray-400 text-center py-6 border-t border-cyan-500/30 relative z-10">
+        <p>© 2025 Sai Balaji Tiles. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        // ==================== TILE DATA BY BRAND ====================
+        const brandTilesData = {
+            kajaria: [
+                { id: 'kaj-1', name: 'Statuario Marble', image: 'images/tiles1.jpg', category: 'polished', price: 95, size: '800x800mm' },
+                { id: 'kaj-2', name: 'Rustic Wood', image: 'images/tiles2.jpg', category: 'ceramic', price: 52, size: '600x600mm' },
+                { id: 'kaj-3', name: 'Calacatta Gold', image: 'images/tiles3.jpg', category: 'glazed', price: 120, size: '600x1200mm' },
+                { id: 'kaj-4', name: 'Dark Emperador', image: 'images/tile1.jpg', category: 'marble', price: 110, size: '800x800mm' },
+                { id: 'kaj-5', name: 'Granite Speckle', image: 'images/tile2.jpg', category: 'outdoor', price: 65, size: '600x600mm' },
+                { id: 'kaj-6', name: 'Concrete Gray', image: 'images/tiles1.jpg', category: 'polished', price: 85, size: '800x800mm' }
+            ],
+            qtone: [
+                { id: 'qt-1', name: 'Onyx Supreme', image: 'images/tiles2.jpg', category: 'polished', price: 135, size: '1200x1200mm' },
+                { id: 'qt-2', name: 'Terrazzo Classic', image: 'images/tiles3.jpg', category: 'ceramic', price: 75, size: '600x600mm' },
+                { id: 'qt-3', name: 'Porcelain White', image: 'images/tile1.jpg', category: 'glazed', price: 140, size: '800x1600mm' },
+                { id: 'qt-4', name: 'Sandstone Beige', image: 'images/tile2.jpg', category: 'outdoor', price: 80, size: '600x600mm' }
+            ],
+            somany: [
+                { id: 'som-1', name: 'Ivory Elegance', image: 'images/tiles1.jpg', category: 'polished', price: 88, size: '800x800mm' },
+                { id: 'som-2', name: 'Metro Brick', image: 'images/tiles2.jpg', category: 'ceramic', price: 45, size: '300x600mm' },
+                { id: 'som-3', name: 'Travertine Beige', image: 'images/tiles3.jpg', category: 'marble', price: 105, size: '600x1200mm' },
+                { id: 'som-4', name: 'Slate Gray', image: 'images/tile1.jpg', category: 'outdoor', price: 70, size: '600x600mm' },
+                { id: 'som-5', name: 'Glossy White', image: 'images/tile2.jpg', category: 'glazed', price: 92, size: '600x600mm' }
+            ]
+        };
+
+        const brandInfo = {
+            kajaria: { name: 'Kajaria', logo: 'images/brands/kar.png', desc: 'India\'s No.1 Tile Company' },
+            qtone: { name: 'Qtone', logo: 'images/brands/brand2.png', desc: 'Premium Luxury Tiles' },
+            somany: { name: 'Somany', logo: 'images/brands/Somany-logo.png', desc: 'Complete Surface Solutions' }
+           
+        };
+
+        // ==================== GET BRAND FROM URL ====================
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentBrand = urlParams.get('brand') || 'kajaria';
+        const tiles = brandTilesData[currentBrand] || [];
+        const brand = brandInfo[currentBrand];
+
+        let currentFilter = 'all';
+
+        // ==================== POPULATE BRAND INFO ====================
+        document.getElementById('brand-title').textContent = brand.name;
+        document.getElementById('brand-name').textContent = brand.name;
+        document.getElementById('brand-description').textContent = brand.desc;
+        document.getElementById('brand-logo').src = brand.logo;
+        document.title = `${brand.name} Tiles - Sai Balaji Tiles`;
+
+        // ==================== RENDER TILES ====================
+        function renderTiles(filter = 'all') {
+            const tilesGrid = document.getElementById('tiles-grid');
+            const emptyState = document.getElementById('empty-state');
+            
+            const filteredTiles = filter === 'all' 
+                ? tiles 
+                : tiles.filter(tile => tile.category === filter);
+
+            if (filteredTiles.length === 0) {
+                tilesGrid.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            tilesGrid.classList.remove('hidden');
+            emptyState.classList.add('hidden');
+            tilesGrid.innerHTML = '';
+
+            filteredTiles.forEach(tile => {
+                const tileCard = document.createElement('div');
+                tileCard.className = 'tile-card';
+                tileCard.onclick = () => {
+                    // Save tile data and redirect to detail page
+                    localStorage.setItem('selectedTile', JSON.stringify({
+                        ...tile,
+                        brand: brand.name
+                    }));
+                    window.location.href = `tile-detail.html?id=${tile.id}`;
+                };
+
+                tileCard.innerHTML = `
+                    <img src="${tile.image}" alt="${tile.name}" class="tile-image">
+                    <div class="p-4">
+                        <h3 class="text-lg font-semibold text-indigo-300 mb-2">${tile.name}</h3>
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="text-gray-400 text-sm">${tile.size}</span>
+                            <span class="text-cyan-400 font-bold">₹${tile.price}/sq.ft</span>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="event.stopPropagation(); addToCart('${tile.id}')" 
+                                    class="btn-theme-primary flex-1 text-center text-sm">
+                                Add to Cart
+                            </button>
+                            <button class="btn-theme-secondary text-sm">
+                                View AR
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                tilesGrid.appendChild(tileCard);
+            });
+        }
+
+        // ==================== FILTER FUNCTIONALITY ====================
+        document.getElementById('filter-buttons').addEventListener('click', (e) => {
+            if (e.target.classList.contains('filter-btn')) {
+                document.querySelectorAll('.filter-btn').forEach(btn => 
+                    btn.classList.remove('active')
+                );
+                e.target.classList.add('active');
+                
+                currentFilter = e.target.dataset.filter;
+                renderTiles(currentFilter);
+            }
+        });
+
+        // ==================== ADD TO CART ====================
+        function addToCart(tileId) {
+            const tile = tiles.find(t => t.id === tileId);
+            if (!tile) return;
+
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const existingIndex = cart.findIndex(item => item.id === tileId);
+
+            if (existingIndex >= 0) {
+                cart[existingIndex].quantity = (cart[existingIndex].quantity || 1) + 1;
+            } else {
+                cart.push({
+                    id: tile.id,
+                    name: tile.name,
+                    image: tile.image,
+                    price: tile.price,
+                    quantity: 1,
+                    brand: brand.name
+                });
+            }
+
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartCount();
+            
+            // Visual feedback
+            alert(`${tile.name} added to cart!`);
+        }
+
+        window.addToCart = addToCart;
+
+        // ==================== CART COUNT ====================
+        function updateCartCount() {
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            document.getElementById('cart-count').textContent = cart.length;
+        }
+
+        // ==================== STARS ====================
+        function createStars() {
+            const container = document.getElementById('stars-bg-global');
+            container.innerHTML = '';
+            const numStars = Math.min(200, Math.floor(window.innerWidth / 18));
+            
+            for (let i = 0; i < numStars; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                const size = Math.random() * 2.5 + 0.5;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                star.style.animationDuration = `${Math.random() * 3 + 4}s`;
+                container.appendChild(star);
+            }
+        }
+
+        // ==================== INITIALIZE ====================
+        window.addEventListener('load', () => {
+            createStars();
+            renderTiles();
+            updateCartCount();
+        });
+
+        window.addEventListener('resize', createStars);
+    </script>
+</body>
+</html>
