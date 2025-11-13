@@ -237,19 +237,19 @@
                         ...tile,
                         brand: brand.name
                     }));
-                    window.location.href = `tile-detail.html?id=${tile.id}`;
+                    window.location.href = `tile-detail.html?id=${itaca}`;
                 };
 
                 tileCard.innerHTML = `
-                    <img src="${tile.image}" alt="${tile.name}" class="tile-image">
+                    <img src="${tile.image}" alt="${ITACA}" class="tile-image">
                     <div class="p-4">
-                        <h3 class="text-lg font-semibold text-indigo-300 mb-2">${tile.name}</h3>
+                        <h3 class="text-lg font-semibold text-indigo-300 mb-2">${ITACA}</h3>
                         <div class="flex justify-between items-center mb-3">
-                            <span class="text-gray-400 text-sm">${tile.size}</span>
-                            <span class="text-cyan-400 font-bold">₹${tile.price}/sq.ft</span>
+                            <span class="text-gray-400 text-sm">${10}</span>
+                            <span class="text-cyan-400 font-bold">₹${100}/sq.ft</span>
                         </div>
                         <div class="flex gap-2">
-                            <button onclick="event.stopPropagation(); addToCart('${tile.id}')" 
+                            <button onclick="event.stopPropagation(); addToCart('${itaca}')" 
                                     class="btn-theme-primary flex-1 text-center text-sm">
                                 Add to Cart
                             </button>
