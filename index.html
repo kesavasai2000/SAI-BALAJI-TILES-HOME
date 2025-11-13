@@ -126,33 +126,139 @@
                 </div>
             </section>
 
-            <!-- BRANDS SECTION -->
-            <section id="brands" class="py-16 sm:py-20 bg-gray-800/70 backdrop-blur-sm needs-blur-fallback"> 
-                <div class="container mx-auto px-4 text-center">
-                    <h2 class="animate-on-scroll init-slide-up text-2xl sm:text-3xl md:text-4xl font-bold mb-6 text-cyan-400">Our Premium Brands</h2>
-                    <p class="animate-on-scroll init-fade-in text-gray-300 mb-10 max-w-2xl mx-auto" style="transition-delay: 0.1s;">
-                        We partner with India's leading tile manufacturers to bring you the finest quality and designs
+            <!-- BRANDS SECTION - ENHANCED & ATTRACTIVE -->
+            <section id="brands" class="py-20 sm:py-24 relative overflow-hidden" style="background: linear-gradient(135deg, rgba(6, 182, 212, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);">
+                <!-- Decorative background elements -->
+                <div class="absolute top-0 left-0 w-full h-full opacity-10">
+                    <div class="absolute top-10 left-10 w-72 h-72 bg-cyan-400 rounded-full filter blur-3xl"></div>
+                    <div class="absolute bottom-10 right-10 w-96 h-96 bg-purple-500 rounded-full filter blur-3xl"></div>
+                </div>
+                
+                <div class="container mx-auto px-4 text-center relative z-10">
+                    <!-- Heading with glow effect -->
+                    <div class="mb-6">
+                        <span class="inline-block px-6 py-2 bg-cyan-400/20 text-cyan-400 rounded-full text-sm font-semibold mb-4 animate-pulse">
+                            ✨ PREMIUM QUALITY
+                        </span>
+                    </div>
+                    <h2 class="animate-on-scroll init-slide-up text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400">
+                        Our Premium Brands
+                    </h2>
+                    <p class="animate-on-scroll init-fade-in text-lg sm:text-xl text-gray-200 mb-10 max-w-3xl mx-auto leading-relaxed" style="transition-delay: 0.1s;">
+                        We partner with <strong class="text-cyan-400">India's leading tile manufacturers</strong> to bring you the finest quality and designs
                     </p>
-                    <a href="brands.html" class="btn-theme-primary text-lg mb-12 inline-block">View All Brands →</a>
                     
-                    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6 max-w-5xl mx-auto">
-                        <div class="animate-on-scroll init-fade-in bg-white/95 p-6 rounded-xl hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2" style="transition-delay: 0.1s;">
-                            <div class="text-cyan-600 font-bold text-xl">KAJARIA</div>
+                    <!-- CTA Button with glow -->
+                    <div class="mb-16 animate-on-scroll init-fade-in" style="transition-delay: 0.2s;">
+                        <a href="brands.html" class="inline-block px-10 py-4 bg-gradient-to-r from-cyan-500 to-purple-600 text-white text-lg font-bold rounded-full shadow-2xl hover:shadow-cyan-500/50 transform hover:scale-105 transition-all duration-300" style="box-shadow: 0 0 30px rgba(34, 211, 238, 0.4);">
+                            🚀 View All Brands →
+                        </a>
+                    </div>
+                    
+                    <!-- Brand Cards Grid - With Logos -->
+                    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6 max-w-6xl mx-auto">
+                        <!-- KAJARIA -->
+                        <a href="brands.html" class="animate-on-scroll init-fade-in group relative bg-white rounded-2xl p-6 shadow-2xl hover:shadow-cyan-500/50 transition-all duration-500 transform hover:-translate-y-3 hover:scale-105 cursor-pointer overflow-hidden" style="transition-delay: 0.1s;">
+                            <div class="absolute inset-0 bg-gradient-to-br from-cyan-400/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            <div class="relative z-10 flex flex-col items-center">
+                                <div class="w-24 h-24 mb-3 flex items-center justify-center">
+                                    <img src="images/brands/kajaria-logo.png" alt="Kajaria" class="max-w-full max-h-full object-contain filter grayscale-0 group-hover:scale-110 transition-transform duration-300"
+                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                                    <div style="display:none;" class="text-cyan-600 font-bold text-2xl">KAJARIA</div>
+                                </div>
+                                <div class="text-gray-500 text-xs font-semibold">India's No.1</div>
+                            </div>
+                            <div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-400 to-cyan-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+                        </a>
+
+                        <!-- QTONE -->
+                        <a href="brands.html" class="animate-on-scroll init-fade-in group relative bg-white rounded-2xl p-6 shadow-2xl hover:shadow-indigo-500/50 transition-all duration-500 transform hover:-translate-y-3 hover:scale-105 cursor-pointer overflow-hidden" style="transition-delay: 0.2s;">
+                            <div class="absolute inset-0 bg-gradient-to-br from-indigo-400/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            <div class="relative z-10 flex flex-col items-center">
+                                <div class="w-24 h-24 mb-3 flex items-center justify-center">
+                                    <img src="images/brands/qtone-logo.png" alt="Qtone" class="max-w-full max-h-full object-contain filter grayscale-0 group-hover:scale-110 transition-transform duration-300"
+                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                                    <div style="display:none;" class="text-indigo-600 font-bold text-2xl">QTONE</div>
+                                </div>
+                                <div class="text-gray-500 text-xs font-semibold">Premium Luxury</div>
+                            </div>
+                            <div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-400 to-indigo-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+                        </a>
+
+                        <!-- SOMANY -->
+                        <a href="brands.html" class="animate-on-scroll init-fade-in group relative bg-white rounded-2xl p-6 shadow-2xl hover:shadow-purple-500/50 transition-all duration-500 transform hover:-translate-y-3 hover:scale-105 cursor-pointer overflow-hidden" style="transition-delay: 0.3s;">
+                            <div class="absolute inset-0 bg-gradient-to-br from-purple-400/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            <div class="relative z-10 flex flex-col items-center">
+                                <div class="w-24 h-24 mb-3 flex items-center justify-center">
+                                    <img src="images/brands/somany-logo.png" alt="Somany" class="max-w-full max-h-full object-contain filter grayscale-0 group-hover:scale-110 transition-transform duration-300"
+                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                                    <div style="display:none;" class="text-purple-600 font-bold text-2xl">SOMANY</div>
+                                </div>
+                                <div class="text-gray-500 text-xs font-semibold">Trusted Quality</div>
+                            </div>
+                            <div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-purple-400 to-purple-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+                        </a>
+
+                        <!-- JOHNSON -->
+                        <a href="brands.html" class="animate-on-scroll init-fade-in group relative bg-white rounded-2xl p-6 shadow-2xl hover:shadow-blue-500/50 transition-all duration-500 transform hover:-translate-y-3 hover:scale-105 cursor-pointer overflow-hidden" style="transition-delay: 0.4s;">
+                            <div class="absolute inset-0 bg-gradient-to-br from-blue-400/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            <div class="relative z-10 flex flex-col items-center">
+                                <div class="w-24 h-24 mb-3 flex items-center justify-center">
+                                    <img src="images/brands/johnson-logo.png" alt="Johnson" class="max-w-full max-h-full object-contain filter grayscale-0 group-hover:scale-110 transition-transform duration-300"
+                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                                    <div style="display:none;" class="text-blue-600 font-bold text-2xl">JOHNSON</div>
+                                </div>
+                                <div class="text-gray-500 text-xs font-semibold">World Class</div>
+                            </div>
+                            <div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 to-blue-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+                        </a>
+
+                        <!-- NITCO -->
+                        <a href="brands.html" class="animate-on-scroll init-fade-in group relative bg-white rounded-2xl p-6 shadow-2xl hover:shadow-teal-500/50 transition-all duration-500 transform hover:-translate-y-3 hover:scale-105 cursor-pointer overflow-hidden" style="transition-delay: 0.5s;">
+                            <div class="absolute inset-0 bg-gradient-to-br from-teal-400/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            <div class="relative z-10 flex flex-col items-center">
+                                <div class="w-24 h-24 mb-3 flex items-center justify-center">
+                                    <img src="images/brands/nitco-logo.png" alt="Nitco" class="max-w-full max-h-full object-contain filter grayscale-0 group-hover:scale-110 transition-transform duration-300"
+                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                                    <div style="display:none;" class="text-teal-600 font-bold text-2xl">NITCO</div>
+                                </div>
+                                <div class="text-gray-500 text-xs font-semibold">Innovative</div>
+                            </div>
+                            <div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-teal-400 to-teal-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+                        </a>
+
+                        <!-- ORIENT BELL -->
+                        <a href="brands.html" class="animate-on-scroll init-fade-in group relative bg-white rounded-2xl p-6 shadow-2xl hover:shadow-orange-500/50 transition-all duration-500 transform hover:-translate-y-3 hover:scale-105 cursor-pointer overflow-hidden" style="transition-delay: 0.6s;">
+                            <div class="absolute inset-0 bg-gradient-to-br from-orange-400/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            <div class="relative z-10 flex flex-col items-center">
+                                <div class="w-24 h-24 mb-3 flex items-center justify-center">
+                                    <img src="images/brands/orient-bell-logo.png" alt="Orient Bell" class="max-w-full max-h-full object-contain filter grayscale-0 group-hover:scale-110 transition-transform duration-300"
+                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                                    <div style="display:none;" class="text-orange-600 font-bold text-2xl">ORIENT</div>
+                                </div>
+                                <div class="text-gray-500 text-xs font-semibold">Contemporary</div>
+                            </div>
+                            <div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-orange-400 to-orange-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+                        </a>
+                    </div>
+
+                    <!-- Trust Indicators -->
+                    <div class="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
+                        <div class="animate-on-scroll init-fade-in text-center" style="transition-delay: 0.7s;">
+                            <div class="text-4xl font-bold text-cyan-400 mb-2">150+</div>
+                            <div class="text-gray-400 text-sm">Design Options</div>
                         </div>
-                        <div class="animate-on-scroll init-fade-in bg-white/95 p-6 rounded-xl hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2" style="transition-delay: 0.2s;">
-                            <div class="text-indigo-600 font-bold text-xl">QTONE</div>
+                        <div class="animate-on-scroll init-fade-in text-center" style="transition-delay: 0.8s;">
+                            <div class="text-4xl font-bold text-purple-400 mb-2">6</div>
+                            <div class="text-gray-400 text-sm">Premium Brands</div>
                         </div>
-                        <div class="animate-on-scroll init-fade-in bg-white/95 p-6 rounded-xl hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2" style="transition-delay: 0.3s;">
-                            <div class="text-purple-600 font-bold text-xl">SOMANY</div>
+                        <div class="animate-on-scroll init-fade-in text-center" style="transition-delay: 0.9s;">
+                            <div class="text-4xl font-bold text-pink-400 mb-2">100%</div>
+                            <div class="text-gray-400 text-sm">Quality Assured</div>
                         </div>
-                        <div class="animate-on-scroll init-fade-in bg-white/95 p-6 rounded-xl hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2" style="transition-delay: 0.4s;">
-                            <div class="text-blue-600 font-bold text-xl">JOHNSON</div>
-                        </div>
-                        <div class="animate-on-scroll init-fade-in bg-white/95 p-6 rounded-xl hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2" style="transition-delay: 0.5s;">
-                            <div class="text-teal-600 font-bold text-xl">NITCO</div>
-                        </div>
-                        <div class="animate-on-scroll init-fade-in bg-white/95 p-6 rounded-xl hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2" style="transition-delay: 0.6s;">
-                            <div class="text-orange-600 font-bold text-xl">ORIENT</div>
+                        <div class="animate-on-scroll init-fade-in text-center" style="transition-delay: 1s;">
+                            <div class="text-4xl font-bold text-indigo-400 mb-2">24/7</div>
+                            <div class="text-gray-400 text-sm">Support Available</div>
                         </div>
                     </div>
                 </div>
