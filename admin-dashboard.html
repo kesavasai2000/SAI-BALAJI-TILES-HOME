@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Sai Balaji Tiles</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f0f2f5;
+            color: #333;
+        }
+
+        /* HEADER */
+        .admin-header {
+            background: linear-gradient(135deg, #1a1a1a 0%, #333 100%);
+            color: #fff;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .admin-logo {
+            font-size: 24px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .admin-badge {
+            background: #ffd700;
+            color: #1a1a1a;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .admin-user {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logout-btn {
+            padding: 10px 24px;
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.2);
+            color: #fff;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        /* DASHBOARD LAYOUT */
+        .dashboard {
+            display: flex;
+            max-width: 1600px;
+            margin: 30px auto;
+            gap: 30px;
+            padding: 0 40px;
+        }
+
+        /* SIDEBAR */
+        .admin-sidebar {
+            width: 260px;
+            background: #fff;
+            border-radius: 15px;
+            padding: 25px;
+            height: fit-content;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 8px;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 18px;
+            border-radius: 10px;
+            text-decoration: none;
+            color: #666;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            background: #1a1a1a;
+            color: #fff;
+        }
+
+        /* CONTENT */
+        .admin-content {
+            flex: 1;
+        }
+
+        .content-section {
+            background: #fff;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-bottom: 25px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .section-header h2 {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        /* STATS GRID */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: #fff;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border-left: 4px solid #1a1a1a;
+        }
+
+        .stat-card.revenue { border-left-color: #10b981; }
+        .stat-card.orders { border-left-color: #3b82f6; }
+        .stat-card.customers { border-left-color: #f59e0b; }
+        .stat-card.products { border-left-color: #8b5cf6; }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            color: #999;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* TABLE */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th {
+            text-align: left;
+            padding: 15px;
+            background: #f8f9fa;
+            color: #666;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+        }
+
+        .data-table td {
+            padding: 16px 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .data-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .action-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-right: 8px;
+        }
+
+        .btn-view {
+            background: #3b82f6;
+            color: #fff;
+        }
+
+        .btn-edit {
+            background: #10b981;
+            color: #fff;
+        }
+
+        .btn-delete {
+            background: #ef4444;
+            color: #fff;
+        }
+
+        .action-btn:hover {
+            opacity: 0.8;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-pending { background: #fef3c7; color: #92400e; }
+        .status-processing { background: #dbeafe; color: #1e40af; }
+        .status-delivered { background: #d1fae5; color: #065f46; }
+        .status-cancelled { background: #fee2e2; color: #991b1b; }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .primary-btn {
+            padding: 12px 24px;
+            background: #1a1a1a;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .primary-btn:hover {
+            background: #333;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .dashboard {
+                flex-direction: column;
+                padding: 0 20px;
+            }
+            .admin-sidebar {
+                width: 100%;
+            }
+            .admin-header {
+                padding: 15px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <div class="admin-header">
+        <div class="admin-logo">
+            🛡️ SAI BALAJI TILES
+            <span class="admin-badge">ADMIN</span>
+        </div>
+        <div class="admin-user">
+            <div>
+                <div style="font-weight: 600; font-size: 14px;" id="adminName">Admin</div>
+                <div style="font-size: 12px; opacity: 0.8;" id="adminEmail">admin@email.com</div>
+            </div>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div class="dashboard">
+        <!-- SIDEBAR -->
+        <div class="admin-sidebar">
+            <ul class="sidebar-menu">
+                <li><a href="#" class="active" onclick="showSection('overview')">📊 Dashboard</a></li>
+                <li><a href="#" onclick="showSection('orders')">📦 Orders</a></li>
+                <li><a href="#" onclick="showSection('customers')">👥 Customers</a></li>
+                <li><a href="#" onclick="showSection('products')">🏺 Products</a></li>
+                <li><a href="#" onclick="showSection('analytics')">📈 Analytics</a></li>
+                <li><a href="index.html">🏠 View Site</a></li>
+            </ul>
+        </div>
+
+        <!-- CONTENT -->
+        <div class="admin-content">
+            <!-- OVERVIEW SECTION -->
+            <div id="overview-section">
+                <div class="stats-grid">
+                    <div class="stat-card revenue">
+                        <div class="stat-value" id="totalRevenue">₹0</div>
+                        <div class="stat-label">Total Revenue</div>
+                    </div>
+                    <div class="stat-card orders">
+                        <div class="stat-value" id="totalOrders">0</div>
+                        <div class="stat-label">Total Orders</div>
+                    </div>
+                    <div class="stat-card customers">
+                        <div class="stat-value" id="totalCustomers">0</div>
+                        <div class="stat-label">Total Customers</div>
+                    </div>
+                    <div class="stat-card products">
+                        <div class="stat-value" id="totalProducts">150+</div>
+                        <div class="stat-label">Products</div>
+                    </div>
+                </div>
+
+                <!-- RECENT ORDERS -->
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2>Recent Orders</h2>
+                        <button class="primary-btn" onclick="showSection('orders')">View All</button>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer</th>
+                                <th>Date</th>
+                                <th>Items</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentOrdersTable">
+                            <tr>
+                                <td colspan="7">
+                                    <div class="empty-state">Loading orders...</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ORDERS SECTION -->
+            <div id="orders-section" style="display: none;">
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2>All Orders</h2>
+                        <button class="primary-btn">Export Data</button>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer</th>
+                                <th>Date</th>
+                                <th>Items</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="allOrdersTable">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- CUSTOMERS SECTION -->
+            <div id="customers-section" style="display: none;">
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2>Customers</h2>
+                        <button class="primary-btn">Export List</button>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Orders</th>
+                                <th>Total Spent</th>
+                                <th>Joined</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="customersTable">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- PRODUCTS SECTION -->
+            <div id="products-section" style="display: none;">
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2>Products Management</h2>
+                        <button class="primary-btn">Add Product</button>
+                    </div>
+                    <p style="color: #999; text-align: center; padding: 40px;">
+                        Product management coming soon. Currently showing 150+ tiles from 6 premium brands.
+                    </p>
+                </div>
+            </div>
+
+            <!-- ANALYTICS SECTION -->
+            <div id="analytics-section" style="display: none;">
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2>Analytics & Reports</h2>
+                    </div>
+                    <p style="color: #999; text-align: center; padding: 40px;">
+                        Advanced analytics dashboard coming soon.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+    <script>
+        // Firebase Config - SAI BALAJI TILES
+        const firebaseConfig = {
+            apiKey: "AIzaSyA91p9ZEvBvqsOgkclsdqPGGySqhhmZUic",
+            authDomain: "sai-balaji-tiles.firebaseapp.com",
+            projectId: "sai-balaji-tiles",
+            storageBucket: "sai-balaji-tiles.firebasestorage.app",
+            messagingSenderId: "644522459444",
+            appId: "1:644522459444:web:a19bbdb0542af4aebb2561",
+            measurementId: "G-TNB9Y0NXYY"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // Admin emails whitelist
+        const ADMIN_EMAILS = ['admin@saibalajitiles.com', 'your-email@gmail.com'];
+
+        // Check admin authentication
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                // Check if user is admin
+                const userDoc = await db.collection('users').doc(user.uid).get();
+                const isAdmin = userDoc.exists && userDoc.data().role === 'admin';
+                
+                if (!isAdmin) {
+                    alert('❌ Access denied. Admin privileges required.');
+                    window.location.href = 'user-dashboard.html';
+                    return;
+                }
+
+                document.getElementById('adminName').textContent = user.displayName || 'Admin';
+                document.getElementById('adminEmail').textContent = user.email;
+                
+                await loadDashboardData();
+            } else {
+                window.location.href = 'auth.html';
+            }
+        });
+
+        async function loadDashboardData() {
+            try {
+                // Load all orders
+                const ordersSnapshot = await db.collection('orders')
+                    .orderBy('createdAt', 'desc')
+                    .limit(50)
+                    .get();
+
+                const orders = [];
+                ordersSnapshot.forEach(doc => {
+                    orders.push({ id: doc.id, ...doc.data() });
+                });
+
+                // Update stats
+                document.getElementById('totalOrders').textContent = orders.length;
+                const totalRevenue = orders.reduce((sum, o) => sum + (o.total || 0), 0);
+                document.getElementById('totalRevenue').textContent = `₹${totalRevenue.toLocaleString()}`;
+
+                // Display orders
+                displayOrders(orders);
+
+                // Load customers
+                const usersSnapshot = await db.collection('users').where('role', '==', 'user').get();
+                document.getElementById('totalCustomers').textContent = usersSnapshot.size;
+                displayCustomers(usersSnapshot);
+
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+            }
+        }
+
+        function displayOrders(orders) {
+            const recentTable = document.getElementById('recentOrdersTable');
+            const allTable = document.getElementById('allOrdersTable');
+
+            if (orders.length === 0) {
+                const emptyRow = `
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-state">No orders yet</div>
+                        </td>
+                    </tr>
+                `;
+                recentTable.innerHTML = emptyRow;
+                allTable.innerHTML = emptyRow;
+                return;
+            }
+
+            const orderRows = orders.slice(0, 10).map(order => `
+                <tr>
+                    <td><strong>#${order.id.substring(0, 8)}</strong></td>
+                    <td>${order.customerName || 'N/A'}</td>
+                    <td>${new Date(order.createdAt?.toDate()).toLocaleDateString()}</td>
+                    <td>${order.items?.length || 0} items</td>
+                    <td><strong>₹${(order.total || 0).toLocaleString()}</strong></td>
+                    <td>
+                        <span class="status-badge status-${order.status}">
+                            ${order.status || 'pending'}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="action-btn btn-view" onclick="viewOrder('${order.id}')">View</button>
+                        <button class="action-btn btn-edit" onclick="updateOrderStatus('${order.id}')">Update</button>
+                    </td>
+                </tr>
+            `).join('');
+
+            recentTable.innerHTML = orderRows;
+            allTable.innerHTML = orders.map(order => `
+                <tr>
+                    <td><strong>#${order.id.substring(0, 8)}</strong></td>
+                    <td>${order.customerName || 'N/A'}</td>
+                    <td>${new Date(order.createdAt?.toDate()).toLocaleDateString()}</td>
+                    <td>${order.items?.length || 0} items</td>
+                    <td><strong>₹${(order.total || 0).toLocaleString()}</strong></td>
+                    <td>
+                        <span class="status-badge status-${order.status}">
+                            ${order.status || 'pending'}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="action-btn btn-view" onclick="viewOrder('${order.id}')">View</button>
+                        <button class="action-btn btn-edit" onclick="updateOrderStatus('${order.id}')">Update</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function displayCustomers(snapshot) {
+            const tbody = document.getElementById('customersTable');
+            
+            if (snapshot.empty) {
+                tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state">No customers yet</div></td></tr>';
+                return;
+            }
+
+            let rows = '';
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                rows += `
+                    <tr>
+                        <td><strong>${data.name || 'N/A'}</strong></td>
+                        <td>${data.email}</td>
+                        <td>${data.orders?.length || 0}</td>
+                        <td>₹${(data.totalSpent || 0).toLocaleString()}</td>
+                        <td>${new Date(data.createdAt?.toDate()).toLocaleDateString()}</td>
+                        <td>
+                            <button class="action-btn btn-view" onclick="viewCustomer('${doc.id}')">View</button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = rows;
+        }
+
+        function showSection(section) {
+            // Hide all sections
+            document.querySelectorAll('[id$="-section"]').forEach(s => s.style.display = 'none');
+            
+            // Remove active class
+            document.querySelectorAll('.sidebar-menu a').forEach(a => a.classList.remove('active'));
+            
+            // Show selected section
+            document.getElementById(`${section}-section`).style.display = 'block';
+            
+            // Add active class
+            event.target.classList.add('active');
+        }
+
+        function viewOrder(orderId) {
+            alert(`Viewing order: ${orderId}`);
+            // Implement detailed view
+        }
+
+        async function updateOrderStatus(orderId) {
+            const newStatus = prompt('Enter new status (pending/processing/delivered/cancelled):');
+            if (newStatus) {
+                try {
+                    await db.collection('orders').doc(orderId).update({
+                        status: newStatus.toLowerCase(),
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    alert('✅ Order status updated!');
+                    loadDashboardData();
+                } catch (error) {
+                    alert('❌ Failed to update status');
+                    console.error(error);
+                }
+            }
+        }
+
+        function viewCustomer(userId) {
+            alert(`Viewing customer: ${userId}`);
+        }
+
+        async function logout() {
+            if (confirm('Logout from admin panel?')) {
+                try {
+                    await auth.signOut();
+                    window.location.href = 'index.html';
+                } catch (error) {
+                    console.error('Logout error:', error);
+                }
+            }
+        }
+    </script>
+
+</body>
+</html>
