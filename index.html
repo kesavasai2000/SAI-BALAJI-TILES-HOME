@@ -5,21 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Sai Balaji Tiles Home</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
+        /* 1. BASE SETTINGS */
         html, body { height: 100%; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
         html { scroll-behavior: smooth; }
         
-        /* 1. DARK UNIVERSE BACKGROUND (Global) */
+        /* 2. CONTINUOUS DARK UNIVERSE BACKGROUND */
         body { 
             background-color: #000000;
-            /* Deep Space Gradient */
+            /* Deep Space Radial Gradient - Fixed Position */
             background-image: radial-gradient(circle at 50% 50%, #111111 0%, #000000 100%);
+            background-attachment: fixed; /* Ensures background stays still while scrolling */
             overflow-x: hidden; 
-            color: #e2e8f0;
+            color: #e2e8f0; /* Soft White Text */
         }
 
-        /* 2. STARS ANIMATION */
+        /* 3. UNIVERSE STARS */
         .stars-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: -1; }
         .star { 
             position: absolute; 
@@ -31,7 +33,7 @@
         }
         @keyframes twinkle { 0%, 100% { opacity: 0.3; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.2); } }
 
-        /* 3. GLASS CARD EFFECT */
+        /* 4. GLASS CARD EFFECT (For Collections, Contact, Footer) */
         .glass-card {
             background: rgba(20, 20, 20, 0.6); /* Dark Glass */
             backdrop-filter: blur(12px);
@@ -46,7 +48,7 @@
             box-shadow: 0 10px 40px rgba(34, 211, 238, 0.1);
         }
 
-        /* 4. SPLASH SCREEN (Fixed Layering) */
+        /* 5. SPLASH SCREEN (Highest Priority) */
         #splash-screen {
             z-index: 99999 !important; 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -57,13 +59,24 @@
         .splash-content { animation: fadeInSlow 1.5s ease-out forwards; }
         .delay-500ms { animation-delay: 0.5s; }
 
-        /* 5. HERO SLIDER */
+        /* 6. ANIMATIONS */
+        .animate-on-scroll { opacity: 0; transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
+        .init-slide-up { transform: translateY(40px); }
+        .init-fade-in { transform: translateY(20px); }
+        .animate-on-scroll.is-visible { opacity: 1; transform: translateY(0); }
+        @keyframes fadeInSlow { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* 7. NAVBAR */
+        .navbar.translate-x-0 { transform: translateX(0%); }
+        .navbar.-translate-x-full { transform: translateX(-100%); }
+
+        /* 8. HERO SLIDER */
         .hero-slide { position: absolute; inset: 0; opacity: 0; transition: opacity 1.5s ease-in-out; z-index: -1; }
         .hero-slide.active { opacity: 1; z-index: 0; }
         .hero-content { z-index: 10; position: relative; }
         .hero-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,0.2), #000000); z-index: 1; }
 
-        /* 6. HEADER SCROLL */
+        /* 9. HEADER SCROLL EFFECT */
         .header-scrolled {
             background-color: rgba(0, 0, 0, 0.9) !important;
             backdrop-filter: blur(10px);
@@ -71,16 +84,7 @@
             padding-top: 0.75rem !important; padding-bottom: 0.75rem !important;
         }
 
-        /* 7. UTILS */
-        .navbar.translate-x-0 { transform: translateX(0%); }
-        .navbar.-translate-x-full { transform: translateX(-100%); }
-        .animate-on-scroll { opacity: 0; transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
-        .init-slide-up { transform: translateY(40px); }
-        .init-fade-in { transform: translateY(20px); }
-        .animate-on-scroll.is-visible { opacity: 1; transform: translateY(0); }
-        @keyframes fadeInSlow { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        
-        /* 8. BUTTONS & INPUTS */
+        /* 10. BUTTONS & INPUTS */
         .btn-theme-primary {
             display: inline-block; padding: 0.75rem 1.75rem; border-radius: 9999px;
             font-weight: 600; font-size: 0.95rem;
@@ -90,6 +94,7 @@
         }
         .btn-theme-primary:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(6, 182, 212, 0.4); }
         
+        /* Glass inputs */
         input, textarea { 
             color: #fff !important; 
             background: rgba(255,255,255,0.05) !important; 
@@ -101,48 +106,53 @@
 </head>
 <body class="font-poppins">
 
-    <!-- 1. SPLASH SCREEN -->
+    <!-- 1. SPLASH SCREEN (Visible on Load) -->
     <div id="splash-screen">
-        <img src="images/logo1.jpg" alt="Logo" class="w-3/4 sm:w-1/3 h-auto splash-content">
+        <img src="images/logo1.jpg" alt="Sai Balaji Tiles Home Logo" class="w-3/4 sm:w-1/3 h-auto splash-content">
         <h1 class="text-xl sm:text-3xl font-bold text-white mt-4 text-center splash-content delay-500ms">
             SAI BALAJI TILES & SANITARYWARE
         </h1>
     </div>
 
-    <!-- 2. MAIN PAGE CONTAINER -->
+    <!-- 2. MAIN PAGE CONTENT (Hidden initially) -->
     <div id="page-container" style="display: none; position: relative; min-height: 100vh;">
-        
-        <!-- GLOBAL STARS BACKGROUND -->
+        <!-- STARS BACKGROUND CONTAINER -->
         <div class="stars-container" id="stars-bg-global"></div>
 
         <!-- HEADER -->
-        <header id="main-header" class="fixed w-full top-0 left-0 bg-transparent transition-all duration-300 flex items-center justify-between px-6 py-5 z-50">
+        <header id="main-header" class="fixed w-full top-0 left-0 bg-transparent transition-all duration-300 flex items-center justify-between px-4 sm:px-6 py-5 z-50">
             <div class="flex-none">
-                <button id="toggle-btn-index" class="text-2xl text-cyan-400 hover:text-cyan-300 transition-colors focus:outline-none">☰</button>
+                <button id="toggle-btn-index" aria-label="Toggle menu" class="text-2xl text-cyan-400 hover:text-cyan-300 transition-colors focus:outline-none">☰</button>
             </div>
+            
             <div class="flex-grow text-center px-2">
-                <a href="index.html" class="text-lg sm:text-xl md:text-2xl font-bold text-white truncate hover:text-cyan-300 tracking-wide">
+                <a href="index.html" class="text-lg sm:text-xl md:text-2xl font-bold text-cyan-400 truncate hover:text-cyan-300">
                     SAI BALAJI TILES
                 </a>
             </div>
+            
             <div class="flex items-center gap-4">
                 <a href="cart.html" class="text-cyan-400 hover:text-cyan-300 text-lg relative">
                     🛒 <span id="cart-count-header" class="text-xs font-bold absolute -top-2 -right-2 bg-red-500 text-white rounded-full px-1">0</span>
                 </a>
-                <button onclick="window.location.href='auth.html'" class="hidden sm:inline-block border border-cyan-500 text-cyan-400 hover:bg-cyan-500 hover:text-white px-4 py-1.5 rounded-full text-sm font-semibold transition">Login</button>
+                
+                <button onclick="window.location.href='auth.html'" class="hidden sm:inline-block text-cyan-400 font-semibold border border-cyan-500 px-4 py-1 rounded hover:bg-cyan-500 hover:text-white transition">
+                    Login
+                </button>
+
                 <a href="auth.html" class="sm:hidden text-cyan-400 text-xl">👤</a>
             </div>
         </header>
 
-        <!-- SIDEBAR -->
+        <!-- SIDEBAR NAV -->
         <nav id="main-navbar-index" class="navbar fixed top-0 left-0 w-64 h-screen bg-black/90 backdrop-blur-xl shadow-2xl transform -translate-x-full transition-transform duration-300 z-40 border-r border-gray-800">
             <div class="p-5 mt-20">
                 <ul class="space-y-4">
-                    <li><a href="#home" class="block text-gray-300 hover:text-cyan-400 text-lg" onclick="toggleMenuIndex()">Home</a></li>
-                    <li><a href="#brands" class="block text-gray-300 hover:text-cyan-400 text-lg" onclick="toggleMenuIndex()">Brands</a></li>
-                    <li><a href="#about" class="block text-gray-300 hover:text-cyan-400 text-lg" onclick="toggleMenuIndex()">About Us</a></li>
-                    <li><a href="#collections" class="block text-gray-300 hover:text-cyan-400 text-lg" onclick="toggleMenuIndex()">Collections</a></li>
-                    <li><a href="#contact" class="block text-gray-300 hover:text-cyan-400 text-lg" onclick="toggleMenuIndex()">Contact</a></li>
+                    <li><a href="#home" class="block text-indigo-300 hover:text-white text-lg" onclick="toggleMenuIndex()">Home</a></li>
+                    <li><a href="#brands" class="block text-indigo-300 hover:text-white text-lg" onclick="toggleMenuIndex()">Brands</a></li>
+                    <li><a href="#about" class="block text-indigo-300 hover:text-white text-lg" onclick="toggleMenuIndex()">About Us</a></li>
+                    <li><a href="#collections" class="block text-indigo-300 hover:text-white text-lg" onclick="toggleMenuIndex()">Collections</a></li>
+                    <li><a href="#contact" class="block text-indigo-300 hover:text-white text-lg" onclick="toggleMenuIndex()">Contact</a></li>
                     <li><a href="auth.html" class="block text-cyan-400 font-bold mt-4" onclick="toggleMenuIndex()">Login / Sign Up</a></li>
                 </ul>
             </div>
@@ -152,23 +162,38 @@
             
             <!-- HERO SLIDER SECTION -->
             <section id="home" class="relative h-screen flex items-center justify-center overflow-hidden">
-                <div class="hero-slide active"><img src="images/tiles3.jpg" class="w-full h-full object-cover"><div class="hero-overlay"></div></div>
-                <div class="hero-slide"><img src="images/tile1.jpg" class="w-full h-full object-cover"><div class="hero-overlay"></div></div>
-                <div class="hero-slide"><img src="images/tile2.jpg" class="w-full h-full object-cover"><div class="hero-overlay"></div></div>
+                <!-- Slide 1 -->
+                <div class="hero-slide active">
+                    <img src="images/tiles3.jpg" class="w-full h-full object-cover" alt="Luxury Tiles">
+                    <div class="hero-overlay"></div>
+                </div>
+                <!-- Slide 2 -->
+                <div class="hero-slide">
+                    <img src="images/tile1.jpg" class="w-full h-full object-cover" alt="Modern Living">
+                    <div class="hero-overlay"></div>
+                </div>
+                <!-- Slide 3 -->
+                <div class="hero-slide">
+                    <img src="images/tile2.jpg" class="w-full h-full object-cover" alt="Rustic Charm">
+                    <div class="hero-overlay"></div>
+                </div>
 
+                <!-- Hero Content -->
                 <div class="hero-content text-center px-4 sm:px-6 relative z-10 animate-on-scroll init-slide-up">
-                    <h1 class="text-4xl sm:text-6xl md:text-7xl font-extrabold text-white mb-6 leading-tight drop-shadow-2xl">
-                        Transform Your Space<br />
-                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400">With Elegance</span>
+                    <h1 class="text-4xl sm:text-6xl md:text-7xl font-bold text-white mb-6 leading-tight drop-shadow-2xl">
+                        Welcome to Sai Balaji Tiles<br />
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400">& Sanitaryware</span>
                     </h1>
-                    <p class="text-lg sm:text-2xl text-gray-300 mb-10 font-light max-w-2xl mx-auto leading-relaxed">
-                        Discover Premium Tiles & Sanitaryware for modern homes.
+                    <p class="text-lg sm:text-2xl text-indigo-300 mb-10 font-light max-w-2xl mx-auto leading-relaxed drop-shadow-md">
+                        Discover Elegance & Durability for Your Spaces.
                     </p>
-                    <a href="#brands" class="btn-theme-primary text-lg px-8 py-4">Explore Collection →</a>
+                    <a href="#brands" class="btn-theme-primary text-lg px-8 py-4 shadow-xl hover:shadow-cyan-500/40 transform hover:-translate-y-1 transition-all duration-300">
+                        Explore Our Brands
+                    </a>
                 </div>
             </section>
 
-            <!-- BRANDS SECTION (Transparent BG so stars show) -->
+            <!-- BRANDS SECTION (Transparent BG) -->
             <section id="brands" class="py-20 relative">
                 <div class="container mx-auto px-4 text-center">
                     <div class="mb-6"><span class="inline-block px-6 py-2 bg-cyan-900/30 text-cyan-400 rounded-full text-sm font-semibold mb-4 border border-cyan-500/30">✨ PREMIUM QUALITY</span></div>
@@ -205,7 +230,7 @@
                 </div>
             </section>
 
-            <!-- COLLECTIONS SECTION -->
+            <!-- COLLECTIONS SECTION (Glass Cards) -->
             <section id="collections" class="py-16">
                 <div class="container mx-auto px-4">
                     <h2 class="text-3xl sm:text-4xl font-bold text-center mb-12 text-cyan-400 animate-on-scroll init-slide-up">Featured Collections</h2>
@@ -235,10 +260,11 @@
                 </div>
             </section>
 
-            <!-- CONTACT SECTION -->
+            <!-- CONTACT SECTION (Glass Cards) -->
             <section id="contact" class="py-16">
                 <div class="container mx-auto px-4">
                     <h2 class="animate-on-scroll init-slide-up text-3xl sm:text-4xl font-bold mb-10 text-white text-center">Get in Touch</h2>
+                    
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 max-w-5xl mx-auto">
                         <!-- Map (Glass container) -->
                         <div class="rounded-xl overflow-hidden shadow-2xl border border-gray-700 h-80 w-full glass-card">
@@ -251,7 +277,9 @@
                             <p class="text-gray-300 mb-2"><strong>Address:</strong> 123 Tile Street, Chittoor</p>
                             <p class="text-gray-300 mb-2"><strong>Phone:</strong> +91 7680943539</p>
                             <p class="text-gray-300 mb-4"><strong>Email:</strong> info@saibalajitiles.com</p>
-                            <a href="https://maps.app.goo.gl/ePv4dAQ9iEprLneLA" target="_blank" class="block w-full text-center bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-3 rounded-lg mt-4 transition">Get Directions</a>
+                            <a href="https://maps.app.goo.gl/ePv4dAQ9iEprLneLA" target="_blank" class="block w-full text-center bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-3 rounded-lg mt-4 transition">
+                                Get Directions
+                            </a>
                         </div>
                     </div>
 
@@ -281,35 +309,58 @@
             </section>
         </main>
 
-        <!-- FOOTER (Glass Effect to match continuous background) -->
+        <!-- FOOTER (Glass Effect) -->
         <footer class="glass-card border-t border-gray-800 text-white pt-16 pb-8 relative z-10 mt-10">
             <div class="container mx-auto px-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12 text-left">
                     <div>
                         <h3 class="text-xl font-bold mb-6 text-cyan-400">About Us</h3>
-                        <p class="text-gray-400 text-sm leading-relaxed mb-6">A global hi-tech manufacturer of premium ceramics lifestyle solutions.</p>
+                        <p class="text-gray-400 text-sm leading-relaxed mb-6">
+                            A global hi-tech manufacturer of premium ceramics lifestyle solutions. We bring elegance, durability, and innovation to your living spaces.
+                        </p>
+                        <div class="flex items-center gap-3 text-gray-300">
+                            <!-- Phone Icon -->
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+                            <span class="font-semibold">+91 7680943539</span>
+                        </div>
                     </div>
                     <div>
-                        <h3 class="text-xl font-bold mb-6 text-cyan-400">Navigate</h3>
+                        <h3 class="text-xl font-bold mb-6 text-cyan-400">Our Navigate</h3>
                         <ul class="space-y-4 text-gray-400 text-sm">
-                            <li><a href="#home" class="hover:text-white transition">Home</a></li>
-                            <li><a href="#brands" class="hover:text-white transition">Brands</a></li>
-                            <li><a href="#contact" class="hover:text-white transition">Contact</a></li>
+                            <li><a href="#" class="hover:text-cyan-400 transition duration-300">Our Philosophy</a></li>
+                            <li><a href="#" class="hover:text-cyan-400 transition duration-300">Our Latest Openings</a></li>
+                            <li><a href="#" class="hover:text-cyan-400 transition duration-300">Our Portfolio</a></li>
+                            <li><a href="#" class="hover:text-cyan-400 transition duration-300">Our Blogs</a></li>
                         </ul>
                     </div>
                     <div>
-                        <h3 class="text-xl font-bold mb-6 text-cyan-400">Collections</h3>
+                        <h3 class="text-xl font-bold mb-6 text-cyan-400">Our Collections</h3>
                         <ul class="space-y-4 text-gray-400 text-sm">
-                            <li><a href="#" class="hover:text-white transition">GVT</a></li>
-                            <li><a href="#" class="hover:text-white transition">Ceramic</a></li>
-                            <li><a href="#" class="hover:text-white transition">Wall Tiles</a></li>
+                            <li><a href="#" class="hover:text-cyan-400 transition duration-300">iMarble</a></li>
+                            <li><a href="#" class="hover:text-cyan-400 transition duration-300">Stoneware</a></li>
+                            <li><a href="#" class="hover:text-cyan-400 transition duration-300">GVT</a></li>
+                            <li><a href="#" class="hover:text-cyan-400 transition duration-300">Ceramic Wall</a></li>
                         </ul>
                     </div>
                     <div>
-                        <h3 class="text-xl font-bold mb-6 text-cyan-400">Office</h3>
-                        <p class="text-gray-400 text-sm">123 Tile Street, Chittoor</p>
-                        <p class="text-gray-400 text-sm mt-2">+91 7680943539</p>
-                        <p class="text-gray-400 text-sm mt-2">info@saibalajitiles.com</p>
+                        <h3 class="text-xl font-bold mb-6 text-cyan-400">Our Office</h3>
+                        <ul class="space-y-6 text-gray-400 text-sm">
+                            <li class="flex items-start gap-3">
+                                <!-- Location Icon -->
+                                <svg class="w-6 h-6 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                                <span>123 Tile Street, Palamaner Road, Chittoor, Andhra Pradesh</span>
+                            </li>
+                            <li class="flex items-center gap-3">
+                                <!-- Phone Icon -->
+                                <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+                                <span>+91 7680943539</span>
+                            </li>
+                            <li class="flex items-center gap-3">
+                                <!-- Email Icon -->
+                                <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                                <span>info@saibalajitiles.com</span>
+                            </li>
+                        </ul>
                     </div>
                 </div>
                 <div class="border-t border-gray-700 pt-8 text-center text-gray-500 text-sm">
@@ -334,7 +385,7 @@
                         splashScreen.style.display = 'none';
                         pageContainer.style.display = 'block';
                         
-                        // Start Features
+                        // Start features after page load
                         startHeroSlider();
                         createStarsGlobal();
                         initializeScripts();
@@ -343,7 +394,7 @@
             }
         });
 
-        // HERO SLIDER
+        // HERO SLIDER LOGIC
         function startHeroSlider() {
             const slides = document.querySelectorAll('.hero-slide');
             let currentSlide = 0;
@@ -354,7 +405,7 @@
             }, 4000);
         }
 
-        // HEADER SCROLL
+        // HEADER SCROLL LOGIC
         window.addEventListener('scroll', () => {
             const header = document.getElementById('main-header');
             if (window.scrollY > 50) {
@@ -366,13 +417,13 @@
 
         function initializeScripts() {
             // Navbar
-            let menuVisible = false;
+            let menuIndexVisible = false;
             const navbarIndex = document.getElementById("main-navbar-index");
             const toggleBtnIndex = document.getElementById("toggle-btn-index");
             window.toggleMenuIndex = function() {
-                menuVisible = !menuVisible;
-                navbarIndex.classList.toggle("translate-x-0", menuVisible);
-                navbarIndex.classList.toggle("-translate-x-full", !menuVisible);
+                menuIndexVisible = !menuIndexVisible;
+                navbarIndex.classList.toggle("translate-x-0", menuIndexVisible);
+                navbarIndex.classList.toggle("-translate-x-full", !menuIndexVisible);
             }
             if(toggleBtnIndex) toggleBtnIndex.addEventListener('click', toggleMenuIndex);
 
@@ -394,6 +445,7 @@
                     container.appendChild(star);
                 }
             }
+            createStarsGlobal();
             window.addEventListener('resize', createStarsGlobal);
 
             // Cart
