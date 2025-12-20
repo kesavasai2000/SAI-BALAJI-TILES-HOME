@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Sai Balaji Tiles Home</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         html, body { height: 100%; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
         html { scroll-behavior: smooth; }
         
         body { 
-            background: #000;
+            background-color: #000;
             overflow-x: hidden; 
         }
 
@@ -28,11 +28,6 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            transition: opacity 0.8s ease-out;
-        }
-
-        .splash-content {
-            animation: fadeInSlow 1.5s ease-out forwards;
         }
 
         /* Stars Background */
@@ -51,6 +46,7 @@
         .animate-on-scroll.is-visible { opacity: 1; transform: translateY(0); }
         
         @keyframes fadeInSlow { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in-slow { animation: fadeInSlow 1.2s ease-out forwards; }
         .delay-500ms { animation-delay: 0.5s; }
 
         /* HERO SLIDER STYLES */
@@ -88,58 +84,61 @@
         .btn-theme-primary {
             display: inline-block;
             padding: 0.75rem 1.75rem;
-            border-radius: 0.75rem;
+            border-radius: 9999px;
             font-weight: 600;
             font-size: 0.95rem;
-            box-shadow: 0 6px 18px rgba(0,0,0,0.35);
-            border: 2px solid rgba(6,182,212,0.9);
-            color: rgba(34,211,238,0.95);
-            background: rgba(31,41,55,0.6);
+            background: linear-gradient(to right, #06b6d4, #8b5cf6);
+            color: white;
             transition: all 0.3s ease-in-out;
             text-decoration: none;
+            box-shadow: 0 4px 15px rgba(6, 182, 212, 0.4);
         }
         .btn-theme-primary:hover {
-            box-shadow: 0 0 15px rgba(34,211,238,0.4), 0 0 25px rgba(34,211,238,0.2);
-            transform: translateY(-2px) scale(1.02);
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(6, 182, 212, 0.6);
         }
 
-        /* Fix for inputs */
+        /* Fix for mobile text inputs */
         input, textarea { color: #000 !important; }
+        
         .hidden { display: none !important; }
     </style>
 </head>
 <body class="bg-black text-gray-200 font-poppins">
 
-    <!-- 1. SPLASH SCREEN (Visible on Load) -->
-    <div id="splash-screen">
-        <img src="images/logo1.jpg" alt="Sai Balaji Tiles Home Logo" class="w-3/4 sm:w-1/3 h-auto splash-content">
-        <h1 class="text-xl sm:text-3xl font-bold text-white mt-4 text-center splash-content delay-500ms">
+    <!-- SPLASH SCREEN -->
+    <div id="splash-screen" class="transition-opacity duration-700 ease-out">
+        <img src="images/logo1.jpg" alt="Sai Balaji Tiles Home Logo" class="w-3/4 sm:w-1/3 h-auto opacity-0 animate-fade-in-slow">
+        <h1 class="text-xl sm:text-3xl font-bold text-white mt-4 text-center opacity-0 animate-fade-in-slow delay-500ms">
             SAI BALAJI TILES & SANITARYWARE
         </h1>
     </div>
 
-    <!-- 2. MAIN PAGE CONTENT (Hidden initially) -->
+    <!-- MAIN PAGE CONTENT (Initially Hidden) -->
     <div id="page-container" style="display: none; position: relative; min-height: 100vh;">
         <div class="stars-container" id="stars-bg-global"></div>
 
         <!-- HEADER -->
-        <header id="main-header" class="fixed w-full top-0 left-0 bg-transparent transition-all duration-300 flex items-center justify-between px-4 sm:px-6 py-5 z-50">
+        <header id="main-header" class="fixed w-full top-0 left-0 bg-transparent transition-all duration-300 flex items-center justify-between px-6 py-5 z-50">
+            <!-- Mobile Menu Button -->
             <div class="flex-none">
                 <button id="toggle-btn-index" aria-label="Toggle menu" class="text-2xl text-cyan-400 hover:text-cyan-300 transition-colors focus:outline-none">☰</button>
             </div>
             
+            <!-- Logo -->
             <div class="flex-grow text-center px-2">
-                <a href="index.html" class="text-lg sm:text-xl md:text-2xl font-bold text-cyan-400 truncate hover:text-cyan-300">
+                <a href="index.html" class="text-lg sm:text-xl md:text-2xl font-bold text-white truncate hover:text-cyan-300 tracking-wide transition-colors">
                     SAI BALAJI TILES
                 </a>
             </div>
             
+            <!-- Right Side -->
             <div class="flex items-center gap-4">
                 <a href="cart.html" class="text-cyan-400 hover:text-cyan-300 text-lg relative">
                     🛒 <span id="cart-count-header" class="text-xs font-bold absolute -top-2 -right-2 bg-red-500 text-white rounded-full px-1">0</span>
                 </a>
                 
-                <button onclick="window.location.href='auth.html'" class="hidden sm:inline-block text-cyan-400 font-semibold border border-cyan-500 px-4 py-1 rounded hover:bg-cyan-500 hover:text-white transition">
+                <button onclick="window.location.href='auth.html'" class="hidden sm:inline-block border border-cyan-500 text-cyan-400 hover:bg-cyan-500 hover:text-white px-4 py-1.5 rounded-full text-sm font-semibold transition-all duration-300">
                     Login
                 </button>
 
@@ -148,12 +147,11 @@
         </header>
 
         <!-- SIDEBAR NAV -->
-        <nav id="main-navbar-index" class="navbar fixed top-0 left-0 w-64 h-screen bg-gray-900/90 backdrop-blur-md shadow-lg transform -translate-x-full transition-transform duration-300 z-40 border-r border-cyan-500/30">
+        <nav id="main-navbar-index" class="navbar fixed top-0 left-0 w-64 h-screen bg-gray-900 shadow-2xl transform -translate-x-full transition-transform duration-300 z-40 border-r border-cyan-500/30">
             <div class="p-5 mt-20">
                 <ul class="space-y-4">
                     <li><a href="#home" class="block text-indigo-300 hover:text-white text-lg" onclick="toggleMenuIndex()">Home</a></li>
                     <li><a href="#brands" class="block text-indigo-300 hover:text-white text-lg" onclick="toggleMenuIndex()">Brands</a></li>
-                    <li><a href="#about" class="block text-indigo-300 hover:text-white text-lg" onclick="toggleMenuIndex()">About Us</a></li>
                     <li><a href="#collections" class="block text-indigo-300 hover:text-white text-lg" onclick="toggleMenuIndex()">Collections</a></li>
                     <li><a href="#contact" class="block text-indigo-300 hover:text-white text-lg" onclick="toggleMenuIndex()">Contact</a></li>
                     <li><a href="auth.html" class="block text-cyan-400 font-bold mt-4" onclick="toggleMenuIndex()">Login / Sign Up</a></li>
@@ -165,17 +163,17 @@
             
             <!-- HERO SLIDER SECTION -->
             <section id="home" class="relative h-screen flex items-center justify-center overflow-hidden">
-                <!-- Slide 1 -->
+                <!-- SLIDE 1 -->
                 <div class="hero-slide active">
                     <img src="images/tiles3.jpg" class="w-full h-full object-cover" alt="Luxury Tiles">
                     <div class="hero-overlay"></div>
                 </div>
-                <!-- Slide 2 -->
+                <!-- SLIDE 2 -->
                 <div class="hero-slide">
                     <img src="images/tile1.jpg" class="w-full h-full object-cover" alt="Modern Living">
                     <div class="hero-overlay"></div>
                 </div>
-                <!-- Slide 3 -->
+                <!-- SLIDE 3 -->
                 <div class="hero-slide">
                     <img src="images/tile2.jpg" class="w-full h-full object-cover" alt="Rustic Charm">
                     <div class="hero-overlay"></div>
@@ -183,16 +181,21 @@
 
                 <!-- Hero Content -->
                 <div class="hero-content text-center px-4 sm:px-6 relative z-10 animate-on-scroll init-slide-up">
-                    <h1 class="text-4xl sm:text-6xl md:text-7xl font-bold text-white mb-6 leading-tight drop-shadow-2xl">
-                        Welcome to Sai Balaji Tiles<br />
-                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400">& Sanitaryware</span>
+                    <h1 class="text-4xl sm:text-6xl md:text-7xl font-extrabold text-white mb-6 leading-tight drop-shadow-2xl">
+                        Transform Your Space<br />
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400">With Elegance</span>
                     </h1>
-                    <p class="text-lg sm:text-2xl text-indigo-300 mb-10 font-light max-w-2xl mx-auto leading-relaxed drop-shadow-md">
-                        Discover Elegance & Durability for Your Spaces.
+                    <p class="text-lg sm:text-2xl text-gray-200 mb-10 font-light max-w-2xl mx-auto leading-relaxed drop-shadow-md">
+                        Discover Premium Tiles & Sanitaryware for modern homes.
                     </p>
                     <a href="#brands" class="btn-theme-primary text-lg px-8 py-4 shadow-xl hover:shadow-cyan-500/40 transform hover:-translate-y-1 transition-all duration-300">
-                        Explore Our Brands
+                        Explore Collection →
                     </a>
+                </div>
+
+                <!-- Scroll Indicator -->
+                <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce text-white">
+                    ↓
                 </div>
             </section>
 
@@ -223,25 +226,12 @@
                     </div>
                     
                     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6 max-w-6xl mx-auto">
-                        <!-- Brand Items -->
-                        <div class="bg-white p-4 rounded-xl shadow-lg hover:scale-105 transition transform flex items-center justify-center h-32">
-                            <img src="images/brands/kar.png" alt="Kajaria" class="max-h-20 max-w-full object-contain">
-                        </div>
-                        <div class="bg-white p-4 rounded-xl shadow-lg hover:scale-105 transition transform flex items-center justify-center h-32">
-                            <img src="images/brands/qtone-logo.png" alt="Qtone" class="max-h-20 max-w-full object-contain">
-                        </div>
-                        <div class="bg-white p-4 rounded-xl shadow-lg hover:scale-105 transition transform flex items-center justify-center h-32">
-                            <img src="images/brands/Somany-logo.png" alt="Somany" class="max-h-20 max-w-full object-contain">
-                        </div>
-                        <div class="bg-white p-4 rounded-xl shadow-lg hover:scale-105 transition transform flex items-center justify-center h-32">
-                            <img src="images/brands/nitco-logo.png" alt="Nitco" class="max-h-20 max-w-full object-contain">
-                        </div>
-                        <div class="bg-white p-4 rounded-xl shadow-lg hover:scale-105 transition transform flex items-center justify-center h-32">
-                            <img src="images/brands/johnson-logo.png" alt="Johnson" class="max-h-20 max-w-full object-contain">
-                        </div>
-                        <div class="bg-white p-4 rounded-xl shadow-lg hover:scale-105 transition transform flex items-center justify-center h-32">
-                            <img src="images/brands/orient-bell-logo.png" alt="Orient" class="max-h-20 max-w-full object-contain">
-                        </div>
+                        <div class="bg-white p-4 rounded-xl shadow-lg hover:scale-105 transition transform flex items-center justify-center h-32"><img src="images/brands/kar.png" class="max-h-20 max-w-full object-contain"></div>
+                        <div class="bg-white p-4 rounded-xl shadow-lg hover:scale-105 transition transform flex items-center justify-center h-32"><img src="images/brands/qtone-logo.png" class="max-h-20 max-w-full object-contain"></div>
+                        <div class="bg-white p-4 rounded-xl shadow-lg hover:scale-105 transition transform flex items-center justify-center h-32"><img src="images/brands/Somany-logo.png" class="max-h-20 max-w-full object-contain"></div>
+                        <div class="bg-white p-4 rounded-xl shadow-lg hover:scale-105 transition transform flex items-center justify-center h-32"><img src="images/brands/nitco-logo.png" class="max-h-20 max-w-full object-contain"></div>
+                        <div class="bg-white p-4 rounded-xl shadow-lg hover:scale-105 transition transform flex items-center justify-center h-32"><img src="images/brands/johnson-logo.png" class="max-h-20 max-w-full object-contain"></div>
+                        <div class="bg-white p-4 rounded-xl shadow-lg hover:scale-105 transition transform flex items-center justify-center h-32"><img src="images/brands/orient-bell-logo.png" class="max-h-20 max-w-full object-contain"></div>
                     </div>
 
                     <div class="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
@@ -265,110 +255,50 @@
                 </div>
             </section>
 
-            <!-- ABOUT SECTION -->
-            <section id="about" class="py-16 sm:py-20 bg-gray-900/60 backdrop-blur-sm needs-blur-fallback">
-                <div class="container mx-auto px-4 text-center">
-                    <h2 class="animate-on-scroll init-slide-up text-2xl sm:text-3xl md:text-4xl font-bold mb-8 sm:mb-10 text-cyan-400">About Sai Balaji Tiles</h2>
-                    <p class="animate-on-scroll init-fade-in text-base sm:text-lg text-gray-300 max-w-xl sm:max-w-2xl mx-auto leading-relaxed" style="transition-delay: 0.1s;">
-                        At Sai Balaji Tiles, we are passionate about providing high-quality tiles that transform spaces. With years of experience in the industry, we offer a curated selection of tiles from India's most trusted brands including Kajaria, Qtone, Somany, Johnson, Nitco, and Orient Bell.
-                    </p>
-                    <p class="animate-on-scroll init-fade-in text-base sm:text-lg text-gray-300 max-w-xl sm:max-w-2xl mx-auto mt-4 leading-relaxed" style="transition-delay: 0.2s;">
-                        Our commitment is to quality, durability, and customer satisfaction. Explore our extensive catalog and let us help you find the perfect tiles for your project.
-                    </p>
-                </div>
-            </section>
-
-            <!-- COLLECTIONS SECTION -->
-            <section id="collections" class="relative py-12 sm:py-16 bg-gray-900/70 backdrop-blur-md needs-blur-fallback">
+            <!-- COLLECTIONS & CONTACT (Unchanged structure) -->
+            <section id="collections" class="relative py-12 sm:py-16 bg-gray-900/70 backdrop-blur-md">
                 <div class="container mx-auto px-4">
                     <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-8 sm:mb-12 text-cyan-400 animate-on-scroll init-slide-up">Featured Collections</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
-                        <div class="animate-on-scroll init-fade-in collection-card bg-gray-800/80 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 sm:hover:-translate-y-2 border border-gray-700 hover:border-cyan-500/50" style="transition-delay: 0.1s;">
-                            <img src="images/tile1.jpg" alt="Modern Minimalist Collection" class="w-full h-40 sm:h-48 object-cover rounded-t-lg">
-                            <div class="p-3 sm:p-4 text-center">
-                                <h3 class="text-lg sm:text-xl font-bold text-indigo-300">Modern Minimalist</h3>
-                                <p class="text-gray-400 mt-1 text-sm sm:text-base">Sleek designs for a contemporary look.</p>
-                                <a href="brands.html" class="inline-block mt-2 sm:mt-3 text-indigo-300 hover:text-indigo-200 transition-colors font-semibold text-sm sm:text-base">Explore</a>
+                        <div class="animate-on-scroll init-fade-in collection-card bg-gray-800/80 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 sm:hover:-translate-y-2 border border-gray-700 hover:border-cyan-500/50">
+                            <img src="images/tile1.jpg" class="w-full h-48 object-cover rounded-t-lg">
+                            <div class="p-6 text-center">
+                                <h3 class="text-lg font-bold text-white mb-2">Modern Minimalist</h3>
+                                <a href="brands.html" class="text-cyan-400 hover:underline">Explore</a>
                             </div>
                         </div>
-                        <div class="animate-on-scroll init-fade-in collection-card bg-gray-800/80 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 sm:hover:-translate-y-2 border border-gray-700 hover:border-cyan-500/50" style="transition-delay: 0.2s;">
-                            <img src="images/tile2.jpg" alt="Rustic Charm Collection" class="w-full h-40 sm:h-48 object-cover rounded-t-lg">
-                            <div class="p-3 sm:p-4 text-center">
-                                <h3 class="text-lg sm:text-xl font-bold text-indigo-300">Rustic Charm</h3>
-                                <p class="text-gray-400 mt-1 text-sm sm:text-base">Warm tones for a cozy vibe.</p>
-                                <a href="brands.html" class="inline-block mt-2 sm:mt-3 text-indigo-300 hover:text-indigo-200 transition-colors font-semibold text-sm sm:text-base">Explore</a>
+                        <div class="animate-on-scroll init-fade-in collection-card bg-gray-800/80 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 sm:hover:-translate-y-2 border border-gray-700 hover:border-cyan-500/50">
+                            <img src="images/tile2.jpg" class="w-full h-48 object-cover rounded-t-lg">
+                            <div class="p-6 text-center">
+                                <h3 class="text-lg font-bold text-white mb-2">Rustic Charm</h3>
+                                <a href="brands.html" class="text-cyan-400 hover:underline">Explore</a>
                             </div>
                         </div>
-                        <div class="animate-on-scroll init-fade-in collection-card bg-gray-800/80 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 sm:hover:-translate-y-2 border border-gray-700 hover:border-cyan-500/50" style="transition-delay: 0.3s;">
-                            <img src="images/tiles3.jpg" alt="Luxury Marble Collection" class="w-full h-40 sm:h-48 object-cover rounded-t-lg">
-                            <div class="p-3 sm:p-4 text-center">
-                                <h3 class="text-lg sm:text-xl font-bold text-indigo-300">Luxury Marble</h3>
-                                <p class="text-gray-400 mt-1 text-sm sm:text-base">Elegant finishes for a premium feel.</p>
-                                <a href="brands.html" class="inline-block mt-2 sm:mt-3 text-indigo-300 hover:text-indigo-200 transition-colors font-semibold text-sm sm:text-base">Explore</a>
+                        <div class="animate-on-scroll init-fade-in collection-card bg-gray-800/80 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 sm:hover:-translate-y-2 border border-gray-700 hover:border-cyan-500/50">
+                            <img src="images/tiles3.jpg" class="w-full h-48 object-cover rounded-t-lg">
+                            <div class="p-6 text-center">
+                                <h3 class="text-lg font-bold text-white mb-2">Luxury Marble</h3>
+                                <a href="brands.html" class="text-cyan-400 hover:underline">Explore</a>
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- CONTACT SECTION -->
-            <section id="contact" class="contact py-16 sm:py-20 bg-gray-900/60 backdrop-blur-sm needs-blur-fallback">
+            <section id="contact" class="contact py-16 sm:py-20 bg-gray-900/60 backdrop-blur-sm">
                 <div class="container mx-auto px-4">
                     <h2 class="animate-on-scroll init-slide-up text-2xl sm:text-3xl md:text-4xl font-bold mb-8 sm:mb-10 text-cyan-400 text-center">Get in Touch</h2>
-                    <div class="animate-on-scroll init-fade-in max-w-xl sm:max-w-2xl mx-auto text-center mb-8 sm:mb-12" style="transition-delay: 0.1s;">
-                         <p class="text-base sm:text-lg text-gray-300">
-                            Have questions about our tiles or need a custom quote? Reach out to us using the form below or visit our showroom.
-                        </p>
-                    </div>
-                    
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start max-w-5xl mx-auto">
                         <div class="map-container rounded-lg overflow-hidden shadow-xl border border-gray-700/50">
-                            <iframe
-                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3887.332740258326!2d79.0926736742076!3d13.212896009265012!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bad5da1ba26771d%3A0xba39ee157f4edca4!2sKajaria%20Eternity%20Boutique%20-%20Tiles%20Showroom%20in%20Palamaner%20Road%2C%20Chittor!5e0!3m2!1sen!2sin!4v1714905193732!5m2!1sen!2sin" 
-                                width="100%" height="350" style="border:0;" allowfullscreen="" loading="lazy">
-                            </iframe>
+                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3887.332740258326!2d79.0926736742076!3d13.212896009265012!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bad5da1ba26771d%3A0xba39ee157f4edca4!2sKajaria%20Eternity%20Boutique%20-%20Tiles%20Showroom%20in%20Palamaner%20Road%2C%20Chittor!5e0!3m2!1sen!2sin!4v1714905193732!5m2!1sen!2sin" width="100%" height="350" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
                         </div>
-                        <div class="bg-gray-800 p-8 rounded-xl shadow-lg border border-gray-700">
+                        <div class="address-details bg-gray-800 p-8 rounded-xl shadow-lg border border-gray-700">
                             <h3 class="text-xl font-bold text-cyan-400 mb-4">Contact Info</h3>
                             <p class="text-gray-300 mb-2"><strong>Address:</strong> 123 Tile Street, Chittoor</p>
                             <p class="text-gray-300 mb-2"><strong>Phone:</strong> +91 7680943539</p>
-                            <p class="text-gray-300 mb-4"><strong>Email:</strong> info@saibalajitiles.com</p>
-                            <a href="https://maps.app.goo.gl/ePv4dAQ9iEprLneLA" target="_blank" class="block w-full text-center bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-3 rounded-lg mt-4 transition">
-                                Get Directions
-                            </a>
+                            <a href="https://maps.app.goo.gl/ePv4dAQ9iEprLneLA" target="_blank" class="block w-full text-center bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-3 rounded-lg mt-4 transition">Get Directions</a>
                         </div>
                     </div>
-
-                    <p class="animate-on-scroll init-fade-in text-base sm:text-lg text-gray-300 max-w-xl sm:max-w-2xl mx-auto text-center mb-8 sm:mb-10 mt-12" style="transition-delay: 0.3s;">
-                        Or send us a message directly:
-                    </p>
-                    <form id="contactForm" class="animate-on-scroll init-fade-in max-w-xl mx-auto bg-gray-800/70 p-6 sm:p-8 rounded-lg shadow-xl border border-gray-700/50" style="transition-delay: 0.4s;">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-6">
-                            <div>
-                                <label for="name" class="block text-sm sm:text-base font-medium text-indigo-300 text-left mb-1">Full Name</label>
-                                <input type="text" name="name" id="name" required class="w-full px-3 py-2 rounded bg-gray-200 text-black border border-gray-600 focus:outline-none focus:ring-2 focus:ring-cyan-400" placeholder="John Doe">
-                            </div>
-                            <div>
-                                <label for="email" class="block text-sm sm:text-base font-medium text-indigo-300 text-left mb-1">Email Address</label>
-                                <input type="email" name="email" id="email" required class="w-full px-3 py-2 rounded bg-gray-200 text-black border border-gray-600 focus:outline-none focus:ring-2 focus:ring-cyan-400" placeholder="john@example.com">
-                            </div>
-                        </div>
-                        <div class="mb-4 sm:mb-6">
-                            <label for="subject" class="block text-sm sm:text-base font-medium text-indigo-300 text-left mb-1">Subject</label>
-                            <input type="text" name="subject" id="subject" class="w-full px-3 py-2 rounded bg-gray-200 text-black border border-gray-600 focus:outline-none focus:ring-2 focus:ring-cyan-400" placeholder="Inquiry">
-                        </div>
-                        <div class="mb-6 sm:mb-8">
-                            <label for="message" class="block text-sm sm:text-base font-medium text-indigo-300 text-left mb-1">Message</label>
-                            <textarea name="message" id="message" rows="4" required class="w-full px-3 py-2 rounded bg-gray-200 text-black border border-gray-600 focus:outline-none focus:ring-2 focus:ring-cyan-400 resize-none" placeholder="Message..."></textarea>
-                        </div>
-                        <div>
-                            <button type="submit" id="sendMessageBtn" class="btn-theme-primary w-full sm:w-auto text-lg">
-                                <span class="button-text">Send Message</span>
-                                <span class="button-loader hidden">Sending...</span>
-                            </button>
-                        </div>
-                        <div id="form-status" class="mt-4 text-sm sm:text-base text-center"></div>
-                    </form>
                 </div>
             </section>
         </main>
@@ -383,7 +313,6 @@
         const splashScreen = document.getElementById('splash-screen');
         const pageContainer = document.getElementById('page-container');
 
-        // SPLASH SCREEN LOGIC
         window.addEventListener('load', () => {
             if (splashScreen && pageContainer) {
                 setTimeout(() => {
@@ -401,7 +330,6 @@
             }
         });
 
-        // HERO SLIDER LOGIC
         function startHeroSlider() {
             const slides = document.querySelectorAll('.hero-slide');
             let currentSlide = 0;
@@ -412,7 +340,6 @@
             }, 4000);
         }
 
-        // HEADER SCROLL LOGIC
         window.addEventListener('scroll', () => {
             const header = document.getElementById('main-header');
             if (window.scrollY > 50) {
@@ -472,63 +399,6 @@
                 });
             });
             document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
-
-            // Contact Form
-            const contactForm = document.getElementById('contactForm');
-            const sendMessageBtn = document.getElementById('sendMessageBtn');
-            const formStatusEl = document.getElementById('form-status');
-
-            if (contactForm && sendMessageBtn && formStatusEl) {
-                contactForm.addEventListener('submit', function(event) {
-                    event.preventDefault();
-                    const buttonText = sendMessageBtn.querySelector('.button-text');
-                    const buttonLoader = sendMessageBtn.querySelector('.button-loader');
-
-                    if (buttonText) buttonText.classList.add('hidden');
-                    if (buttonLoader) buttonLoader.classList.remove('hidden');
-                    sendMessageBtn.disabled = true;
-                    formStatusEl.textContent = '';
-                    formStatusEl.className = 'mt-4 text-sm sm:text-base text-center';
-
-                    const formData = new FormData(contactForm);
-                    const formSpreeEndpoint = 'https://formspree.io/f/mldndgpw';
-
-                    fetch(formSpreeEndpoint, {
-                        method: 'POST',
-                        body: formData,
-                        headers: { 'Accept': 'application/json' }
-                    }).then(response => {
-                        if (response.ok) {
-                            formStatusEl.textContent = 'Message sent successfully! We will get back to you soon.';
-                            formStatusEl.classList.add('text-green-400');
-                            contactForm.reset();
-                        } else {
-                            response.json().then(data => {
-                                if (data && data.errors) {
-                                    formStatusEl.textContent = data.errors.map(error => error.message).join(", ");
-                                } else if (data && data.error) {
-                                    formStatusEl.textContent = data.error;
-                                } else {
-                                    formStatusEl.textContent = 'Oops! There was a problem submitting your form.';
-                                }
-                                formStatusEl.classList.add('text-red-400');
-                            }).catch(() => {
-                                 formStatusEl.textContent = 'Oops! Server response issue. Please try again.';
-                                 formStatusEl.classList.add('text-red-400');
-                            });
-                        }
-                    }).catch(error => {
-                        console.error('Form submission error:', error);
-                        formStatusEl.textContent = 'Network problem. Please check connection and try again.';
-                        formStatusEl.classList.add('text-red-400');
-                    }).finally(() => {
-                        if (buttonText) buttonText.classList.remove('hidden');
-                        if (buttonLoader) buttonLoader.classList.add('hidden');
-                        sendMessageBtn.disabled = false;
-                        setTimeout(() => { formStatusEl.textContent = ''; }, 7000);
-                    });
-                });
-            }
         }
     </script>
 </body>
