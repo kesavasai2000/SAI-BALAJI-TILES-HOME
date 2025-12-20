@@ -447,19 +447,23 @@
         </div>
     </div>
 
+    <!-- Supabase SDK (Make sure this is only here once in the file) -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
     <script>
         // ============================================
-        // 🚀 SUPABASE CONFIGURATION
-        // Replace these with your own keys from Supabase Dashboard > Settings > API
+        // 1. CONFIGURATION
         // ============================================
+        // REPLACE THESE WITH YOUR KEYS FROM THE SCREENSHOT YOU TOOK EARLIER
         const supabaseUrl = 'https://jjseffkbreruegudlmnd.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impqc2VmZmticmVydWVndWRsbW5kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxOTMwMTEsImV4cCI6MjA4MTc2OTAxMX0.xrCWARm6FbW-U98Qs13mMvlCeBiQWgmD73qverF7Brk';
         
         // Initialize Supabase Client
+        // (This creates the connection only once)
         const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
         // ============================================
-        // UI FUNCTIONS
+        // 2. UI FUNCTIONS (Tabs, Alerts, etc)
         // ============================================
         function switchTab(tab) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -490,19 +494,24 @@
 
         function showAlert(message, type) {
             const alert = document.getElementById('authAlert');
-            alert.className = `alert alert-${type} show`;
-            alert.textContent = message;
+            if(alert) {
+                alert.className = `alert alert-${type} show`;
+                alert.textContent = message;
+            } else {
+                console.log(type + ": " + message);
+            }
         }
 
         function hideAlert() {
-            document.getElementById('authAlert').classList.remove('show');
+            const alert = document.getElementById('authAlert');
+            if(alert) alert.classList.remove('show');
         }
 
         // ============================================
-        // AUTHENTICATION LOGIC (POSTGRESQL / SUPABASE)
+        // 3. AUTHENTICATION LOGIC
         // ============================================
 
-        // --- 1. HANDLE LOGIN ---
+        // --- HANDLE LOGIN ---
         async function handleLogin(event) {
             event.preventDefault();
             
@@ -514,7 +523,7 @@
             btn.innerHTML = 'Signing In<span class="spinner"></span>';
 
             try {
-                // A. Login with Supabase Auth
+                // A. Login
                 const { data, error } = await supabase.auth.signInWithPassword({
                     email: email,
                     password: password
@@ -522,7 +531,7 @@
 
                 if (error) throw error;
 
-                // B. Check Role in 'profiles' table and Redirect
+                // B. Check Role
                 await checkRoleAndRedirect(data.user.id);
 
             } catch (error) {
@@ -533,7 +542,7 @@
             }
         }
 
-        // --- 2. HANDLE SIGNUP ---
+        // --- HANDLE SIGNUP ---
         async function handleSignup(event) {
             event.preventDefault();
             
@@ -552,7 +561,7 @@
             btn.innerHTML = 'Creating Account<span class="spinner"></span>';
 
             try {
-                // A. Sign up with Supabase Auth
+                // A. Sign up
                 const { data, error } = await supabase.auth.signUp({
                     email: email,
                     password: password
@@ -560,8 +569,7 @@
 
                 if (error) throw error;
 
-                // B. Insert Profile Row in 'profiles' table
-                // This is crucial for your Role Logic!
+                // B. Insert Profile Row
                 const { error: profileError } = await supabase
                     .from('profiles')
                     .insert([
@@ -584,9 +592,8 @@
             }
         }
 
-        // --- 3. CHECK ROLE AND REDIRECT HELPER ---
+        // --- CHECK ROLE HELPER ---
         async function checkRoleAndRedirect(userId) {
-            // Query the 'profiles' table using the User ID
             const { data, error } = await supabase
                 .from('profiles')
                 .select('role')
@@ -594,7 +601,6 @@
                 .single();
 
             if (error) {
-                // If profile missing, assume basic user
                 console.warn('Profile not found, defaulting to user.');
                 window.location.href = 'user-dashboard.html';
                 return;
@@ -604,25 +610,14 @@
             showAlert(`✅ Verified. Logging in as ${role}...`, 'success');
 
             setTimeout(() => {
-                switch(role) {
-                    case 'admin':
-                        window.location.href = 'admin-dashboard.html';
-                        break;
-                    case 'worker':
-                        window.location.href = 'worker-dashboard.html';
-                        break;
-                    case 'loader':
-                        window.location.href = 'loader-dashboard.html';
-                        break;
-                    case 'user':
-                    default:
-                        window.location.href = 'user-dashboard.html';
-                        break;
-                }
+                if (role === 'admin') window.location.href = 'admin-dashboard.html';
+                else if (role === 'worker') window.location.href = 'worker-dashboard.html';
+                else if (role === 'loader') window.location.href = 'loader-dashboard.html';
+                else window.location.href = 'user-dashboard.html';
             }, 1000);
         }
 
-        // --- 4. FORGOT PASSWORD ---
+        // --- FORGOT PASSWORD ---
         async function showForgotPassword() {
             const email = document.getElementById('loginEmail').value;
             
@@ -636,21 +631,23 @@
                 if (error) {
                     showAlert(error.message, 'error');
                 } else {
-                    showAlert('✅ Reset email sent! Check your inbox.', 'success');
+                    showAlert('✅ Reset email sent!', 'success');
                 }
             }
         }
 
-        // Check if already logged in on page load
+        // --- GOOGLE SIGN IN (Placeholder) ---
+        function googleSignIn() {
+             alert('To use Google Login with Supabase, you need to enable the Google Provider in Supabase Auth Settings. For now, please use Email/Password.');
+        }
+
+        // Check session on load
         (async function checkSession() {
             const { data } = await supabase.auth.getSession();
             if (data.session) {
                 console.log("User already logged in.");
-                // Optional: Auto-redirect if already logged in
-                // checkRoleAndRedirect(data.session.user.id);
             }
         })();
-
     </script>
 
 </body>
