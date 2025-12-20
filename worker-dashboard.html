@@ -39,11 +39,9 @@
             <p><strong>Customer:</strong> <span id="displayCustName"></span></p>
             
             <label>Select Tile Model:</label>
+            <!-- EMPTY SELECT: We will fill this using JavaScript -->
             <select id="tileSelect">
-                <option value="Kajaria - Marble White">Kajaria - Marble White (2x2)</option>
-                <option value="Somany - Rustic Wood">Somany - Rustic Wood (2x4)</option>
-                <option value="Qtone - High Gloss">Qtone - High Gloss (4x4)</option>
-                <option value="Nitco - Matte Finish">Nitco - Matte Finish (2x2)</option>
+                <option value="">Loading products...</option>
             </select>
             
             <input type="number" id="tileQty" placeholder="Quantity (Boxes)">
@@ -56,21 +54,46 @@
 
     <script>
         // ==========================================
-        // 🚀 PASTE YOUR SUPABASE KEYS HERE
+        // 🚀 PASTE YOUR KEYS HERE
         // ==========================================
         const supabaseUrl = 'https://jjseffkbreruegudlmnd.supabase.co'; 
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impqc2VmZmticmVydWVndWRsbW5kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxOTMwMTEsImV4cCI6MjA4MTc2OTAxMX0.xrCWARm6FbW-U98Qs13mMvlCeBiQWgmD73qverF7Brk';
 
-        
-        // FIX: Renamed to sbClient to avoid crash
         const sbClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-        // Check if user is logged in
+        // --- AUTH CHECK ---
         async function checkAuth() {
             const { data: { session } } = await sbClient.auth.getSession();
             if (!session) window.location.href = 'auth.html';
         }
         checkAuth();
+
+        // --- NEW FUNCTION: LOAD PRODUCTS FROM DATABASE ---
+        async function loadProducts() {
+            // 1. Fetch products from Supabase
+            const { data: products, error } = await sbClient
+                .from('products')
+                .select('*');
+
+            if (error) {
+                console.error('Error loading products:', error);
+                return;
+            }
+
+            // 2. Find the dropdown menu
+            const select = document.getElementById('tileSelect');
+            select.innerHTML = '<option value="">-- Select a Tile --</option>'; // Clear loading message
+
+            // 3. Loop through products and create options
+            products.forEach(product => {
+                const option = document.createElement('option');
+                // We save the Name as the value
+                option.value = product.name; 
+                // We show Name + Stock count to the worker
+                option.textContent = `${product.brand} - ${product.name} (Stock: ${product.stock})`;
+                select.appendChild(option);
+            });
+        }
 
         function goToStep2() {
             const name = document.getElementById('custName').value;
@@ -82,26 +105,30 @@
             document.getElementById('displayCustName').textContent = name;
             document.getElementById('step1').classList.add('hidden');
             document.getElementById('step2').classList.remove('hidden');
+
+            // LOAD PRODUCTS NOW
+            loadProducts();
         }
 
         async function submitOrder() {
-            // Get current user
             const { data: { user } } = await sbClient.auth.getUser();
+            const selectedTile = document.getElementById('tileSelect').value;
+
+            if (!selectedTile) return alert("Please select a tile");
 
             const orderData = {
                 customer_name: document.getElementById('custName').value,
                 customer_phone: document.getElementById('custPhone').value,
                 customer_address: document.getElementById('custAddr').value,
                 items: [{
-                    tile: document.getElementById('tileSelect').value,
+                    tile: selectedTile,
                     qty: document.getElementById('tileQty').value,
                     measurements: document.getElementById('measurements').value
                 }],
-                status: 'processing', // This sends it to the loader
+                status: 'processing',
                 worker_id: user.id
             };
 
-            // Send to Database
             const { error } = await sbClient.from('orders').insert([orderData]);
 
             if (error) {
