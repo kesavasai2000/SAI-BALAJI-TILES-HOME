@@ -450,15 +450,25 @@
     <!-- Supabase SDK (Make sure this is only here once in the file) -->
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
-    <script>
- 
-        const supabaseUrl = 'https://jjseffkbreruegudlmnd.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impqc2VmZmticmVydWVndWRsbW5kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxOTMwMTEsImV4cCI6MjA4MTc2OTAxMX0.xrCWARm6FbW-U98Qs13mMvlCeBiQWgmD73qverF7Brk';
-        
-     
-        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+   <!-- 1. Supabase Library -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
-     
+    <script>
+        // ============================================
+        // 1. CONFIGURATION
+        // ============================================
+        
+        // 👇 PASTE YOUR KEYS HERE
+        const supabaseUrl = 'https://jjseffkbreruegudlmnd.supabase.co'; 
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impqc2VmZmticmVydWVndWRsbW5kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxOTMwMTEsImV4cCI6MjA4MTc2OTAxMX0.xrCWARm6FbW-U98Qs13mMvlCeBiQWgmD73qverF7Brk';
+
+        // Initialize Supabase Client
+        // WE ARE NAMING THIS 'sbClient' TO AVOID CONFUSION
+        const sbClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+        // ============================================
+        // 2. UI FUNCTIONS
+        // ============================================
         function switchTab(tab) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
@@ -517,15 +527,15 @@
             btn.innerHTML = 'Signing In<span class="spinner"></span>';
 
             try {
-                // A. Login
-                const { data, error } = await supabase.auth.signInWithPassword({
+                // UPDATE: Using sbClient
+                const { data, error } = await sbClient.auth.signInWithPassword({
                     email: email,
                     password: password
                 });
 
                 if (error) throw error;
 
-                // B. Check Role
+                // Check Role
                 await checkRoleAndRedirect(data.user.id);
 
             } catch (error) {
@@ -555,16 +565,16 @@
             btn.innerHTML = 'Creating Account<span class="spinner"></span>';
 
             try {
-                // A. Sign up
-                const { data, error } = await supabase.auth.signUp({
+                // UPDATE: Using sbClient
+                const { data, error } = await sbClient.auth.signUp({
                     email: email,
                     password: password
                 });
 
                 if (error) throw error;
 
-                // B. Insert Profile Row
-                const { error: profileError } = await supabase
+                // Insert Profile Row
+                const { error: profileError } = await sbClient
                     .from('profiles')
                     .insert([
                         { id: data.user.id, full_name: name, role: 'user', email: email }
@@ -588,7 +598,8 @@
 
         // --- CHECK ROLE HELPER ---
         async function checkRoleAndRedirect(userId) {
-            const { data, error } = await supabase
+            // UPDATE: Using sbClient
+            const { data, error } = await sbClient
                 .from('profiles')
                 .select('role')
                 .eq('id', userId)
@@ -621,7 +632,8 @@
             }
 
             if (confirm(`Send password reset email to ${email}?`)) {
-                const { error } = await supabase.auth.resetPasswordForEmail(email);
+                // UPDATE: Using sbClient
+                const { error } = await sbClient.auth.resetPasswordForEmail(email);
                 if (error) {
                     showAlert(error.message, 'error');
                 } else {
@@ -630,14 +642,10 @@
             }
         }
 
-        // --- GOOGLE SIGN IN (Placeholder) ---
-        function googleSignIn() {
-             alert('To use Google Login with Supabase, you need to enable the Google Provider in Supabase Auth Settings. For now, please use Email/Password.');
-        }
-
         // Check session on load
         (async function checkSession() {
-            const { data } = await supabase.auth.getSession();
+            // UPDATE: Using sbClient
+            const { data } = await sbClient.auth.getSession();
             if (data.session) {
                 console.log("User already logged in.");
             }
