@@ -5,48 +5,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Sai Balaji Tiles Home</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <style>
         html, body { height: 100%; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
         html { scroll-behavior: smooth; }
         
-        /* 1. CONTINUOUS DARK UNIVERSE BACKGROUND */
+        /* 1. DARK UNIVERSE BACKGROUND (Global) */
         body { 
             background-color: #000000;
-            /* Deep Space Radial Gradient */
+            /* Deep Space Gradient */
             background-image: radial-gradient(circle at 50% 50%, #111111 0%, #000000 100%);
             overflow-x: hidden; 
-            color: #e2e8f0; /* Soft White Text */
+            color: #e2e8f0;
         }
 
-        /* 2. UNIVERSE STARS */
+        /* 2. STARS ANIMATION */
         .stars-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: -1; }
         .star { 
             position: absolute; 
             background-color: white; 
             border-radius: 50%; 
-            opacity: 0.8;
+            opacity: 0.8; 
             animation: twinkle 4s infinite ease-in-out; 
             box-shadow: 0 0 4px rgba(255, 255, 255, 0.8);
         }
         @keyframes twinkle { 0%, 100% { opacity: 0.3; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.2); } }
 
-        /* 3. GLOSSY GLASS CARD EFFECT (Applied to sections) */
+        /* 3. GLASS CARD EFFECT */
         .glass-card {
-            background: rgba(20, 20, 20, 0.6); /* Semi-transparent black */
-            backdrop-filter: blur(12px); /* Blur behind */
+            background: rgba(20, 20, 20, 0.6); /* Dark Glass */
+            backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1); /* Thin white border */
+            border: 1px solid rgba(255, 255, 255, 0.1);
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
             transition: all 0.3s ease;
         }
         .glass-card:hover {
-            border-color: rgba(34, 211, 238, 0.5); /* Cyan glow on hover */
+            border-color: rgba(34, 211, 238, 0.5);
             transform: translateY(-5px);
             box-shadow: 0 10px 40px rgba(34, 211, 238, 0.1);
         }
 
-        /* 4. SPLASH SCREEN (Highest Priority) */
+        /* 4. SPLASH SCREEN (Fixed Layering) */
         #splash-screen {
             z-index: 99999 !important; 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -63,7 +63,7 @@
         .hero-content { z-index: 10; position: relative; }
         .hero-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,0.2), #000000); z-index: 1; }
 
-        /* 6. HEADER SCROLL EFFECT */
+        /* 6. HEADER SCROLL */
         .header-scrolled {
             background-color: rgba(0, 0, 0, 0.9) !important;
             backdrop-filter: blur(10px);
@@ -71,7 +71,7 @@
             padding-top: 0.75rem !important; padding-bottom: 0.75rem !important;
         }
 
-        /* 7. UTILS & ANIMATIONS */
+        /* 7. UTILS */
         .navbar.translate-x-0 { transform: translateX(0%); }
         .navbar.-translate-x-full { transform: translateX(-100%); }
         .animate-on-scroll { opacity: 0; transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
@@ -168,21 +168,21 @@
                 </div>
             </section>
 
-            <!-- BRANDS SECTION -->
+            <!-- BRANDS SECTION (Transparent BG so stars show) -->
             <section id="brands" class="py-20 relative">
                 <div class="container mx-auto px-4 text-center">
                     <div class="mb-6"><span class="inline-block px-6 py-2 bg-cyan-900/30 text-cyan-400 rounded-full text-sm font-semibold mb-4 border border-cyan-500/30">✨ PREMIUM QUALITY</span></div>
                     <h2 class="animate-on-scroll init-slide-up text-3xl sm:text-5xl font-extrabold mb-6 text-white">Our Premium Brands</h2>
                     <p class="animate-on-scroll init-fade-in text-lg text-gray-400 mb-12">We partner with India's leading manufacturers.</p>
                     
-                    <!-- Glass Cards Grid -->
+                    <!-- White Cards for Logos (Logos need white background to be seen) -->
                     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6 max-w-6xl mx-auto">
-                        <div class="glass-card p-4 rounded-xl flex items-center justify-center h-32"><img src="images/brands/kar.png" class="max-h-16 max-w-full"></div>
-                        <div class="glass-card p-4 rounded-xl flex items-center justify-center h-32"><img src="images/brands/qtone-logo.png" class="max-h-16 max-w-full"></div>
-                        <div class="glass-card p-4 rounded-xl flex items-center justify-center h-32"><img src="images/brands/Somany-logo.png" class="max-h-16 max-w-full"></div>
-                        <div class="glass-card p-4 rounded-xl flex items-center justify-center h-32"><img src="images/brands/nitco-logo.png" class="max-h-16 max-w-full"></div>
-                        <div class="glass-card p-4 rounded-xl flex items-center justify-center h-32"><img src="images/brands/johnson-logo.png" class="max-h-16 max-w-full"></div>
-                        <div class="glass-card p-4 rounded-xl flex items-center justify-center h-32"><img src="images/brands/orient-bell-logo.png" class="max-h-16 max-w-full"></div>
+                        <div class="bg-white p-4 rounded-xl shadow-lg hover:scale-105 transition transform flex items-center justify-center h-32"><img src="images/brands/kar.png" class="max-h-16 max-w-full"></div>
+                        <div class="bg-white p-4 rounded-xl shadow-lg hover:scale-105 transition transform flex items-center justify-center h-32"><img src="images/brands/qtone-logo.png" class="max-h-16 max-w-full"></div>
+                        <div class="bg-white p-4 rounded-xl shadow-lg hover:scale-105 transition transform flex items-center justify-center h-32"><img src="images/brands/Somany-logo.png" class="max-h-16 max-w-full"></div>
+                        <div class="bg-white p-4 rounded-xl shadow-lg hover:scale-105 transition transform flex items-center justify-center h-32"><img src="images/brands/nitco-logo.png" class="max-h-16 max-w-full"></div>
+                        <div class="bg-white p-4 rounded-xl shadow-lg hover:scale-105 transition transform flex items-center justify-center h-32"><img src="images/brands/johnson-logo.png" class="max-h-16 max-w-full"></div>
+                        <div class="bg-white p-4 rounded-xl shadow-lg hover:scale-105 transition transform flex items-center justify-center h-32"><img src="images/brands/orient-bell-logo.png" class="max-h-16 max-w-full"></div>
                     </div>
 
                     <!-- Stats Grid -->
@@ -200,7 +200,7 @@
                 <div class="container mx-auto px-4">
                     <h2 class="animate-on-scroll init-slide-up text-3xl sm:text-4xl font-bold mb-6 text-white">About Sai Balaji Tiles</h2>
                     <p class="animate-on-scroll init-fade-in text-base sm:text-lg text-gray-400 max-w-2xl mx-auto leading-relaxed">
-                        At Sai Balaji Tiles, we are passionate about providing high-quality tiles that transform spaces. With years of experience, we offer a curated selection from India's most trusted brands. Our commitment is to quality, durability, and customer satisfaction.
+                        At Sai Balaji Tiles, we are passionate about providing high-quality tiles that transform spaces. With years of experience, we offer a curated selection from India's most trusted brands including Kajaria, Qtone, Somany, Johnson, Nitco, and Orient Bell. Our commitment is to quality, durability, and customer satisfaction.
                     </p>
                 </div>
             </section>
@@ -239,14 +239,13 @@
             <section id="contact" class="py-16">
                 <div class="container mx-auto px-4">
                     <h2 class="animate-on-scroll init-slide-up text-3xl sm:text-4xl font-bold mb-10 text-white text-center">Get in Touch</h2>
-                    
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 max-w-5xl mx-auto">
-                        <!-- Map -->
+                        <!-- Map (Glass container) -->
                         <div class="rounded-xl overflow-hidden shadow-2xl border border-gray-700 h-80 w-full glass-card">
                             <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3887.332740258326!2d79.0926736742076!3d13.212896009265012!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bad5da1ba26771d%3A0xba39ee157f4edca4!2sKajaria%20Eternity%20Boutique%20-%20Tiles%20Showroom%20in%20Palamaner%20Road%2C%20Chittor!5e0!3m2!1sen!2sin!4v1714905193732!5m2!1sen!2sin" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
                         </div>
                         
-                        <!-- Contact Info -->
+                        <!-- Contact Info (Glass container) -->
                         <div class="glass-card p-8 rounded-xl">
                             <h3 class="text-xl font-bold text-cyan-400 mb-4">Contact Info</h3>
                             <p class="text-gray-300 mb-2"><strong>Address:</strong> 123 Tile Street, Chittoor</p>
@@ -256,7 +255,7 @@
                         </div>
                     </div>
 
-                    <!-- Contact Form -->
+                    <!-- Contact Form (Glass container) -->
                     <div class="mt-12 max-w-xl mx-auto glass-card p-8 rounded-xl">
                         <h3 class="text-xl font-bold text-center text-white mb-6">Send us a message</h3>
                         <form id="contactForm" class="space-y-4">
@@ -282,7 +281,7 @@
             </section>
         </main>
 
-        <!-- FOOTER (Glass Effect) -->
+        <!-- FOOTER (Glass Effect to match continuous background) -->
         <footer class="glass-card border-t border-gray-800 text-white pt-16 pb-8 relative z-10 mt-10">
             <div class="container mx-auto px-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12 text-left">
