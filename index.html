@@ -13,7 +13,7 @@
         /* 1. CONTINUOUS DARK UNIVERSE BACKGROUND */
         body { 
             background-color: #000000;
-            /* Deep Space Gradient */
+            /* Deep Space Radial Gradient */
             background-image: radial-gradient(circle at 50% 50%, #111111 0%, #000000 100%);
             overflow-x: hidden; 
             color: #e2e8f0; /* Soft White Text */
@@ -27,11 +27,11 @@
             border-radius: 50%; 
             opacity: 0.8;
             animation: twinkle 4s infinite ease-in-out; 
-            box-shadow: 0 0 4px rgba(255, 255, 255, 0.8); /* Glow effect */
+            box-shadow: 0 0 4px rgba(255, 255, 255, 0.8);
         }
         @keyframes twinkle { 0%, 100% { opacity: 0.3; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.2); } }
 
-        /* 3. GLOSSY GLASS CARD EFFECT */
+        /* 3. GLOSSY GLASS CARD EFFECT (Applied to sections) */
         .glass-card {
             background: rgba(20, 20, 20, 0.6); /* Semi-transparent black */
             backdrop-filter: blur(12px); /* Blur behind */
@@ -46,7 +46,7 @@
             box-shadow: 0 10px 40px rgba(34, 211, 238, 0.1);
         }
 
-        /* 4. SPLASH SCREEN */
+        /* 4. SPLASH SCREEN (Highest Priority) */
         #splash-screen {
             z-index: 99999 !important; 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -63,15 +63,15 @@
         .hero-content { z-index: 10; position: relative; }
         .hero-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,0.2), #000000); z-index: 1; }
 
-        /* 6. HEADER */
+        /* 6. HEADER SCROLL EFFECT */
         .header-scrolled {
-            background-color: rgba(0, 0, 0, 0.8) !important;
+            background-color: rgba(0, 0, 0, 0.9) !important;
             backdrop-filter: blur(10px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             padding-top: 0.75rem !important; padding-bottom: 0.75rem !important;
         }
 
-        /* 7. UTILS */
+        /* 7. UTILS & ANIMATIONS */
         .navbar.translate-x-0 { transform: translateX(0%); }
         .navbar.-translate-x-full { transform: translateX(-100%); }
         .animate-on-scroll { opacity: 0; transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
@@ -80,6 +80,7 @@
         .animate-on-scroll.is-visible { opacity: 1; transform: translateY(0); }
         @keyframes fadeInSlow { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         
+        /* 8. BUTTONS & INPUTS */
         .btn-theme-primary {
             display: inline-block; padding: 0.75rem 1.75rem; border-radius: 9999px;
             font-weight: 600; font-size: 0.95rem;
@@ -89,14 +90,18 @@
         }
         .btn-theme-primary:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(6, 182, 212, 0.4); }
         
-        input, textarea { color: #fff !important; background: rgba(255,255,255,0.1) !important; border: 1px solid rgba(255,255,255,0.2) !important; }
+        input, textarea { 
+            color: #fff !important; 
+            background: rgba(255,255,255,0.05) !important; 
+            border: 1px solid rgba(255,255,255,0.2) !important; 
+        }
         input::placeholder, textarea::placeholder { color: #aaa; }
         .hidden { display: none !important; }
     </style>
 </head>
 <body class="font-poppins">
 
-    <!-- SPLASH SCREEN -->
+    <!-- 1. SPLASH SCREEN -->
     <div id="splash-screen">
         <img src="images/logo1.jpg" alt="Logo" class="w-3/4 sm:w-1/3 h-auto splash-content">
         <h1 class="text-xl sm:text-3xl font-bold text-white mt-4 text-center splash-content delay-500ms">
@@ -104,8 +109,10 @@
         </h1>
     </div>
 
+    <!-- 2. MAIN PAGE CONTAINER -->
     <div id="page-container" style="display: none; position: relative; min-height: 100vh;">
-        <!-- STARS BACKGROUND (Global) -->
+        
+        <!-- GLOBAL STARS BACKGROUND -->
         <div class="stars-container" id="stars-bg-global"></div>
 
         <!-- HEADER -->
@@ -133,6 +140,7 @@
                 <ul class="space-y-4">
                     <li><a href="#home" class="block text-gray-300 hover:text-cyan-400 text-lg" onclick="toggleMenuIndex()">Home</a></li>
                     <li><a href="#brands" class="block text-gray-300 hover:text-cyan-400 text-lg" onclick="toggleMenuIndex()">Brands</a></li>
+                    <li><a href="#about" class="block text-gray-300 hover:text-cyan-400 text-lg" onclick="toggleMenuIndex()">About Us</a></li>
                     <li><a href="#collections" class="block text-gray-300 hover:text-cyan-400 text-lg" onclick="toggleMenuIndex()">Collections</a></li>
                     <li><a href="#contact" class="block text-gray-300 hover:text-cyan-400 text-lg" onclick="toggleMenuIndex()">Contact</a></li>
                     <li><a href="auth.html" class="block text-cyan-400 font-bold mt-4" onclick="toggleMenuIndex()">Login / Sign Up</a></li>
@@ -142,7 +150,7 @@
 
         <main id="page-main-content" class="relative z-10"> 
             
-            <!-- HERO SECTION -->
+            <!-- HERO SLIDER SECTION -->
             <section id="home" class="relative h-screen flex items-center justify-center overflow-hidden">
                 <div class="hero-slide active"><img src="images/tiles3.jpg" class="w-full h-full object-cover"><div class="hero-overlay"></div></div>
                 <div class="hero-slide"><img src="images/tile1.jpg" class="w-full h-full object-cover"><div class="hero-overlay"></div></div>
@@ -165,15 +173,24 @@
                 <div class="container mx-auto px-4 text-center">
                     <div class="mb-6"><span class="inline-block px-6 py-2 bg-cyan-900/30 text-cyan-400 rounded-full text-sm font-semibold mb-4 border border-cyan-500/30">✨ PREMIUM QUALITY</span></div>
                     <h2 class="animate-on-scroll init-slide-up text-3xl sm:text-5xl font-extrabold mb-6 text-white">Our Premium Brands</h2>
+                    <p class="animate-on-scroll init-fade-in text-lg text-gray-400 mb-12">We partner with India's leading manufacturers.</p>
                     
-                    <!-- Updated to Glass Cards -->
-                    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6 max-w-6xl mx-auto mt-12">
+                    <!-- Glass Cards Grid -->
+                    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6 max-w-6xl mx-auto">
                         <div class="glass-card p-4 rounded-xl flex items-center justify-center h-32"><img src="images/brands/kar.png" class="max-h-16 max-w-full"></div>
                         <div class="glass-card p-4 rounded-xl flex items-center justify-center h-32"><img src="images/brands/qtone-logo.png" class="max-h-16 max-w-full"></div>
                         <div class="glass-card p-4 rounded-xl flex items-center justify-center h-32"><img src="images/brands/Somany-logo.png" class="max-h-16 max-w-full"></div>
                         <div class="glass-card p-4 rounded-xl flex items-center justify-center h-32"><img src="images/brands/nitco-logo.png" class="max-h-16 max-w-full"></div>
                         <div class="glass-card p-4 rounded-xl flex items-center justify-center h-32"><img src="images/brands/johnson-logo.png" class="max-h-16 max-w-full"></div>
                         <div class="glass-card p-4 rounded-xl flex items-center justify-center h-32"><img src="images/brands/orient-bell-logo.png" class="max-h-16 max-w-full"></div>
+                    </div>
+
+                    <!-- Stats Grid -->
+                    <div class="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+                        <div><div class="text-3xl font-bold text-cyan-400">150+</div><div class="text-gray-400 text-sm">Designs</div></div>
+                        <div><div class="text-3xl font-bold text-purple-400">6</div><div class="text-gray-400 text-sm">Top Brands</div></div>
+                        <div><div class="text-3xl font-bold text-pink-400">100%</div><div class="text-gray-400 text-sm">Quality</div></div>
+                        <div><div class="text-3xl font-bold text-indigo-400">24/7</div><div class="text-gray-400 text-sm">Support</div></div>
                     </div>
                 </div>
             </section>
@@ -183,7 +200,7 @@
                 <div class="container mx-auto px-4">
                     <h2 class="animate-on-scroll init-slide-up text-3xl sm:text-4xl font-bold mb-6 text-white">About Sai Balaji Tiles</h2>
                     <p class="animate-on-scroll init-fade-in text-base sm:text-lg text-gray-400 max-w-2xl mx-auto leading-relaxed">
-                        At Sai Balaji Tiles, we are passionate about providing high-quality tiles that transform spaces. With years of experience, we offer a curated selection from India's most trusted brands.
+                        At Sai Balaji Tiles, we are passionate about providing high-quality tiles that transform spaces. With years of experience, we offer a curated selection from India's most trusted brands. Our commitment is to quality, durability, and customer satisfaction.
                     </p>
                 </div>
             </section>
@@ -222,22 +239,50 @@
             <section id="contact" class="py-16">
                 <div class="container mx-auto px-4">
                     <h2 class="animate-on-scroll init-slide-up text-3xl sm:text-4xl font-bold mb-10 text-white text-center">Get in Touch</h2>
+                    
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 max-w-5xl mx-auto">
+                        <!-- Map -->
                         <div class="rounded-xl overflow-hidden shadow-2xl border border-gray-700 h-80 w-full glass-card">
                             <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3887.332740258326!2d79.0926736742076!3d13.212896009265012!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bad5da1ba26771d%3A0xba39ee157f4edca4!2sKajaria%20Eternity%20Boutique%20-%20Tiles%20Showroom%20in%20Palamaner%20Road%2C%20Chittor!5e0!3m2!1sen!2sin!4v1714905193732!5m2!1sen!2sin" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
                         </div>
+                        
+                        <!-- Contact Info -->
                         <div class="glass-card p-8 rounded-xl">
                             <h3 class="text-xl font-bold text-cyan-400 mb-4">Contact Info</h3>
                             <p class="text-gray-300 mb-2"><strong>Address:</strong> 123 Tile Street, Chittoor</p>
                             <p class="text-gray-300 mb-2"><strong>Phone:</strong> +91 7680943539</p>
+                            <p class="text-gray-300 mb-4"><strong>Email:</strong> info@saibalajitiles.com</p>
                             <a href="https://maps.app.goo.gl/ePv4dAQ9iEprLneLA" target="_blank" class="block w-full text-center bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-3 rounded-lg mt-4 transition">Get Directions</a>
                         </div>
+                    </div>
+
+                    <!-- Contact Form -->
+                    <div class="mt-12 max-w-xl mx-auto glass-card p-8 rounded-xl">
+                        <h3 class="text-xl font-bold text-center text-white mb-6">Send us a message</h3>
+                        <form id="contactForm" class="space-y-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm text-gray-400 mb-1">Name</label>
+                                    <input type="text" name="name" required class="w-full px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-cyan-400" placeholder="John Doe">
+                                </div>
+                                <div>
+                                    <label class="block text-sm text-gray-400 mb-1">Email</label>
+                                    <input type="email" name="email" required class="w-full px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-cyan-400" placeholder="john@example.com">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm text-gray-400 mb-1">Message</label>
+                                <textarea name="message" rows="4" required class="w-full px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-cyan-400 resize-none" placeholder="Your message here..."></textarea>
+                            </div>
+                            <button type="submit" id="sendMessageBtn" class="w-full py-3 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded-lg transition shadow-lg">Send Message</button>
+                            <div id="form-status" class="text-center text-sm mt-2"></div>
+                        </form>
                     </div>
                 </div>
             </section>
         </main>
 
-        <!-- FOOTER (Transparent Glass) -->
+        <!-- FOOTER (Glass Effect) -->
         <footer class="glass-card border-t border-gray-800 text-white pt-16 pb-8 relative z-10 mt-10">
             <div class="container mx-auto px-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12 text-left">
@@ -248,9 +293,9 @@
                     <div>
                         <h3 class="text-xl font-bold mb-6 text-cyan-400">Navigate</h3>
                         <ul class="space-y-4 text-gray-400 text-sm">
-                            <li><a href="#" class="hover:text-white transition">Home</a></li>
-                            <li><a href="#" class="hover:text-white transition">Brands</a></li>
-                            <li><a href="#" class="hover:text-white transition">Contact</a></li>
+                            <li><a href="#home" class="hover:text-white transition">Home</a></li>
+                            <li><a href="#brands" class="hover:text-white transition">Brands</a></li>
+                            <li><a href="#contact" class="hover:text-white transition">Contact</a></li>
                         </ul>
                     </div>
                     <div>
@@ -275,11 +320,13 @@
         </footer>
     </div>
 
+    <!-- SCRIPTS -->
     <script src="header.js"></script>
     <script>
         const splashScreen = document.getElementById('splash-screen');
         const pageContainer = document.getElementById('page-container');
 
+        // SPLASH SCREEN LOGIC
         window.addEventListener('load', () => {
             if (splashScreen && pageContainer) {
                 setTimeout(() => {
@@ -287,7 +334,8 @@
                     setTimeout(() => {
                         splashScreen.style.display = 'none';
                         pageContainer.style.display = 'block';
-                        // Start features
+                        
+                        // Start Features
                         startHeroSlider();
                         createStarsGlobal();
                         initializeScripts();
@@ -296,6 +344,7 @@
             }
         });
 
+        // HERO SLIDER
         function startHeroSlider() {
             const slides = document.querySelectorAll('.hero-slide');
             let currentSlide = 0;
@@ -306,21 +355,21 @@
             }, 4000);
         }
 
+        // HEADER SCROLL
         window.addEventListener('scroll', () => {
             const header = document.getElementById('main-header');
             if (window.scrollY > 50) {
                 header.classList.add('header-scrolled');
-                header.classList.remove('py-5');
             } else {
                 header.classList.remove('header-scrolled');
-                header.classList.add('py-5');
             }
         });
 
         function initializeScripts() {
+            // Navbar
+            let menuVisible = false;
             const navbarIndex = document.getElementById("main-navbar-index");
             const toggleBtnIndex = document.getElementById("toggle-btn-index");
-            let menuVisible = false;
             window.toggleMenuIndex = function() {
                 menuVisible = !menuVisible;
                 navbarIndex.classList.toggle("translate-x-0", menuVisible);
@@ -328,7 +377,7 @@
             }
             if(toggleBtnIndex) toggleBtnIndex.addEventListener('click', toggleMenuIndex);
 
-            // Stars Logic
+            // Stars
             function createStarsGlobal() {
                 const container = document.getElementById('stars-bg-global');
                 if (!container) return;
@@ -348,7 +397,7 @@
             }
             window.addEventListener('resize', createStarsGlobal);
 
-            // Update Cart
+            // Cart
             function updateCartCountIndex() {
                 const cart = JSON.parse(localStorage.getItem("cart") || "[]");
                 document.querySelectorAll("#cart-count-header, #cart-count-index").forEach(el => el.textContent = cart.length);
@@ -363,6 +412,29 @@
                 });
             });
             document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+
+            // Contact Form
+            const contactForm = document.getElementById('contactForm');
+            if (contactForm) {
+                contactForm.addEventListener('submit', function(event) {
+                    event.preventDefault();
+                    const btn = document.getElementById('sendMessageBtn');
+                    const status = document.getElementById('form-status');
+                    btn.disabled = true; btn.textContent = 'Sending...';
+                    
+                    // Simulate sending (Replace with real API if needed)
+                    setTimeout(() => {
+                        btn.textContent = 'Sent Successfully!';
+                        btn.classList.add('bg-green-600');
+                        status.textContent = 'We will contact you shortly.';
+                        status.className = 'text-green-400 text-sm mt-2';
+                        contactForm.reset();
+                        setTimeout(() => { 
+                            btn.disabled = false; btn.textContent = 'Send Message'; btn.classList.remove('bg-green-600'); status.textContent = '';
+                        }, 3000);
+                    }, 1500);
+                });
+            }
         }
     </script>
 </body>
