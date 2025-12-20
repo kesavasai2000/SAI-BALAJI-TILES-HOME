@@ -8,10 +8,12 @@
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <style>
     * { box-sizing: border-box; }
+    
+    /* DARK UNIVERSE BACKGROUND */
     body { 
         font-family: 'Poppins', sans-serif; 
         background-color: #000000;
-        background-image: radial-gradient(circle at center, #111 0%, #000 100%);
+        background-image: radial-gradient(circle at 50% 50%, #111111 0%, #000000 100%);
         color: #fff; 
         padding: 15px; 
         margin: 0; 
@@ -20,10 +22,9 @@
 
     /* STARS */
     .stars-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: -1; }
-    .star { position: absolute; background-color: rgba(255, 255, 255, 0.8); border-radius: 50%; animation: twinkle 6s infinite ease-in-out; }
-    @keyframes twinkle { 0%, 100% { opacity: 0.2; transform: scale(0.5); } 50% { opacity: 1; transform: scale(1.2); } }
+    .star { position: absolute; background-color: white; border-radius: 50%; opacity: 0.8; animation: twinkle 6s infinite ease-in-out; }
+    @keyframes twinkle { 0%, 100% { opacity: 0.3; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.2); } }
 
-    /* LAYOUT */
     .container { max-width: 1000px; margin: 0 auto; width: 100%; }
     
     .header { 
@@ -40,15 +41,14 @@
         padding: 10px 15px; 
         background: rgba(255, 255, 255, 0.05); 
         color: #aaa; border: 1px solid rgba(255,255,255,0.1);
-        cursor: pointer; border-radius: 5px; white-space: nowrap; 
-        transition: 0.3s;
+        cursor: pointer; border-radius: 5px; white-space: nowrap; transition: 0.3s;
     }
-    .tab-btn.active { background: rgba(255, 255, 255, 0.15); color: white; font-weight: bold; border-color: rgba(255,255,255,0.3); }
+    .tab-btn.active { background: rgba(255, 255, 255, 0.15); color: white; font-weight: bold; border-color: #22d3ee; }
     
     /* GLASS CONTENT CARD */
     .section { 
         display: none; 
-        background: rgba(0, 0, 0, 0.6); 
+        background: rgba(20, 20, 20, 0.6); /* Glass Effect */
         backdrop-filter: blur(15px);
         padding: 20px; border-radius: 10px; margin-top: 20px; 
         border: 1px solid rgba(255,255,255,0.1);
@@ -59,7 +59,7 @@
     .table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
     table { width: 100%; border-collapse: collapse; margin-top: 10px; min-width: 600px; }
     th, td { text-align: left; padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); }
-    th { color: #4cc9f0; }
+    th { color: #22d3ee; }
 
     /* FORMS */
     .input-group { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 30px; }
@@ -74,11 +74,11 @@
     input::placeholder { color: #777; }
 
     .btn-add { 
-        background: rgba(76, 201, 240, 0.1); color: #4cc9f0; 
-        border: 1px solid #4cc9f0; padding: 12px 20px; 
+        background: rgba(6, 182, 212, 0.1); color: #22d3ee; 
+        border: 1px solid #22d3ee; padding: 12px 20px; 
         cursor: pointer; flex-grow: 1; transition: 0.3s;
     }
-    .btn-add:hover { background: #4cc9f0; color: #000; }
+    .btn-add:hover { background: #22d3ee; color: #000; }
     
     .status-delivered { color: #4cc9f0; font-weight: bold; }
     .status-processing { color: #f72585; font-weight: bold; }
