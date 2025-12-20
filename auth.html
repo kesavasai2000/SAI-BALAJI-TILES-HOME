@@ -17,7 +17,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 15px; /* Added padding to prevent edge touching on mobile */
+            padding: 15px;
         }
 
         .auth-container {
@@ -26,185 +26,243 @@
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             overflow: hidden;
             width: 100%;
-            max-width: 450px; /* Limits width on desktop */
+            max-width: 420px;
             position: relative;
         }
 
+        /* HEADER STYLES */
         .auth-header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 30px 20px;
+            padding: 35px 30px;
             text-align: center;
+            color: #fff;
+            position: relative; /* Needed for close button positioning */
+        }
+
+        /* FIXED CLOSE BUTTON */
+        .close-auth {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: #fff;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            line-height: 1;
+            padding-bottom: 2px; /* Visual adjustment for the 'x' */
+        }
+
+        .close-auth:hover {
+            background: rgba(255, 255, 255, 0.4);
+            transform: rotate(90deg);
+        }
+
+        .auth-header h2 { font-size: 26px; font-weight: 600; margin-bottom: 5px; }
+        .auth-header p { font-size: 14px; opacity: 0.9; }
+
+        .auth-body { padding: 30px; }
+
+        /* TABS */
+        .auth-tabs { display: flex; gap: 10px; margin-bottom: 25px; }
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background: #f0f2f5;
+            color: #666;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .tab-btn.active {
+            background: #667eea;
             color: #fff;
         }
 
-        .auth-body {
-            padding: 30px 20px;
-        }
-
+        /* FORMS */
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 500; color: #555; margin-bottom: 6px; }
+        
         .form-input {
             width: 100%;
-            padding: 14px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 16px; /* 16px prevents zoom on iPhone */
-            margin-bottom: 15px;
+            padding: 12px 14px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: 'Poppins', sans-serif;
+            transition: border 0.3s;
         }
+        .form-input:focus { border-color: #667eea; outline: none; }
 
         .submit-btn {
             width: 100%;
-            padding: 16px;
+            padding: 14px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: #fff;
             border: none;
-            border-radius: 10px;
-            font-size: 16px;
+            border-radius: 8px;
+            font-size: 15px;
             font-weight: 600;
             cursor: pointer;
+            margin-top: 5px;
+            transition: transform 0.2s;
+        }
+        .submit-btn:hover { transform: translateY(-1px); }
+
+        /* DIVIDER */
+        .divider { text-align: center; margin: 20px 0; position: relative; }
+        .divider::before {
+            content: ''; position: absolute; left: 0; top: 50%; width: 100%; height: 1px; background: #e0e0e0;
+        }
+        .divider span {
+            background: #fff; padding: 0 10px; position: relative; color: #888; font-size: 12px;
         }
 
-        /* Mobile Optimization */
-        @media (max-width: 480px) {
-            .auth-header h2 { font-size: 24px; }
-            .auth-body { padding: 20px; }
+        /* FIXED GOOGLE BUTTON */
+        .google-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            background-color: #fff;
+            border: 1px solid #dadce0;
+            border-radius: 20px; /* Pill shape */
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            color: #3c4043;
+            font-size: 14px;
+            gap: 10px;
         }
-        
-        /* Utility classes */
+
+        .google-btn:hover {
+            background-color: #f7f8f8;
+            border-color: #d2e3fc;
+        }
+
+        .google-btn img {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* UTILS */
         .hidden { display: none; }
         .auth-form { display: none; }
-        .auth-form.active { display: block; }
-        .tab-btn { padding: 10px; flex: 1; border: none; background: #eee; cursor: pointer; }
-        .tab-btn.active { background: #667eea; color: white; }
-        .auth-tabs { display: flex; gap: 10px; margin-bottom: 20px; }
-        .alert { padding: 10px; margin-bottom: 15px; border-radius: 5px; font-size: 14px; display: none; }
+        .auth-form.active { display: block; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        .forgot-password { text-align: right; margin-bottom: 15px; }
+        .forgot-password a { font-size: 12px; color: #667eea; text-decoration: none; }
+
+        .alert { padding: 10px; border-radius: 6px; font-size: 13px; margin-bottom: 15px; display: none; }
         .alert.show { display: block; }
-        .alert-error { background: #ffebee; color: #c62828; }
-        .alert-success { background: #e8f5e9; color: #2e7d32; }
+        .alert-error { background: #fee2e2; color: #991b1b; }
+        .alert-success { background: #dcfce7; color: #166534; }
     </style>
 </head>
 <body>
 
-    <div id="authModal" class="auth-modal">
-        <div class="auth-container">
-            <div class="auth-header">
-                <button class="close-auth" onclick="goBack()">×</button>
-                <h2>Welcome Back!</h2>
-                <p>Sign in to access your account</p>
+    <div class="auth-container">
+        <!-- Header with Close Button -->
+        <div class="auth-header">
+            <button class="close-auth" onclick="goBack()">×</button>
+            <h2 class="auth-title">Welcome Back</h2>
+            <p class="auth-subtitle">Sign in to access your account</p>
+        </div>
+
+        <div class="auth-body">
+            <!-- Tabs -->
+            <div class="auth-tabs">
+                <button class="tab-btn active" onclick="switchTab('login')">Login</button>
+                <button class="tab-btn" onclick="switchTab('signup')">Sign Up</button>
             </div>
 
-            <div class="auth-body">
-                <div class="auth-tabs">
-                    <button class="tab-btn active" onclick="switchTab('login')">Login</button>
-                    <button class="tab-btn" onclick="switchTab('signup')">Sign Up</button>
+            <div id="authAlert" class="alert"></div>
+
+            <!-- LOGIN FORM -->
+            <form id="loginForm" class="auth-form active" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" class="form-input" id="loginEmail" placeholder="your@email.com" required>
                 </div>
 
-                <div id="authAlert" class="alert"></div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" class="form-input" id="loginPassword" placeholder="Enter password" required>
+                </div>
 
-                <!-- LOGIN FORM -->
-                <form id="loginForm" class="auth-form active" onsubmit="handleLogin(event)">
-                    <div class="form-group">
-                        <label>Email Address</label>
-                        <input type="email" class="form-input" id="loginEmail" placeholder="your@email.com" required>
-                    </div>
+                <div class="forgot-password">
+                    <a href="#" onclick="showForgotPassword()">Forgot Password?</a>
+                </div>
 
-                    <div class="form-group">
-                        <label>Password</label>
-                        <div class="password-toggle">
-                            <input type="password" class="form-input" id="loginPassword" placeholder="Enter password" required>
-                            <button type="button" class="password-toggle-btn" onclick="togglePassword('loginPassword')">👁️</button>
-                        </div>
-                    </div>
+                <button type="submit" class="submit-btn" id="loginBtn">Sign In</button>
 
-                    <div class="forgot-password">
-                        <a href="#" onclick="showForgotPassword()">Forgot Password?</a>
-                    </div>
+                <div class="divider"><span>OR</span></div>
 
-                    <button type="submit" class="submit-btn" id="loginBtn">
-                        Sign In
-                    </button>
+                <!-- NEW GOOGLE BUTTON -->
+                <button type="button" class="google-btn" onclick="googleSignIn()">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google">
+                    Sign in with Google
+                </button>
+            </form>
 
-                    <div class="divider"><span>OR</span></div>
+            <!-- SIGNUP FORM -->
+            <form id="signupForm" class="auth-form" onsubmit="handleSignup(event)">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" class="form-input" id="signupName" placeholder="John Doe" required>
+                </div>
 
-                    <div class="social-login">
-                        <button type="button" class="social-btn" onclick="alert('Google login requires extra setup. Please use Email/Password for now.')">
-                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath fill='%234285F4' d='M45.12 24.5c0-1.56-.14-3.06-.4-4.5H24v8.51h11.84c-.51 2.75-2.06 5.08-4.39 6.64v5.52h7.11c4.16-3.83 6.56-9.47 6.56-16.17z'/%3E%3Cpath fill='%2334A853' d='M24 46c5.94 0 10.92-1.97 14.56-5.33l-7.11-5.52c-1.97 1.32-4.49 2.1-7.45 2.1-5.73 0-10.58-3.87-12.31-9.07H4.34v5.7C7.96 41.07 15.4 46 24 46z'/%3E%3Cpath fill='%23FBBC05' d='M11.69 28.18C11.25 26.86 11 25.45 11 24s.25-2.86.69-4.18v-5.7H4.34C2.85 17.09 2 20.45 2 24c0 3.55.85 6.91 2.34 9.88l7.35-5.7z'/%3E%3Cpath fill='%23EA4335' d='M24 10.75c3.23 0 6.13 1.11 8.41 3.29l6.31-6.31C34.91 4.18 29.93 2 24 2 15.4 2 7.96 6.93 4.34 14.12l7.35 5.7c1.73-5.2 6.58-9.07 12.31-9.07z'/%3E%3C/svg%3E" alt="Google">
-                            Continue with Google
-                        </button>
-                    </div>
-                </form>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" class="form-input" id="signupEmail" placeholder="your@email.com" required>
+                </div>
 
-                <!-- SIGNUP FORM -->
-                <form id="signupForm" class="auth-form" onsubmit="handleSignup(event)">
-                    <div class="form-group">
-                        <label>Full Name</label>
-                        <input type="text" class="form-input" id="signupName" placeholder="John Doe" required>
-                    </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" class="form-input" id="signupPassword" placeholder="Min. 6 characters" required minlength="6">
+                </div>
 
-                    <div class="form-group">
-                        <label>Email Address</label>
-                        <input type="email" class="form-input" id="signupEmail" placeholder="your@email.com" required>
-                    </div>
+                <div class="form-group">
+                    <label>Confirm Password</label>
+                    <input type="password" class="form-input" id="signupConfirmPassword" placeholder="Confirm password" required>
+                </div>
 
-                    <div class="form-group">
-                        <label>Password</label>
-                        <div class="password-toggle">
-                            <input type="password" class="form-input" id="signupPassword" placeholder="Min. 6 characters" required minlength="6">
-                            <button type="button" class="password-toggle-btn" onclick="togglePassword('signupPassword')">👁️</button>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Confirm Password</label>
-                        <div class="password-toggle">
-                            <input type="password" class="form-input" id="signupConfirmPassword" placeholder="Confirm password" required>
-                            <button type="button" class="password-toggle-btn" onclick="togglePassword('signupConfirmPassword')">👁️</button>
-                        </div>
-                    </div>
-
-                    <button type="submit" class="submit-btn" id="signupBtn">
-                        Create Account
-                    </button>
-
-                    <div class="divider"><span>OR</span></div>
-
-                    <div class="form-footer">
-                        By signing up, you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a>
-                    </div>
-                </form>
-            </div>
+                <button type="submit" class="submit-btn" id="signupBtn">Create Account</button>
+            </form>
         </div>
     </div>
 
-    <!-- Supabase SDK (Make sure this is only here once in the file) -->
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-
-   <!-- 1. Supabase Library -->
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-
     <script>
-        // ============================================
-        // 1. CONFIGURATION
-        // ============================================
-        
-        // 👇 PASTE YOUR KEYS HERE
+        // ==========================================
+        // 🚀 PASTE YOUR KEYS HERE
+        // ==========================================
         const supabaseUrl = 'https://jjseffkbreruegudlmnd.supabase.co'; 
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impqc2VmZmticmVydWVndWRsbW5kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxOTMwMTEsImV4cCI6MjA4MTc2OTAxMX0.xrCWARm6FbW-U98Qs13mMvlCeBiQWgmD73qverF7Brk';
 
-        // Initialize Supabase Client
-        // WE ARE NAMING THIS 'sbClient' TO AVOID CONFUSION
         const sbClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-        // ============================================
-        // 2. UI FUNCTIONS
-        // ============================================
+        // --- UI FUNCTIONS ---
         function switchTab(tab) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
-
             document.querySelectorAll('.auth-form').forEach(form => form.classList.remove('active'));
             
             if (tab === 'login') {
                 document.getElementById('loginForm').classList.add('active');
-                document.querySelector('.auth-header h2').textContent = 'Welcome Back!';
+                document.querySelector('.auth-header h2').textContent = 'Welcome Back';
                 document.querySelector('.auth-header p').textContent = 'Sign in to access your account';
             } else {
                 document.getElementById('signupForm').classList.add('active');
@@ -214,118 +272,73 @@
             hideAlert();
         }
 
-        function togglePassword(inputId) {
-            const input = document.getElementById(inputId);
-            input.type = input.type === 'password' ? 'text' : 'password';
-        }
-
-        function goBack() {
-            window.history.back();
-        }
+        function goBack() { window.history.back(); }
 
         function showAlert(message, type) {
             const alert = document.getElementById('authAlert');
-            if(alert) {
-                alert.className = `alert alert-${type} show`;
-                alert.textContent = message;
-            } else {
-                console.log(type + ": " + message);
-            }
+            alert.className = `alert alert-${type} show`;
+            alert.textContent = message;
         }
 
         function hideAlert() {
-            const alert = document.getElementById('authAlert');
-            if(alert) alert.classList.remove('show');
+            document.getElementById('authAlert').classList.remove('show');
         }
 
-        // ============================================
-        // 3. AUTHENTICATION LOGIC
-        // ============================================
-
-        // --- HANDLE LOGIN ---
+        // --- AUTH LOGIC ---
         async function handleLogin(event) {
             event.preventDefault();
-            
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
             const btn = document.getElementById('loginBtn');
 
             btn.disabled = true;
-            btn.innerHTML = 'Signing In<span class="spinner"></span>';
+            btn.innerHTML = 'Signing In...';
 
             try {
-                // UPDATE: Using sbClient
-                const { data, error } = await sbClient.auth.signInWithPassword({
-                    email: email,
-                    password: password
-                });
-
+                const { data, error } = await sbClient.auth.signInWithPassword({ email, password });
                 if (error) throw error;
-
-                // Check Role
                 await checkRoleAndRedirect(data.user.id);
-
             } catch (error) {
-                console.error('Login error:', error);
+                console.error(error);
                 showAlert(error.message, 'error');
                 btn.disabled = false;
                 btn.innerHTML = 'Sign In';
             }
         }
 
-        // --- HANDLE SIGNUP ---
         async function handleSignup(event) {
             event.preventDefault();
-            
             const name = document.getElementById('signupName').value;
             const email = document.getElementById('signupEmail').value;
             const password = document.getElementById('signupPassword').value;
             const confirmPassword = document.getElementById('signupConfirmPassword').value;
             const btn = document.getElementById('signupBtn');
 
-            if (password !== confirmPassword) {
-                showAlert('❌ Passwords do not match!', 'error');
-                return;
-            }
+            if (password !== confirmPassword) { showAlert('❌ Passwords do not match', 'error'); return; }
 
             btn.disabled = true;
-            btn.innerHTML = 'Creating Account<span class="spinner"></span>';
+            btn.innerHTML = 'Creating...';
 
             try {
-                // UPDATE: Using sbClient
-                const { data, error } = await sbClient.auth.signUp({
-                    email: email,
-                    password: password
-                });
-
+                const { data, error } = await sbClient.auth.signUp({ email, password });
                 if (error) throw error;
 
-                // Insert Profile Row
                 const { error: profileError } = await sbClient
                     .from('profiles')
-                    .insert([
-                        { id: data.user.id, full_name: name, role: 'user', email: email }
-                    ]);
+                    .insert([{ id: data.user.id, full_name: name, role: 'user', email: email }]);
 
                 if (profileError) throw profileError;
 
                 showAlert('✅ Account created! Redirecting...', 'success');
-                
-                setTimeout(() => {
-                    window.location.href = 'user-dashboard.html';
-                }, 1500);
-
+                setTimeout(() => { window.location.href = 'user-dashboard.html'; }, 1500);
             } catch (error) {
-                console.error('Signup error:', error);
                 showAlert(error.message, 'error');
                 btn.disabled = false;
                 btn.innerHTML = 'Create Account';
             }
         }
 
-        // --- CHECK ROLE HELPER ---
         async function checkRoleAndRedirect(userId) {
-            // UPDATE: Using sbClient
             const { data, error } = await sbClient
                 .from('profiles')
                 .select('role')
@@ -333,7 +346,6 @@
                 .single();
 
             if (error) {
-                console.warn('Profile not found, defaulting to user.');
                 window.location.href = 'user-dashboard.html';
                 return;
             }
@@ -349,34 +361,17 @@
             }, 1000);
         }
 
-        // --- FORGOT PASSWORD ---
         async function showForgotPassword() {
             const email = document.getElementById('loginEmail').value;
-            
-            if (!email) {
-                showAlert('Please enter your email first', 'error');
-                return;
-            }
-
-            if (confirm(`Send password reset email to ${email}?`)) {
-                // UPDATE: Using sbClient
-                const { error } = await sbClient.auth.resetPasswordForEmail(email);
-                if (error) {
-                    showAlert(error.message, 'error');
-                } else {
-                    showAlert('✅ Reset email sent!', 'success');
-                }
-            }
+            if (!email) { showAlert('Please enter email first', 'error'); return; }
+            const { error } = await sbClient.auth.resetPasswordForEmail(email);
+            if (error) showAlert(error.message, 'error');
+            else showAlert('✅ Reset email sent!', 'success');
         }
 
-        // Check session on load
-        (async function checkSession() {
-            // UPDATE: Using sbClient
-            const { data } = await sbClient.auth.getSession();
-            if (data.session) {
-                console.log("User already logged in.");
-            }
-        })();
+        function googleSignIn() {
+             alert('To use Google Login, enable it in Supabase Auth Settings.');
+        }
     </script>
 
 </body>
