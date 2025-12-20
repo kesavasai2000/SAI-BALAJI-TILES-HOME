@@ -7,85 +7,100 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <style>
-        body { font-family: 'Poppins', sans-serif; background: #1a1a2e; color: #fff; padding: 15px; margin: 0; }
-        .container { max-width: 1000px; margin: 0 auto; width: 100%; }
-        
-        .header { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            border-bottom: 1px solid #333; 
-            padding-bottom: 15px; 
-            flex-wrap: wrap; 
-            gap: 15px;
-        }
+    /* BASE SETTINGS & DARK THEME */
+    * { box-sizing: border-box; }
+    body { 
+        font-family: 'Poppins', sans-serif; 
+        background: linear-gradient(270deg, #0d0320, #1a094b, #000000, #8e2de2, #000000);
+        background-size: 300% 300%;
+        animation: gradientBG 20s ease infinite;
+        color: #fff; 
+        padding: 15px; 
+        margin: 0; 
+        min-height: 100vh;
+    }
 
-        h1 { font-size: 22px; margin: 0; }
-        
-        /* TABS */
-        .tabs { margin-top: 20px; display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; }
-        .tab-btn { 
-            padding: 10px 15px; 
-            background: #16213e; 
-            color: #ccc; 
-            border: none; 
-            cursor: pointer; 
-            border-radius: 5px; 
-            white-space: nowrap; /* Prevents text wrap on tabs */
-        }
-        .tab-btn.active { background: #e94560; color: white; font-weight: bold; }
-        
-        /* CONTENT */
-        .section { display: none; background: #16213e; padding: 20px; border-radius: 10px; margin-top: 20px; }
-        .section.active { display: block; }
+    @keyframes gradientBG { 
+        0% { background-position: 0% 50%; } 
+        50% { background-position: 100% 50%; } 
+        100% { background-position: 0% 50%; } 
+    }
 
-        /* RESPONSIVE TABLES */
-        .table-wrapper {
-            overflow-x: auto; /* Allows table to scroll sideways on mobile */
-            -webkit-overflow-scrolling: touch;
-        }
+    /* STARS BACKGROUND */
+    .stars-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: -1; }
+    .star { position: absolute; background-color: rgba(255, 255, 255, 0.8); border-radius: 50%; animation: twinkle 6s infinite ease-in-out; }
+    @keyframes twinkle { 0%, 100% { opacity: 0.2; transform: scale(0.5); } 50% { opacity: 1; transform: scale(1.2); } }
 
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; min-width: 600px; /* Forces scroll on small screens */ }
-        th, td { text-align: left; padding: 12px; border-bottom: 1px solid #333; }
-        th { color: #e94560; }
+    /* LAYOUT */
+    .container { max-width: 1000px; margin: 0 auto; width: 100%; }
+    
+    .header { 
+        display: flex; justify-content: space-between; align-items: center; 
+        border-bottom: 1px solid rgba(255,255,255,0.2); 
+        padding-bottom: 15px; flex-wrap: wrap; gap: 15px;
+    }
 
-        /* FORMS */
-        .input-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 30px;
-        }
+    h1 { font-size: 22px; margin: 0; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+    
+    /* TABS */
+    .tabs { margin-top: 20px; display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; }
+    .tab-btn { 
+        padding: 10px 15px; 
+        background: rgba(255, 255, 255, 0.1); 
+        color: #ccc; border: 1px solid rgba(255,255,255,0.1);
+        cursor: pointer; border-radius: 5px; white-space: nowrap; 
+        transition: 0.3s;
+    }
+    .tab-btn.active { background: #e94560; color: white; font-weight: bold; border-color: #e94560; }
+    
+    /* CONTENT CARD */
+    .section { 
+        display: none; 
+        background: rgba(22, 33, 62, 0.8); /* Semi-transparent dark blue */
+        backdrop-filter: blur(10px);
+        padding: 20px; border-radius: 10px; margin-top: 20px; 
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+    .section.active { display: block; }
 
-        input { 
-            padding: 12px; 
-            background: #0f3460; 
-            border: 1px solid #333; 
-            color: white; 
-            border-radius: 4px; 
-            flex: 1; /* Inputs grow to fill space */
-            min-width: 200px; /* Minimum width before wrapping */
-        }
+    /* RESPONSIVE TABLES */
+    .table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; min-width: 600px; }
+    th, td { text-align: left; padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    th { color: #e94560; }
 
-        .btn-add { 
-            background: #0f3460; 
-            color: #4cc9f0; 
-            border: 1px solid #4cc9f0; 
-            padding: 12px 20px; 
-            cursor: pointer; 
-            flex-grow: 1;
-        }
-        
-        .btn-logout { background: #e94560; color: white; border: none; padding: 8px 16px; cursor:pointer; border-radius: 4px; }
+    /* FORMS */
+    .input-group { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 30px; }
 
-        @media (max-width: 600px) {
-            .section { padding: 15px; }
-            .input-group { flex-direction: column; }
-            input { width: 100%; }
-        }
-    </style>
+    input { 
+        padding: 12px; 
+        background: rgba(0, 0, 0, 0.4); 
+        border: 1px solid rgba(255,255,255,0.2); 
+        color: white; border-radius: 4px; 
+        flex: 1; min-width: 200px;
+    }
+    input::placeholder { color: #aaa; }
+
+    .btn-add { 
+        background: rgba(76, 201, 240, 0.2); color: #4cc9f0; 
+        border: 1px solid #4cc9f0; padding: 12px 20px; 
+        cursor: pointer; flex-grow: 1; transition: 0.3s;
+    }
+    .btn-add:hover { background: #4cc9f0; color: #000; }
+    
+    .status-delivered { color: #4cc9f0; font-weight: bold; }
+    .status-processing { color: #e94560; font-weight: bold; }
+
+    @media (max-width: 600px) {
+        .section { padding: 15px; }
+        .input-group { flex-direction: column; }
+        input { width: 100%; }
+    }
+</style>
 </head>
 <body>
+    <!-- Background Stars Container -->
+<div class="stars-container" id="stars-bg-global"></div>
 
     <div class="container">
         <div class="header">

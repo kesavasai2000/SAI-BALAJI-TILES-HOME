@@ -7,65 +7,86 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <style>
-        body { font-family: 'Poppins', sans-serif; background: #f0f2f5; padding: 15px; margin: 0; }
-        
-        .container { 
-            max-width: 600px; 
-            margin: 0 auto; 
-            background: white; 
-            padding: 25px; 
-            border-radius: 12px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
-            width: 100%;
-            box-sizing: border-box; /* Ensures padding doesn't break width */
-        }
+    /* BASE SETTINGS & DARK THEME */
+    * { box-sizing: border-box; }
+    body { 
+        font-family: 'Poppins', sans-serif; 
+        background: linear-gradient(270deg, #0d0320, #1a094b, #000000, #8e2de2, #000000);
+        background-size: 300% 300%;
+        animation: gradientBG 20s ease infinite;
+        padding: 15px; margin: 0; min-height: 100vh;
+        color: white;
+    }
 
-        h1 { color: #333; font-size: 24px; margin-top: 0; }
-        
-        /* Stack Header Elements */
-        .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    @keyframes gradientBG { 
+        0% { background-position: 0% 50%; } 
+        50% { background-position: 100% 50%; } 
+        100% { background-position: 0% 50%; } 
+    }
 
-        input, select { 
-            width: 100%; 
-            padding: 14px; /* Larger tap area */
-            margin-bottom: 15px; 
-            border: 1px solid #ddd; 
-            border-radius: 8px; 
-            box-sizing: border-box; 
-            font-size: 16px; /* Prevents auto-zoom on mobile */
-        }
+    /* STARS BACKGROUND */
+    .stars-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: -1; }
+    .star { position: absolute; background-color: rgba(255, 255, 255, 0.8); border-radius: 50%; animation: twinkle 6s infinite ease-in-out; }
+    @keyframes twinkle { 0%, 100% { opacity: 0.2; transform: scale(0.5); } 50% { opacity: 1; transform: scale(1.2); } }
 
-        button { 
-            width: 100%; 
-            padding: 15px; 
-            background: #22d3ee; 
-            color: #000; 
-            font-weight: bold; 
-            border: none; 
-            border-radius: 8px; 
-            cursor: pointer; 
-            font-size: 16px;
-            margin-bottom: 10px;
-        }
+    /* CONTAINER (Glassmorphism) */
+    .container { 
+        max-width: 600px; 
+        margin: 0 auto; 
+        background: rgba(255, 255, 255, 0.1); 
+        backdrop-filter: blur(15px);
+        padding: 25px; 
+        border-radius: 12px; 
+        box-shadow: 0 4px 30px rgba(0,0,0,0.5); 
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        width: 100%;
+    }
 
-        .logout { 
-            background: #ff4d4d; 
-            color: white; 
-            width: auto; 
-            padding: 8px 16px; 
-            font-size: 14px;
-        }
-        
-        .hidden { display: none; }
+    h1 { color: #fff; font-size: 24px; margin-top: 0; text-align: center; }
+    
+    input, select { 
+        width: 100%; 
+        padding: 14px; 
+        margin-bottom: 15px; 
+        background: rgba(0, 0, 0, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.2); 
+        border-radius: 8px; 
+        color: white;
+        font-size: 16px;
+    }
+    
+    /* Dark dropdown options */
+    select option { background: #1a1a2e; color: white; }
 
-        /* Mobile Tweaks */
-        @media (max-width: 480px) {
-            .container { padding: 20px; }
-            h1 { font-size: 20px; }
-        }
-    </style>
+    button { 
+        width: 100%; padding: 15px; 
+        background: linear-gradient(to right, #22d3ee, #06b6d4);
+        color: #000; font-weight: bold; 
+        border: none; border-radius: 8px; 
+        cursor: pointer; font-size: 16px; margin-bottom: 10px;
+        transition: transform 0.2s;
+    }
+    button:active { transform: scale(0.98); }
+
+    .logout { 
+        background: rgba(255, 77, 77, 0.2); border: 1px solid #ff4d4d;
+        color: #ff4d4d; width: auto; padding: 8px 16px; font-size: 14px; float: right;
+    }
+    .logout:hover { background: #ff4d4d; color: white; }
+    
+    .hidden { display: none; }
+
+    @media (max-width: 480px) {
+        .container { padding: 20px; }
+        h1 { font-size: 20px; }
+    }
+</style>
+    
+    
 </head>
 <body>
+    <!-- Background Stars Container -->
+<div class="stars-container" id="stars-bg-global"></div>
 
     <div class="container">
         <button class="logout" onclick="logout()">Logout</button>
