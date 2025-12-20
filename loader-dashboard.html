@@ -28,202 +28,86 @@
     </div>
 
     <script>
-        // ============================================
-        // 1. CONFIGURATION
-        // ============================================
+        // ==========================================
+        // 🚀 PASTE YOUR SUPABASE KEYS HERE
+        // ==========================================
+        const supabaseUrl = 'https://jjseffkbreruegudlmnd.supabase.co'; 
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impqc2VmZmticmVydWVndWRsbW5kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxOTMwMTEsImV4cCI6MjA4MTc2OTAxMX0.xrCWARm6FbW-U98Qs13mMvlCeBiQWgmD73qverF7Brk';
+
         
-        // 👇 PASTE YOUR KEYS HERE (Copy them from your file before deleting, or from Supabase)
-        const supabaseUrl = 'YOUR_SUPABASE_URL_HERE'; 
-        const supabaseKey = 'YOUR_SUPABASE_ANON_KEY_HERE';
+        // FIX: Renamed to sbClient
+        const sbClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-        // Initialize Supabase Client
-        // FIX: We renamed this variable to 'supabaseClient' to avoid the error!
-        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
-
-        // ============================================
-        // 2. UI FUNCTIONS (Tabs, Alerts, etc)
-        // ============================================
-        function switchTab(tab) {
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-
-            document.querySelectorAll('.auth-form').forEach(form => form.classList.remove('active'));
-            
-            if (tab === 'login') {
-                document.getElementById('loginForm').classList.add('active');
-                document.querySelector('.auth-header h2').textContent = 'Welcome Back!';
-                document.querySelector('.auth-header p').textContent = 'Sign in to access your account';
-            } else {
-                document.getElementById('signupForm').classList.add('active');
-                document.querySelector('.auth-header h2').textContent = 'Create Account';
-                document.querySelector('.auth-header p').textContent = 'Join us to start shopping';
-            }
-            hideAlert();
+        // Check Auth
+        async function checkAuth() {
+            const { data: { session } } = await sbClient.auth.getSession();
+            if (!session) window.location.href = 'auth.html';
         }
+        checkAuth();
 
-        function togglePassword(inputId) {
-            const input = document.getElementById(inputId);
-            input.type = input.type === 'password' ? 'text' : 'password';
-        }
+        // Load Orders where status is 'processing'
+        async function loadPendingOrders() {
+            const { data: orders, error } = await sbClient
+                .from('orders')
+                .select('*')
+                .eq('status', 'processing')
+                .order('created_at', { ascending: false });
 
-        function goBack() {
-            window.history.back();
-        }
+            const list = document.getElementById('orders-list');
+            list.innerHTML = '';
 
-        function showAlert(message, type) {
-            const alert = document.getElementById('authAlert');
-            if(alert) {
-                alert.className = `alert alert-${type} show`;
-                alert.textContent = message;
-            } else {
-                console.log(type + ": " + message);
-            }
-        }
+            if (error) return alert("Error loading orders");
 
-        function hideAlert() {
-            const alert = document.getElementById('authAlert');
-            if(alert) alert.classList.remove('show');
-        }
-
-        // ============================================
-        // 3. AUTHENTICATION LOGIC
-        // ============================================
-
-        // --- HANDLE LOGIN ---
-        async function handleLogin(event) {
-            event.preventDefault();
-            
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-            const btn = document.getElementById('loginBtn');
-
-            btn.disabled = true;
-            btn.innerHTML = 'Signing In<span class="spinner"></span>';
-
-            try {
-                // UPDATE: Using supabaseClient instead of supabase
-                const { data, error } = await supabaseClient.auth.signInWithPassword({
-                    email: email,
-                    password: password
-                });
-
-                if (error) throw error;
-
-                // Check Role
-                await checkRoleAndRedirect(data.user.id);
-
-            } catch (error) {
-                console.error('Login error:', error);
-                showAlert(error.message, 'error');
-                btn.disabled = false;
-                btn.innerHTML = 'Sign In';
-            }
-        }
-
-        // --- HANDLE SIGNUP ---
-        async function handleSignup(event) {
-            event.preventDefault();
-            
-            const name = document.getElementById('signupName').value;
-            const email = document.getElementById('signupEmail').value;
-            const password = document.getElementById('signupPassword').value;
-            const confirmPassword = document.getElementById('signupConfirmPassword').value;
-            const btn = document.getElementById('signupBtn');
-
-            if (password !== confirmPassword) {
-                showAlert('❌ Passwords do not match!', 'error');
+            if (orders.length === 0) {
+                list.innerHTML = '<p>No orders pending dispatch.</p>';
                 return;
             }
 
-            btn.disabled = true;
-            btn.innerHTML = 'Creating Account<span class="spinner"></span>';
+            orders.forEach(order => {
+                // Extract item details from the JSON column
+                const item = order.items[0]; 
 
-            try {
-                // UPDATE: Using supabaseClient
-                const { data, error } = await supabaseClient.auth.signUp({
-                    email: email,
-                    password: password
-                });
-
-                if (error) throw error;
-
-                // Insert Profile Row
-                const { error: profileError } = await supabaseClient
-                    .from('profiles')
-                    .insert([
-                        { id: data.user.id, full_name: name, role: 'user', email: email }
-                    ]);
-
-                if (profileError) throw profileError;
-
-                showAlert('✅ Account created! Redirecting...', 'success');
-                
-                setTimeout(() => {
-                    window.location.href = 'user-dashboard.html';
-                }, 1500);
-
-            } catch (error) {
-                console.error('Signup error:', error);
-                showAlert(error.message, 'error');
-                btn.disabled = false;
-                btn.innerHTML = 'Create Account';
-            }
+                const div = document.createElement('div');
+                div.className = 'order-card';
+                div.innerHTML = `
+                    <h3>👤 ${order.customer_name}</h3>
+                    <p>📞 ${order.customer_phone}</p>
+                    <p>📍 ${order.customer_address}</p>
+                    <hr style="border:0; border-top:1px dashed #ccc; margin:10px 0;">
+                    <p><strong>Tile:</strong> ${item.tile}</p>
+                    <p><strong>Quantity:</strong> ${item.qty} Boxes</p>
+                    <p><strong>Notes:</strong> ${item.measurements}</p>
+                    <br>
+                    <button class="btn-load" onclick="markLoaded(${order.id})">✅ Mark Loaded & Shipped</button>
+                `;
+                list.appendChild(div);
+            });
         }
 
-        // --- CHECK ROLE HELPER ---
-        async function checkRoleAndRedirect(userId) {
-            // UPDATE: Using supabaseClient
-            const { data, error } = await supabaseClient
-                .from('profiles')
-                .select('role')
-                .eq('id', userId)
-                .single();
+        // Update status to 'delivered'
+        async function markLoaded(orderId) {
+            if(confirm("Confirm: Is this order loaded on the vehicle?")) {
+                const { error } = await sbClient
+                    .from('orders')
+                    .update({ status: 'delivered' })
+                    .eq('id', orderId);
 
-            if (error) {
-                console.warn('Profile not found, defaulting to user.');
-                window.location.href = 'user-dashboard.html';
-                return;
-            }
-
-            const role = data.role;
-            showAlert(`✅ Verified. Logging in as ${role}...`, 'success');
-
-            setTimeout(() => {
-                if (role === 'admin') window.location.href = 'admin-dashboard.html';
-                else if (role === 'worker') window.location.href = 'worker-dashboard.html';
-                else if (role === 'loader') window.location.href = 'loader-dashboard.html';
-                else window.location.href = 'user-dashboard.html';
-            }, 1000);
-        }
-
-        // --- FORGOT PASSWORD ---
-        async function showForgotPassword() {
-            const email = document.getElementById('loginEmail').value;
-            
-            if (!email) {
-                showAlert('Please enter your email first', 'error');
-                return;
-            }
-
-            if (confirm(`Send password reset email to ${email}?`)) {
-                // UPDATE: Using supabaseClient
-                const { error } = await supabaseClient.auth.resetPasswordForEmail(email);
-                if (error) {
-                    showAlert(error.message, 'error');
+                if (!error) {
+                    alert("Order Dispatched!");
+                    loadPendingOrders(); // Refresh list
                 } else {
-                    showAlert('✅ Reset email sent!', 'success');
+                    alert("Error: " + error.message);
                 }
             }
         }
 
-        // Check session on load
-        (async function checkSession() {
-            // UPDATE: Using supabaseClient
-            const { data } = await supabaseClient.auth.getSession();
-            if (data.session) {
-                console.log("User already logged in.");
-            }
-        })();
+        async function logout() {
+            await sbClient.auth.signOut();
+            window.location.href = 'auth.html';
+        }
+
+        // Load on startup
+        loadPendingOrders();
     </script>
 </body>
 </html>

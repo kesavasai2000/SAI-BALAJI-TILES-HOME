@@ -58,13 +58,16 @@
         // ==========================================
         // 🚀 PASTE YOUR SUPABASE KEYS HERE
         // ==========================================
-        const supabaseUrl = 'https://jjseffkbreruegudlmnd.supabase.co';
+        const supabaseUrl = 'https://jjseffkbreruegudlmnd.supabase.co'; 
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impqc2VmZmticmVydWVndWRsbW5kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxOTMwMTEsImV4cCI6MjA4MTc2OTAxMX0.xrCWARm6FbW-U98Qs13mMvlCeBiQWgmD73qverF7Brk';
-        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+        
+        // FIX: Renamed to sbClient to avoid crash
+        const sbClient = supabase.createClient(supabaseUrl, supabaseKey);
 
         // Check if user is logged in
         async function checkAuth() {
-            const { data: { session } } = await supabase.auth.getSession();
+            const { data: { session } } = await sbClient.auth.getSession();
             if (!session) window.location.href = 'auth.html';
         }
         checkAuth();
@@ -82,7 +85,8 @@
         }
 
         async function submitOrder() {
-            const { data: { user } } = await supabase.auth.getUser();
+            // Get current user
+            const { data: { user } } = await sbClient.auth.getUser();
 
             const orderData = {
                 customer_name: document.getElementById('custName').value,
@@ -97,7 +101,8 @@
                 worker_id: user.id
             };
 
-            const { error } = await supabase.from('orders').insert([orderData]);
+            // Send to Database
+            const { error } = await sbClient.from('orders').insert([orderData]);
 
             if (error) {
                 alert("Error submitting: " + error.message);
@@ -108,7 +113,7 @@
         }
 
         async function logout() {
-            await supabase.auth.signOut();
+            await sbClient.auth.signOut();
             window.location.href = 'auth.html';
         }
     </script>
