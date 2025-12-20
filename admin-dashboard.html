@@ -7,26 +7,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <style>
-    /* BASE SETTINGS & DARK THEME */
     * { box-sizing: border-box; }
     body { 
         font-family: 'Poppins', sans-serif; 
-        background: linear-gradient(270deg, #0d0320, #1a094b, #000000, #8e2de2, #000000);
-        background-size: 300% 300%;
-        animation: gradientBG 20s ease infinite;
+        background-color: #000000;
+        background-image: radial-gradient(circle at center, #111 0%, #000 100%);
         color: #fff; 
         padding: 15px; 
         margin: 0; 
         min-height: 100vh;
     }
 
-    @keyframes gradientBG { 
-        0% { background-position: 0% 50%; } 
-        50% { background-position: 100% 50%; } 
-        100% { background-position: 0% 50%; } 
-    }
-
-    /* STARS BACKGROUND */
+    /* STARS */
     .stars-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: -1; }
     .star { position: absolute; background-color: rgba(255, 255, 255, 0.8); border-radius: 50%; animation: twinkle 6s infinite ease-in-out; }
     @keyframes twinkle { 0%, 100% { opacity: 0.2; transform: scale(0.5); } 50% { opacity: 1; transform: scale(1.2); } }
@@ -36,60 +28,60 @@
     
     .header { 
         display: flex; justify-content: space-between; align-items: center; 
-        border-bottom: 1px solid rgba(255,255,255,0.2); 
+        border-bottom: 1px solid rgba(255,255,255,0.1); 
         padding-bottom: 15px; flex-wrap: wrap; gap: 15px;
     }
 
-    h1 { font-size: 22px; margin: 0; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+    h1 { font-size: 22px; margin: 0; }
     
     /* TABS */
     .tabs { margin-top: 20px; display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; }
     .tab-btn { 
         padding: 10px 15px; 
-        background: rgba(255, 255, 255, 0.1); 
-        color: #ccc; border: 1px solid rgba(255,255,255,0.1);
+        background: rgba(255, 255, 255, 0.05); 
+        color: #aaa; border: 1px solid rgba(255,255,255,0.1);
         cursor: pointer; border-radius: 5px; white-space: nowrap; 
         transition: 0.3s;
     }
-    .tab-btn.active { background: #e94560; color: white; font-weight: bold; border-color: #e94560; }
+    .tab-btn.active { background: rgba(255, 255, 255, 0.15); color: white; font-weight: bold; border-color: rgba(255,255,255,0.3); }
     
-    /* CONTENT CARD */
+    /* GLASS CONTENT CARD */
     .section { 
         display: none; 
-        background: rgba(22, 33, 62, 0.8); /* Semi-transparent dark blue */
-        backdrop-filter: blur(10px);
+        background: rgba(0, 0, 0, 0.6); 
+        backdrop-filter: blur(15px);
         padding: 20px; border-radius: 10px; margin-top: 20px; 
         border: 1px solid rgba(255,255,255,0.1);
     }
     .section.active { display: block; }
 
-    /* RESPONSIVE TABLES */
+    /* TABLES */
     .table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
     table { width: 100%; border-collapse: collapse; margin-top: 10px; min-width: 600px; }
     th, td { text-align: left; padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); }
-    th { color: #e94560; }
+    th { color: #4cc9f0; }
 
     /* FORMS */
     .input-group { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 30px; }
 
     input { 
         padding: 12px; 
-        background: rgba(0, 0, 0, 0.4); 
+        background: rgba(0, 0, 0, 0.5); 
         border: 1px solid rgba(255,255,255,0.2); 
         color: white; border-radius: 4px; 
         flex: 1; min-width: 200px;
     }
-    input::placeholder { color: #aaa; }
+    input::placeholder { color: #777; }
 
     .btn-add { 
-        background: rgba(76, 201, 240, 0.2); color: #4cc9f0; 
+        background: rgba(76, 201, 240, 0.1); color: #4cc9f0; 
         border: 1px solid #4cc9f0; padding: 12px 20px; 
         cursor: pointer; flex-grow: 1; transition: 0.3s;
     }
     .btn-add:hover { background: #4cc9f0; color: #000; }
     
     .status-delivered { color: #4cc9f0; font-weight: bold; }
-    .status-processing { color: #e94560; font-weight: bold; }
+    .status-processing { color: #f72585; font-weight: bold; }
 
     @media (max-width: 600px) {
         .section { padding: 15px; }

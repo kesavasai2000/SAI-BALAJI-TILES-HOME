@@ -7,24 +7,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <style>
-    /* BASE SETTINGS & DARK THEME */
     * { box-sizing: border-box; }
     body { 
         font-family: 'Poppins', sans-serif; 
-        background: linear-gradient(270deg, #0d0320, #1a094b, #000000, #8e2de2, #000000);
-        background-size: 300% 300%;
-        animation: gradientBG 20s ease infinite;
+        background-color: #000000;
+        background-image: radial-gradient(circle at center, #111 0%, #000 100%);
         padding: 15px; margin: 0; min-height: 100vh;
         color: white;
     }
 
-    @keyframes gradientBG { 
-        0% { background-position: 0% 50%; } 
-        50% { background-position: 100% 50%; } 
-        100% { background-position: 0% 50%; } 
-    }
-
-    /* STARS BACKGROUND */
+    /* STARS */
     .stars-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: -1; }
     .star { position: absolute; background-color: rgba(255, 255, 255, 0.8); border-radius: 50%; animation: twinkle 6s infinite ease-in-out; }
     @keyframes twinkle { 0%, 100% { opacity: 0.2; transform: scale(0.5); } 50% { opacity: 1; transform: scale(1.2); } }
@@ -34,24 +26,22 @@
         margin-bottom: 20px; flex-wrap: wrap; gap: 10px;
     }
     
-    h1 { margin: 0; font-size: 22px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+    h1 { margin: 0; font-size: 22px; }
 
-    /* ORDER CARDS (Glassmorphism) */
+    /* GLASS ORDER CARD */
     .order-card { 
-        background: rgba(255, 255, 255, 0.1); 
-        backdrop-filter: blur(10px);
+        background: rgba(0, 0, 0, 0.6); 
+        backdrop-filter: blur(15px);
         padding: 20px; 
         margin-bottom: 15px; 
         border-radius: 10px; 
-        box-shadow: 0 4px 15px rgba(0,0,0,0.3); 
+        box-shadow: 0 4px 15px rgba(0,0,0,0.5); 
+        border: 1px solid rgba(255, 255, 255, 0.1);
         border-left: 5px solid #ffa502; 
-        border-top: 1px solid rgba(255,255,255,0.1);
-        border-right: 1px solid rgba(255,255,255,0.1);
-        border-bottom: 1px solid rgba(255,255,255,0.1);
     }
 
     .btn-load { 
-        background: rgba(16, 185, 129, 0.2); 
+        background: rgba(16, 185, 129, 0.1); 
         color: #10b981; 
         border: 1px solid #10b981; 
         padding: 12px 20px; 
@@ -65,15 +55,13 @@
     .btn-load:hover { background: #10b981; color: white; }
 
     .logout { 
-        background: rgba(255, 77, 77, 0.2); 
+        background: transparent; 
         color: #ff4d4d; 
         padding: 8px 16px; 
         border: 1px solid #ff4d4d;
         border-radius: 5px; 
         cursor: pointer; 
-        transition: 0.3s;
     }
-    .logout:hover { background: #ff4d4d; color: white; }
 </style>
 </head>
 <body>

@@ -7,23 +7,16 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-    /* 1. BASE SETTINGS & DARK THEME */
+    /* 1. BASE SETTINGS & DARK BLACK THEME */
     html, body { height: 100%; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
     html { scroll-behavior: smooth; }
     
     body { 
-        /* The exact gradient used in Login/Admin pages */
-        background: linear-gradient(270deg, #0d0320, #1a094b, #000000, #8e2de2, #000000);
-        background-size: 300% 300%;
-        animation: gradientBG 20s ease infinite;
+        background-color: #000000; /* Pure Black */
+        /* Subtle radial gradient for depth */
+        background-image: radial-gradient(circle at 50% 50%, #1a1a1a 0%, #000000 100%);
         overflow-x: hidden; 
         color: white;
-    }
-
-    @keyframes gradientBG { 
-        0% { background-position: 0% 50%; } 
-        50% { background-position: 100% 50%; } 
-        100% { background-position: 0% 50%; } 
     }
 
     /* 2. STARS BACKGROUND */
@@ -69,14 +62,14 @@
     .hero-slide.active { opacity: 1; z-index: 0; }
     .hero-content { z-index: 10; position: relative; }
     .hero-overlay {
-        position: absolute; inset: 0; background: rgba(0,0,0,0.5); z-index: 1;
+        position: absolute; inset: 0; background: rgba(0,0,0,0.6); z-index: 1; /* Darker overlay for better text */
     }
 
     /* 7. HEADER SCROLL EFFECT */
     .header-scrolled {
-        background-color: rgba(17, 24, 39, 0.95) !important;
+        background-color: rgba(0, 0, 0, 0.95) !important; /* Pure black header */
         backdrop-filter: blur(10px);
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 6px -1px rgba(255, 255, 255, 0.1);
         padding-top: 0.75rem !important; padding-bottom: 0.75rem !important;
     }
 
@@ -87,12 +80,13 @@
         box-shadow: 0 6px 18px rgba(0,0,0,0.35);
         border: 2px solid rgba(6,182,212,0.9);
         color: rgba(34,211,238,0.95);
-        background: rgba(31,41,55,0.6);
+        background: rgba(0,0,0,0.6); /* Dark button bg */
         transition: all 0.3s ease-in-out; text-decoration: none;
     }
     .btn-theme-primary:hover {
-        box-shadow: 0 0 15px rgba(34,211,238,0.4), 0 0 25px rgba(34,211,238,0.2);
+        box-shadow: 0 0 15px rgba(34,211,238,0.4);
         transform: translateY(-2px) scale(1.02);
+        background: rgba(6,182,212,0.2);
     }
 
     /* 9. MOBILE FIXES */
