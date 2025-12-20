@@ -451,20 +451,14 @@
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
     <script>
-        // ============================================
-        // 1. CONFIGURATION
-        // ============================================
-        // REPLACE THESE WITH YOUR KEYS FROM THE SCREENSHOT YOU TOOK EARLIER
+ 
         const supabaseUrl = 'https://jjseffkbreruegudlmnd.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impqc2VmZmticmVydWVndWRsbW5kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxOTMwMTEsImV4cCI6MjA4MTc2OTAxMX0.xrCWARm6FbW-U98Qs13mMvlCeBiQWgmD73qverF7Brk';
         
-        // Initialize Supabase Client
-        // (This creates the connection only once)
-        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+     
+        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-        // ============================================
-        // 2. UI FUNCTIONS (Tabs, Alerts, etc)
-        // ============================================
+     
         function switchTab(tab) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
