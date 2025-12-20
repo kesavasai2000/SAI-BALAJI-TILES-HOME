@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loader Dashboard - Sai Balaji Tiles</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <style>
+        body { font-family: 'Poppins', sans-serif; background: #f0f2f5; padding: 20px; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .order-card { background: white; padding: 20px; margin-bottom: 15px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-left: 5px solid #ffa502; }
+        .btn-load { background: #10b981; color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 5px; font-weight: bold; }
+        .btn-load:hover { background: #059669; }
+        .logout { background: #ff4d4d; color: white; padding: 8px 16px; border: none; border-radius: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>📦 Dispatch / Loader</h1>
+        <button class="logout" onclick="logout()">Logout</button>
+    </div>
+    <p>Orders pending for loading:</p>
+    
+    <div id="orders-list">
+        <p>Loading pending orders...</p>
+    </div>
+
+    <script>
+        // ==========================================
+        // 🚀 PASTE YOUR SUPABASE KEYS HERE
+        // ==========================================
+        const supabaseUrl = 'https://jjseffkbreruegudlmnd.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impqc2VmZmticmVydWVndWRsbW5kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxOTMwMTEsImV4cCI6MjA4MTc2OTAxMX0.xrCWARm6FbW-U98Qs13mMvlCeBiQWgmD73qverF7Brk';
+        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+        // Check Auth
+        async function checkAuth() {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) window.location.href = 'auth.html';
+        }
+        checkAuth();
+
+        // Load Orders where status is 'processing'
+        async function loadPendingOrders() {
+            const { data: orders, error } = await supabase
+                .from('orders')
+                .select('*')
+                .eq('status', 'processing')
+                .order('created_at', { ascending: false });
+
+            const list = document.getElementById('orders-list');
+            list.innerHTML = '';
+
+            if (error) return alert("Error loading orders");
+
+            if (orders.length === 0) {
+                list.innerHTML = '<p>No orders pending dispatch.</p>';
+                return;
+            }
+
+            orders.forEach(order => {
+                // Extract item details from the JSON column
+                const item = order.items[0]; 
+
+                const div = document.createElement('div');
+                div.className = 'order-card';
+                div.innerHTML = `
+                    <h3>👤 ${order.customer_name}</h3>
+                    <p>📞 ${order.customer_phone}</p>
+                    <p>📍 ${order.customer_address}</p>
+                    <hr style="border:0; border-top:1px dashed #ccc; margin:10px 0;">
+                    <p><strong>Tile:</strong> ${item.tile}</p>
+                    <p><strong>Quantity:</strong> ${item.qty} Boxes</p>
+                    <p><strong>Notes:</strong> ${item.measurements}</p>
+                    <br>
+                    <button class="btn-load" onclick="markLoaded(${order.id})">✅ Mark Loaded & Shipped</button>
+                `;
+                list.appendChild(div);
+            });
+        }
+
+        // Update status to 'delivered'
+        async function markLoaded(orderId) {
+            if(confirm("Confirm: Is this order loaded on the vehicle?")) {
+                const { error } = await supabase
+                    .from('orders')
+                    .update({ status: 'delivered' })
+                    .eq('id', orderId);
+
+                if (!error) {
+                    alert("Order Dispatched!");
+                    loadPendingOrders(); // Refresh list
+                } else {
+                    alert("Error: " + error.message);
+                }
+            }
+        }
+
+        async function logout() {
+            await supabase.auth.signOut();
+            window.location.href = 'auth.html';
+        }
+
+        // Load on startup
+        loadPendingOrders();
+    </script>
+</body>
+</html>

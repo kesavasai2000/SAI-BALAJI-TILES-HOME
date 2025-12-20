@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Worker Dashboard - Sai Balaji Tiles</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <style>
+        body { font-family: 'Poppins', sans-serif; background: #f0f2f5; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1 { color: #333; }
+        input, select { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background: #22d3ee; color: #000; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; transition: 0.3s; }
+        button:hover { background: #06b6d4; }
+        .logout { background: #ff4d4d; color: white; margin-bottom: 20px; width: auto; padding: 8px 16px; float: right; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <button class="logout" onclick="logout()">Logout</button>
+        <h1>👷 Sales Entry</h1>
+        <hr style="margin-bottom: 20px; border: 0; border-top: 1px solid #eee;">
+
+        <!-- STEP 1: Customer Details -->
+        <div id="step1">
+            <h3>Step 1: Customer Details</h3>
+            <input type="text" id="custName" placeholder="Customer Name">
+            <input type="tel" id="custPhone" placeholder="Phone Number">
+            <input type="text" id="custAddr" placeholder="Delivery Address">
+            <button onclick="goToStep2()">Next: Select Tiles</button>
+        </div>
+
+        <!-- STEP 2: Select Tiles -->
+        <div id="step2" class="hidden">
+            <h3>Step 2: Order Details</h3>
+            <p><strong>Customer:</strong> <span id="displayCustName"></span></p>
+            
+            <label>Select Tile Model:</label>
+            <select id="tileSelect">
+                <option value="Kajaria - Marble White">Kajaria - Marble White (2x2)</option>
+                <option value="Somany - Rustic Wood">Somany - Rustic Wood (2x4)</option>
+                <option value="Qtone - High Gloss">Qtone - High Gloss (4x4)</option>
+                <option value="Nitco - Matte Finish">Nitco - Matte Finish (2x2)</option>
+            </select>
+            
+            <input type="number" id="tileQty" placeholder="Quantity (Boxes)">
+            <input type="text" id="measurements" placeholder="Measurements / Notes (e.g. 1200 sq.ft hall)">
+            
+            <button onclick="submitOrder()">✅ Submit Order to Loader</button>
+            <button onclick="location.reload()" style="background: #ccc; margin-top: 10px;">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // 🚀 PASTE YOUR SUPABASE KEYS HERE
+        // ==========================================
+        const supabaseUrl = 'https://jjseffkbreruegudlmnd.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impqc2VmZmticmVydWVndWRsbW5kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxOTMwMTEsImV4cCI6MjA4MTc2OTAxMX0.xrCWARm6FbW-U98Qs13mMvlCeBiQWgmD73qverF7Brk';
+        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+        // Check if user is logged in
+        async function checkAuth() {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) window.location.href = 'auth.html';
+        }
+        checkAuth();
+
+        function goToStep2() {
+            const name = document.getElementById('custName').value;
+            const phone = document.getElementById('custPhone').value;
+            const addr = document.getElementById('custAddr').value;
+
+            if(!name || !phone || !addr) return alert("Please fill all customer details.");
+            
+            document.getElementById('displayCustName').textContent = name;
+            document.getElementById('step1').classList.add('hidden');
+            document.getElementById('step2').classList.remove('hidden');
+        }
+
+        async function submitOrder() {
+            const { data: { user } } = await supabase.auth.getUser();
+
+            const orderData = {
+                customer_name: document.getElementById('custName').value,
+                customer_phone: document.getElementById('custPhone').value,
+                customer_address: document.getElementById('custAddr').value,
+                items: [{
+                    tile: document.getElementById('tileSelect').value,
+                    qty: document.getElementById('tileQty').value,
+                    measurements: document.getElementById('measurements').value
+                }],
+                status: 'processing', // This sends it to the loader
+                worker_id: user.id
+            };
+
+            const { error } = await supabase.from('orders').insert([orderData]);
+
+            if (error) {
+                alert("Error submitting: " + error.message);
+            } else {
+                alert("✅ Order Sent to Loader Successfully!");
+                location.reload();
+            }
+        }
+
+        async function logout() {
+            await supabase.auth.signOut();
+            window.location.href = 'auth.html';
+        }
+    </script>
+</body>
+</html>
