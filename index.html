@@ -7,106 +7,98 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        html, body { height: 100%; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
-        html { scroll-behavior: smooth; }
-        
-        body { 
-            background: #000;
-            overflow-x: hidden; 
-        }
+    /* 1. BASE SETTINGS & DARK THEME */
+    html, body { height: 100%; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+    html { scroll-behavior: smooth; }
+    
+    body { 
+        /* The exact gradient used in Login/Admin pages */
+        background: linear-gradient(270deg, #0d0320, #1a094b, #000000, #8e2de2, #000000);
+        background-size: 300% 300%;
+        animation: gradientBG 20s ease infinite;
+        overflow-x: hidden; 
+        color: white;
+    }
 
-        /* --- CRITICAL SPLASH SCREEN FIX --- */
-        #splash-screen {
-            z-index: 99999 !important; /* Forces it above everything else */
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #000;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            transition: opacity 0.8s ease-out;
-        }
+    @keyframes gradientBG { 
+        0% { background-position: 0% 50%; } 
+        50% { background-position: 100% 50%; } 
+        100% { background-position: 0% 50%; } 
+    }
 
-        .splash-content {
-            animation: fadeInSlow 1.5s ease-out forwards;
-        }
+    /* 2. STARS BACKGROUND */
+    .stars-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; overflow: hidden; z-index: 0; }
+    .star { position: absolute; background-color: rgba(255, 255, 255, 0.7); border-radius: 50%; animation: twinkle 6s infinite ease-in-out; }
+    @keyframes twinkle { 0%, 100% { opacity: 0.1; transform: scale(0.6); } 50% { opacity: 0.7; transform: scale(1); } }
 
-        /* Stars Background */
-        .stars-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; overflow: hidden; z-index: 0; }
-        .star { position: absolute; background-color: rgba(255, 255, 255, 0.7); border-radius: 50%; animation: twinkle 6s infinite ease-in-out; }
-        @keyframes twinkle { 0%, 100% { opacity: 0.1; transform: scale(0.6); } 50% { opacity: 0.7; transform: scale(1); } }
+    /* 3. SPLASH SCREEN (Highest Priority) */
+    #splash-screen {
+        z-index: 99999 !important; 
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #000;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        transition: opacity 0.8s ease-out;
+    }
 
-        /* Navbar Animations */
-        .navbar.translate-x-0 { transform: translateX(0%); }
-        .navbar.-translate-x-full { transform: translateX(-100%); }
+    .splash-content { animation: fadeInSlow 1.5s ease-out forwards; }
+    .delay-500ms { animation-delay: 0.5s; }
 
-        /* Animations */
-        .animate-on-scroll { opacity: 0; transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
-        .init-slide-up { transform: translateY(40px); }
-        .init-fade-in { transform: translateY(20px); }
-        .animate-on-scroll.is-visible { opacity: 1; transform: translateY(0); }
-        
-        @keyframes fadeInSlow { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .delay-500ms { animation-delay: 0.5s; }
+    /* 4. ANIMATIONS */
+    .animate-on-scroll { opacity: 0; transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
+    .init-slide-up { transform: translateY(40px); }
+    .init-fade-in { transform: translateY(20px); }
+    .animate-on-scroll.is-visible { opacity: 1; transform: translateY(0); }
+    
+    @keyframes fadeInSlow { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* HERO SLIDER STYLES */
-        .hero-slide {
-            position: absolute;
-            inset: 0;
-            opacity: 0;
-            transition: opacity 1.5s ease-in-out;
-            z-index: -1;
-        }
-        .hero-slide.active {
-            opacity: 1;
-            z-index: 0;
-        }
-        .hero-content {
-            z-index: 10;
-            position: relative;
-        }
-        .hero-overlay {
-            position: absolute;
-            inset: 0;
-            background: rgba(0,0,0,0.5); 
-            z-index: 1;
-        }
+    /* 5. NAVBAR */
+    .navbar.translate-x-0 { transform: translateX(0%); }
+    .navbar.-translate-x-full { transform: translateX(-100%); }
 
-        /* HEADER SCROLL EFFECT */
-        .header-scrolled {
-            background-color: rgba(17, 24, 39, 0.95) !important; /* Gray-900 */
-            backdrop-filter: blur(10px);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            padding-top: 0.75rem !important;
-            padding-bottom: 0.75rem !important;
-        }
+    /* 6. HERO SLIDER */
+    .hero-slide {
+        position: absolute; inset: 0; opacity: 0; transition: opacity 1.5s ease-in-out; z-index: -1;
+    }
+    .hero-slide.active { opacity: 1; z-index: 0; }
+    .hero-content { z-index: 10; position: relative; }
+    .hero-overlay {
+        position: absolute; inset: 0; background: rgba(0,0,0,0.5); z-index: 1;
+    }
 
-        .btn-theme-primary {
-            display: inline-block;
-            padding: 0.75rem 1.75rem;
-            border-radius: 0.75rem;
-            font-weight: 600;
-            font-size: 0.95rem;
-            box-shadow: 0 6px 18px rgba(0,0,0,0.35);
-            border: 2px solid rgba(6,182,212,0.9);
-            color: rgba(34,211,238,0.95);
-            background: rgba(31,41,55,0.6);
-            transition: all 0.3s ease-in-out;
-            text-decoration: none;
-        }
-        .btn-theme-primary:hover {
-            box-shadow: 0 0 15px rgba(34,211,238,0.4), 0 0 25px rgba(34,211,238,0.2);
-            transform: translateY(-2px) scale(1.02);
-        }
+    /* 7. HEADER SCROLL EFFECT */
+    .header-scrolled {
+        background-color: rgba(17, 24, 39, 0.95) !important;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        padding-top: 0.75rem !important; padding-bottom: 0.75rem !important;
+    }
 
-        /* Fix for inputs */
-        input, textarea { color: #000 !important; }
-        .hidden { display: none !important; }
-    </style>
+    /* 8. BUTTONS */
+    .btn-theme-primary {
+        display: inline-block; padding: 0.75rem 1.75rem; border-radius: 0.75rem;
+        font-weight: 600; font-size: 0.95rem;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+        border: 2px solid rgba(6,182,212,0.9);
+        color: rgba(34,211,238,0.95);
+        background: rgba(31,41,55,0.6);
+        transition: all 0.3s ease-in-out; text-decoration: none;
+    }
+    .btn-theme-primary:hover {
+        box-shadow: 0 0 15px rgba(34,211,238,0.4), 0 0 25px rgba(34,211,238,0.2);
+        transform: translateY(-2px) scale(1.02);
+    }
+
+    /* 9. MOBILE FIXES */
+    input, textarea { color: #000 !important; }
+    .hidden { display: none !important; }
+</style>
 </head>
 <body class="bg-black text-gray-200 font-poppins">
 
