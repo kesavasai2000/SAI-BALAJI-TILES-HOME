@@ -4,39 +4,70 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Sai Balaji Tiles Home</title>
+    <!-- Tailwind CSS -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
+        /* BASE RESET */
         html, body { height: 100%; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
-        
         html { scroll-behavior: smooth; }
+        body { background-color: #000; overflow-x: hidden; }
 
-        body { 
-            background-color: #000;
-            overflow-x: hidden; 
-        }
-
-        /* SPLASH SCREEN */
+        /* ===========================
+           1. SPLASH SCREEN (CRITICAL)
+           =========================== */
         #splash-screen {
-            z-index: 9999; /* Highest priority to cover everything */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000000;
+            z-index: 999999; /* Maximum priority */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.8s ease-out;
         }
 
+        /* Splash Content Animation */
+        .splash-content {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 1s ease-out forwards;
+        }
+        
+        .splash-delay {
+            animation-delay: 0.5s;
+        }
+
+        @keyframes fadeInUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===========================
+           2. MAIN PAGE STYLES
+           =========================== */
+        
         /* Stars Background */
         .stars-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; overflow: hidden; z-index: 0; }
         .star { position: absolute; background-color: rgba(255, 255, 255, 0.7); border-radius: 50%; animation: twinkle 6s infinite ease-in-out; }
         @keyframes twinkle { 0%, 100% { opacity: 0.1; transform: scale(0.6); } 50% { opacity: 0.7; transform: scale(1); } }
 
-        /* Navbar Animations */
+        /* Navbar Transitions */
         .navbar.translate-x-0 { transform: translateX(0%); }
         .navbar.-translate-x-full { transform: translateX(-100%); }
 
-        /* General Animations */
+        /* Scroll Animations */
         .animate-on-scroll { opacity: 0; transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
         .init-slide-up { transform: translateY(40px); }
         .init-fade-in { transform: translateY(20px); }
         .animate-on-scroll.is-visible { opacity: 1; transform: translateY(0); }
 
-        /* HERO SLIDER STYLES */
+        /* HERO SLIDER */
         .hero-slide {
             position: absolute;
             inset: 0;
@@ -44,88 +75,71 @@
             transition: opacity 1.5s ease-in-out;
             z-index: -1;
         }
-        .hero-slide.active {
-            opacity: 1;
-            z-index: 0;
-        }
-        .hero-content {
-            z-index: 10;
-            position: relative;
-        }
-        
+        .hero-slide.active { opacity: 1; z-index: 0; }
+        .hero-content { z-index: 10; position: relative; }
         .hero-overlay {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.6) 100%); /* Enhanced Gradient */
+            position: absolute; inset: 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.7) 100%);
             z-index: 1;
         }
 
-        /* Header Transition Class */
+        /* HEADER SCROLL EFFECT */
         .header-scrolled {
-            background-color: rgba(17, 24, 39, 0.95) !important; /* Gray-900 */
+            background-color: rgba(17, 24, 39, 0.95) !important;
             backdrop-filter: blur(10px);
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             padding-top: 0.75rem !important;
             padding-bottom: 0.75rem !important;
         }
 
+        /* BUTTONS & INPUTS */
         .btn-theme-primary {
-            display: inline-block;
-            padding: 0.75rem 1.75rem;
-            border-radius: 9999px;
-            font-weight: 600;
-            font-size: 0.95rem;
+            display: inline-block; padding: 0.75rem 1.75rem; border-radius: 9999px;
+            font-weight: 600; font-size: 0.95rem;
             background: linear-gradient(to right, #06b6d4, #8b5cf6);
-            color: white;
-            transition: all 0.3s ease-in-out;
-            text-decoration: none;
+            color: white; transition: all 0.3s ease-in-out; text-decoration: none;
             box-shadow: 0 4px 15px rgba(6, 182, 212, 0.4);
         }
-        .btn-theme-primary:hover {
-            transform: scale(1.05);
-            box-shadow: 0 6px 20px rgba(6, 182, 212, 0.6);
-        }
-
-        /* Fix for mobile text inputs */
-        input, textarea { color: #000 !important; }
+        .btn-theme-primary:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(6, 182, 212, 0.6); }
         
+        input, textarea { color: #000 !important; }
         .hidden { display: none !important; }
     </style>
 </head>
-<body class="bg-black text-gray-200 font-poppins">
+<body class="text-gray-200 font-poppins">
 
-    <div id="splash-screen" class="fixed inset-0 bg-black flex flex-col items-center justify-center z-50 transition-opacity duration-700 ease-out p-4">
-        <img src="images/logo1.jpg" alt="Sai Balaji Tiles Home Logo" class="w-3/4 sm:w-1/2 md:w-1/3 lg:w-1/4 h-auto opacity-0 animate-fade-in-slow">
-        <h1 class="text-2xl sm:text-3xl md:text-4xl text-white font-bold mt-4 sm:mt-6 text-center opacity-0 animate-fade-in-slow delay-500ms">SAI BALAJI TILES & SANITARYWARE</h1>
+    <!-- 1. SPLASH SCREEN -->
+    <div id="splash-screen">
+        <img src="images/logo1.jpg" alt="Logo" class="w-2/3 sm:w-1/4 h-auto splash-content">
+        <h1 class="text-xl sm:text-3xl text-white font-bold mt-4 text-center splash-content splash-delay">
+            SAI BALAJI TILES
+        </h1>
     </div>
 
+    <!-- 2. MAIN PAGE CONTAINER (Hidden initially) -->
     <div id="page-container" style="display: none; position: relative; min-height: 100vh;">
+        
         <div class="stars-container" id="stars-bg-global"></div>
 
         <!-- HEADER -->
         <header id="main-header" class="fixed w-full top-0 left-0 bg-transparent transition-all duration-300 flex items-center justify-between px-4 sm:px-6 py-5 z-50">
-            <!-- Mobile Menu Button -->
             <div class="flex-none">
                 <button id="toggle-btn-index" aria-label="Toggle menu" class="text-3xl text-cyan-400 hover:text-cyan-300 transition-colors focus:outline-none">☰</button>
             </div>
             
-            <!-- Logo -->
             <div class="flex-grow text-center px-2">
                 <a href="index.html" class="text-lg sm:text-2xl font-extrabold text-white truncate hover:text-cyan-300 tracking-wide transition-colors">
                     SAI BALAJI TILES
                 </a>
             </div>
             
-            <!-- Right Side -->
             <div class="flex items-center gap-3 sm:gap-4">
                 <a href="cart.html" class="text-cyan-400 hover:text-cyan-300 text-2xl relative">
                     🛒 <span id="cart-count-header" class="text-xs font-bold absolute -top-1 -right-2 bg-red-500 text-white rounded-full px-1.5 py-0.5">0</span>
                 </a>
-                
                 <button onclick="window.location.href='auth.html'" class="hidden sm:inline-block border border-cyan-500 text-cyan-400 hover:bg-cyan-500 hover:text-white px-5 py-1.5 rounded-full text-sm font-semibold transition-all duration-300">
                     Login
                 </button>
-
                 <a href="auth.html" class="sm:hidden text-cyan-400 text-2xl ml-1">👤</a>
             </div>
         </header>
@@ -149,20 +163,19 @@
             
             <!-- HERO SLIDER SECTION -->
             <section id="home" class="relative h-screen flex items-center justify-center overflow-hidden">
-                
                 <!-- Slide 1 -->
                 <div class="hero-slide active">
-                    <img src="images/tiles3.jpg" class="w-full h-full object-cover" alt="Luxury Tiles">
+                    <img src="images/tiles3.jpg" class="w-full h-full object-cover" alt="Luxury">
                     <div class="hero-overlay"></div>
                 </div>
                 <!-- Slide 2 -->
                 <div class="hero-slide">
-                    <img src="images/tile1.jpg" class="w-full h-full object-cover" alt="Modern Living">
+                    <img src="images/tile1.jpg" class="w-full h-full object-cover" alt="Modern">
                     <div class="hero-overlay"></div>
                 </div>
                 <!-- Slide 3 -->
                 <div class="hero-slide">
-                    <img src="images/tile2.jpg" class="w-full h-full object-cover" alt="Rustic Charm">
+                    <img src="images/tile2.jpg" class="w-full h-full object-cover" alt="Rustic">
                     <div class="hero-overlay"></div>
                 </div>
 
@@ -180,10 +193,7 @@
                     </a>
                 </div>
 
-                <!-- Scroll Arrow -->
-                <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce text-cyan-400 text-3xl opacity-80">
-                    ↓
-                </div>
+                <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce text-cyan-400 text-3xl opacity-80">↓</div>
             </section>
 
             <!-- BRANDS SECTION -->
@@ -199,21 +209,9 @@
                             ✨ PREMIUM QUALITY
                         </span>
                     </div>
-                    <h2 class="animate-on-scroll init-slide-up text-3xl sm:text-5xl font-extrabold mb-6 text-white">
-                        Our Premium Brands
-                    </h2>
-                    <p class="animate-on-scroll init-fade-in text-base sm:text-lg text-gray-300 mb-10 max-w-3xl mx-auto leading-relaxed">
-                        We partner with <strong class="text-cyan-400">India's leading tile manufacturers</strong> to bring you the finest quality.
-                    </p>
+                    <h2 class="animate-on-scroll init-slide-up text-3xl sm:text-5xl font-extrabold mb-6 text-white">Our Premium Brands</h2>
                     
-                    <div class="mb-12 animate-on-scroll init-fade-in">
-                        <a href="brands.html" class="inline-block px-8 py-3 bg-gradient-to-r from-cyan-600 to-purple-700 text-white font-bold rounded-full shadow-lg hover:shadow-cyan-500/50 transform hover:scale-105 transition-all duration-300 text-sm sm:text-base">
-                            🚀 View All Brands
-                        </a>
-                    </div>
-                    
-                    <!-- BRAND GRID: 2 cols mobile, 3 tablet, 6 desktop -->
-                    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-6 max-w-6xl mx-auto">
+                    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-6 max-w-6xl mx-auto mt-12">
                         <div class="bg-white p-4 rounded-xl shadow-lg hover:scale-105 transition transform flex items-center justify-center h-28 sm:h-32"><img src="images/brands/kar.png" class="max-h-16 max-w-full"></div>
                         <div class="bg-white p-4 rounded-xl shadow-lg hover:scale-105 transition transform flex items-center justify-center h-28 sm:h-32"><img src="images/brands/qtone-logo.png" class="max-h-16 max-w-full"></div>
                         <div class="bg-white p-4 rounded-xl shadow-lg hover:scale-105 transition transform flex items-center justify-center h-28 sm:h-32"><img src="images/brands/Somany-logo.png" class="max-h-16 max-w-full"></div>
@@ -221,24 +219,6 @@
                         <div class="bg-white p-4 rounded-xl shadow-lg hover:scale-105 transition transform flex items-center justify-center h-28 sm:h-32"><img src="images/brands/johnson-logo.png" class="max-h-16 max-w-full"></div>
                         <div class="bg-white p-4 rounded-xl shadow-lg hover:scale-105 transition transform flex items-center justify-center h-28 sm:h-32"><img src="images/brands/orient-bell-logo.png" class="max-h-16 max-w-full"></div>
                     </div>
-
-                    <!-- STATS GRID -->
-                    <div class="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-                        <div><div class="text-3xl font-bold text-cyan-400">150+</div><div class="text-gray-400 text-xs sm:text-sm">Designs</div></div>
-                        <div><div class="text-3xl font-bold text-purple-400">6</div><div class="text-gray-400 text-xs sm:text-sm">Top Brands</div></div>
-                        <div><div class="text-3xl font-bold text-pink-400">100%</div><div class="text-gray-400 text-xs sm:text-sm">Quality</div></div>
-                        <div><div class="text-3xl font-bold text-indigo-400">24/7</div><div class="text-gray-400 text-xs sm:text-sm">Support</div></div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- ABOUT SECTION -->
-            <section id="about" class="py-16 sm:py-24 bg-gray-900/60 backdrop-blur-sm">
-                <div class="container mx-auto px-4 text-center">
-                    <h2 class="animate-on-scroll init-slide-up text-3xl sm:text-4xl font-bold mb-6 text-white">About Us</h2>
-                    <p class="animate-on-scroll init-fade-in text-base sm:text-lg text-gray-300 max-w-2xl mx-auto leading-relaxed">
-                        At Sai Balaji Tiles, we provide high-quality tiles that transform spaces. With years of experience, we offer a curated selection from India's most trusted brands.
-                    </p>
                 </div>
             </section>
 
@@ -246,8 +226,6 @@
             <section id="collections" class="py-16 sm:py-24 bg-gray-900/80">
                 <div class="container mx-auto px-4">
                     <h2 class="text-3xl sm:text-4xl font-bold text-center mb-12 text-cyan-400 animate-on-scroll init-slide-up">Featured Collections</h2>
-                    
-                    <!-- Responsive Grid: 1 col mobile, 3 cols desktop -->
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                         <div class="bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:shadow-cyan-500/50 transition duration-300">
                             <img src="images/tile1.jpg" class="w-full h-56 object-cover">
@@ -278,24 +256,15 @@
             <section id="contact" class="py-16 sm:py-24 bg-gray-900/60">
                 <div class="container mx-auto px-4">
                     <h2 class="animate-on-scroll init-slide-up text-3xl sm:text-4xl font-bold mb-10 text-white text-center">Get in Touch</h2>
-                    
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 max-w-5xl mx-auto">
-                        <!-- Map -->
                         <div class="rounded-xl overflow-hidden shadow-2xl border border-gray-700 h-80 w-full">
-                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3887.332740258326!2d79.0926736742076!3d13.212896009265012!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bad5da1ba26771d%3A0xba39ee157f4edca4!2sKajaria%20Eternity%20Boutique%20-%20Tiles%20Showroom%20in%20Palamaner%20Road%2C%20Chittor!5e0!3m2!1sen!2sin!4v1714905193732!5m2!1sen!2sin" 
-                                width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3887.332740258326!2d79.0926736742076!3d13.212896009265012!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bad5da1ba26771d%3A0xba39ee157f4edca4!2sKajaria%20Eternity%20Boutique%20-%20Tiles%20Showroom%20in%20Palamaner%20Road%2C%20Chittor!5e0!3m2!1sen!2sin!4v1714905193732!5m2!1sen!2sin" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
                         </div>
-
-                        <!-- Contact Form -->
                         <div class="bg-gray-800 p-6 sm:p-8 rounded-xl shadow-lg border border-gray-700">
-                            <h3 class="text-2xl font-bold text-cyan-400 mb-6">Send Message</h3>
-                            <form id="contactForm" class="space-y-4">
-                                <input type="text" name="name" placeholder="Your Name" required class="w-full p-3 rounded bg-gray-200 text-black border border-gray-600 focus:outline-none focus:ring-2 focus:ring-cyan-400">
-                                <input type="email" name="email" placeholder="Your Email" required class="w-full p-3 rounded bg-gray-200 text-black border border-gray-600 focus:outline-none focus:ring-2 focus:ring-cyan-400">
-                                <textarea name="message" rows="4" placeholder="Your Message" required class="w-full p-3 rounded bg-gray-200 text-black border border-gray-600 focus:outline-none focus:ring-2 focus:ring-cyan-400 resize-none"></textarea>
-                                <button type="submit" id="sendMessageBtn" class="w-full py-3 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded-lg transition shadow-lg">Send Message</button>
-                                <div id="form-status" class="text-center text-sm mt-2"></div>
-                            </form>
+                            <h3 class="text-2xl font-bold text-cyan-400 mb-6">Contact Info</h3>
+                            <p class="mb-4 text-gray-300"><strong>📍 Address:</strong><br>123 Tile Street, Chittoor</p>
+                            <p class="mb-4 text-gray-300"><strong>📞 Phone:</strong> +91 7680943539</p>
+                            <a href="https://maps.app.goo.gl/ePv4dAQ9iEprLneLA" target="_blank" class="block w-full text-center bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-3 rounded-lg transition">Get Directions</a>
                         </div>
                     </div>
                 </div>
@@ -307,33 +276,45 @@
         </footer>
     </div>
 
-    <!-- SHARED SCRIPTS -->
+    <!-- SCRIPTS -->
     <script src="header.js"></script>
     <script>
-        const splashScreen = document.getElementById('splash-screen');
-        const pageContainer = document.getElementById('page-container');
-
-        // SPLASH SCREEN LOGIC
+        // ============================
+        // 1. SPLASH SCREEN LOGIC
+        // ============================
         window.addEventListener('load', () => {
-            if (splashScreen && pageContainer) {
-                setTimeout(() => {
-                    splashScreen.style.opacity = '0';
+            const splashScreen = document.getElementById('splash-screen');
+            const pageContainer = document.getElementById('page-container');
+
+            // Wait 2.5 seconds, then fade out splash and show page
+            setTimeout(() => {
+                if (splashScreen) {
+                    splashScreen.style.opacity = '0'; // Fade out
+                    
+                    // After fade transition (0.8s), hide it and show content
                     setTimeout(() => {
                         splashScreen.style.display = 'none';
-                        pageContainer.style.display = 'block';
-                        document.body.classList.add('main-content-visible');
-                        
-                        // Initialize Features
-                        startHeroSlider();
-                        initializeScripts();
-                    }, 700);
-                }, 2500);
-            }
+                        if (pageContainer) {
+                            pageContainer.style.display = 'block';
+                            document.body.classList.add('main-content-visible');
+                            
+                            // 🚀 TRIGGER FEATURES AFTER PAGE IS VISIBLE
+                            startHeroSlider();
+                            createStarsGlobal();
+                            initializeMainContentScripts();
+                        }
+                    }, 800); // Matches CSS transition time
+                }
+            }, 2500); // Splash visible duration
         });
 
-        // HERO SLIDER LOGIC
+        // ============================
+        // 2. HERO SLIDER
+        // ============================
         function startHeroSlider() {
             const slides = document.querySelectorAll('.hero-slide');
+            if (slides.length === 0) return;
+            
             let currentSlide = 0;
             setInterval(() => {
                 slides[currentSlide].classList.remove('active');
@@ -342,7 +323,9 @@
             }, 4000);
         }
 
-        // HEADER SCROLL LOGIC
+        // ============================
+        // 3. HEADER SCROLL
+        // ============================
         window.addEventListener('scroll', () => {
             const header = document.getElementById('main-header');
             if (window.scrollY > 50) {
@@ -354,39 +337,21 @@
             }
         });
 
-        function initializeScripts() {
+        // ============================
+        // 4. GENERAL SCRIPTS
+        // ============================
+        function initializeMainContentScripts() {
             // Navbar Toggle
-            let menuIndexVisible = false;
             const navbarIndex = document.getElementById("main-navbar-index");
             const toggleBtnIndex = document.getElementById("toggle-btn-index");
+            let menuVisible = false;
 
             window.toggleMenuIndex = function() {
-                menuIndexVisible = !menuIndexVisible;
-                navbarIndex.classList.toggle("translate-x-0", menuIndexVisible);
-                navbarIndex.classList.toggle("-translate-x-full", !menuIndexVisible);
+                menuVisible = !menuVisible;
+                navbarIndex.classList.toggle("translate-x-0", menuVisible);
+                navbarIndex.classList.toggle("-translate-x-full", !menuVisible);
             }
             if (toggleBtnIndex) toggleBtnIndex.addEventListener('click', toggleMenuIndex);
-
-            // Stars Background
-            function createStarsGlobal() {
-                const container = document.getElementById('stars-bg-global');
-                if (!container) return;
-                const numStars = Math.min(100, Math.floor(window.innerWidth / 20));
-                container.innerHTML = '';
-                for (let i = 0; i < numStars; i++) {
-                    const star = document.createElement('div');
-                    star.className = 'star';
-                    const size = Math.random() * 2 + 1;
-                    star.style.width = `${size}px`;
-                    star.style.height = `${size}px`;
-                    star.style.left = `${Math.random() * 100}%`;
-                    star.style.top = `${Math.random() * 100}%`;
-                    star.style.animationDuration = `${Math.random() * 3 + 4}s`;
-                    container.appendChild(star);
-                }
-            }
-            createStarsGlobal();
-            window.addEventListener('resize', createStarsGlobal);
 
             // Cart Count
             function updateCartCountIndex() {
@@ -396,7 +361,7 @@
             updateCartCountIndex();
             window.addEventListener('storage', (e) => { if (e.key === 'cart') updateCartCountIndex(); });
 
-            // Scroll Animation
+            // Intersection Observer (Animations)
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) entry.target.classList.add('is-visible');
@@ -404,6 +369,26 @@
             });
             document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
         }
+
+        // Stars Background
+        function createStarsGlobal() {
+            const container = document.getElementById('stars-bg-global');
+            if (!container) return;
+            const numStars = Math.min(100, Math.floor(window.innerWidth / 20));
+            container.innerHTML = '';
+            for (let i = 0; i < numStars; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                const size = Math.random() * 2 + 1;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                star.style.animationDuration = `${Math.random() * 3 + 4}s`;
+                container.appendChild(star);
+            }
+        }
+        window.addEventListener('resize', createStarsGlobal);
     </script>
 </body>
 </html>
