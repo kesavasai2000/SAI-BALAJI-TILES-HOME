@@ -9,10 +9,12 @@
     <style>
         html, body { height: 100%; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
         body { 
-            background: linear-gradient(270deg #000000);
-            background-size: 300% 300%;
-            animation: gradientBG 20s ease infinite;
-        }
+        background-color: #000000;
+        /* Deep Space Radial Gradient */
+        background-image: radial-gradient(circle at 50% 50%, #111111 0%, #000000 100%);
+        overflow-x: hidden; 
+        color: #e2e8f0; /* Soft White Text */
+    }
         @keyframes gradientBG { 
             0% { background-position: 0% 50%; } 
             50% { background-position: 100% 50%; } 
