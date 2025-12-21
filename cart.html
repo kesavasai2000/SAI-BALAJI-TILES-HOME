@@ -10,7 +10,13 @@
 
   <style>
     :root { --accent: #22d3ee; --card: rgba(17,24,39,0.65); }
-    html,body { height:100%; margin:0; font-family:'Poppins',sans-serif; background: linear-gradient(270deg,#0d0320,#1a094b,#000,#8e2de2,#000); background-size:300% 300%; animation: gradientBG 18s linear infinite; color:#e6eef7; }
+    html,body { 
+        background-color: #000000;
+        /* Deep Space Radial Gradient */
+        background-image: radial-gradient(circle at 50% 50%, #111111 0%, #000000 100%);
+        overflow-x: hidden; 
+        color: #e2e8f0; /* Soft White Text */
+    }
     @keyframes gradientBG { 0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%} }
 
     .stars-container { position: fixed; inset:0; pointer-events:none; z-index:-1; }
