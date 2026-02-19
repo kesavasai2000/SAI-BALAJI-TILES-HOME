@@ -381,8 +381,9 @@ window.addToCart = function(tileId) {
 
 <script>
     // 1. CONFIGURATION
-    const supabaseUrl = 'YOUR_SUPABASE_URL_HERE';
-    const supabaseKey = 'YOUR_SUPABASE_ANON_KEY_HERE';
+    const supabaseUrl = 'https://jjseffkbreruegudlmnd.supabase.co'; 
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impqc2VmZmticmVydWVndWRsbW5kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxOTMwMTEsImV4cCI6MjA4MTc2OTAxMX0.xrCWARm6FbW-U98Qs13mMvlCeBiQWgmD73qverF7Brk';
+
     const sbClient = supabase.createClient(supabaseUrl, supabaseKey);
 
     // 2. SMART ADD TO CART FUNCTION
