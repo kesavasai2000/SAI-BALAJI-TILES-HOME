@@ -139,7 +139,24 @@
     <div id="page-container" style="display: none; position: relative; min-height: 100vh;">
         <div class="stars-container" id="stars-bg-global"></div>
 
-        
+        <!-- HEADER -->
+        <header id="main-header" class="fixed w-full top-0 left-0 bg-transparent transition-all duration-300 flex items-center justify-between px-4 sm:px-6 py-5 z-50">
+            <div class="flex-none">
+                <button id="toggle-btn-index" aria-label="Toggle menu" class="text-2xl text-cyan-400 hover:text-cyan-300 transition-colors focus:outline-none">☰</button>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <a href="cart.html" class="text-cyan-400 hover:text-cyan-300 text-lg relative">
+                    🛒 <span id="cart-count-header" class="text-xs font-bold absolute -top-2 -right-2 bg-red-500 text-white rounded-full px-1">0</span>
+                </a>
+                
+                <button onclick="window.location.href='auth.html'" class="hidden sm:inline-block text-cyan-400 font-semibold border border-cyan-500 px-4 py-1 rounded hover:bg-cyan-500 hover:text-white transition">
+                    Login
+                </button>
+
+                <a href="auth.html" class="sm:hidden text-cyan-400 text-xl">👤</a>
+            </div>
+        </header>
 
         <!-- SIDEBAR NAV -->
         <nav id="main-navbar-index" class="navbar fixed top-0 left-0 w-64 h-screen bg-gray-900/90 backdrop-blur-md shadow-lg transform -translate-x-full transition-transform duration-300 z-40 border-r border-cyan-500/30">
