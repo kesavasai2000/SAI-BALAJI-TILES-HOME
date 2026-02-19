@@ -304,5 +304,78 @@
       window.showSnackbar = showSnackbar;
     });
   </script>
+  <!-- Supabase SDK -->
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
+<script>
+    // 1. CONFIGURATION
+    const supabaseUrl = 'YOUR_SUPABASE_URL_HERE';
+    const supabaseKey = 'YOUR_SUPABASE_ANON_KEY_HERE';
+    const sbClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+    // 2. SMART ADD TO CART FUNCTION
+    async function addToCart(tileId) {
+        // A. Check if User is Logged In
+        const { data: { session } } = await sbClient.auth.getSession();
+
+        if (!session) {
+            // User NOT logged in
+            if(confirm("You must login to add items to your cart. Go to Login?")) {
+                // Save where they were so we can come back later (Optional advanced step)
+                window.location.href = 'auth.html';
+            }
+            return;
+        }
+
+        // User IS logged in - Proceed to add
+        const user = session.user;
+        
+        // 1. Get current cart from LocalStorage
+        let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+
+        // 2. Find item details (Assuming you have a 'tiles' array in your page script)
+        // If this is tile-detail.html, use 'currentTile'. 
+        // If brand-tiles.html, we find it from the list.
+        let tileToAdd;
+        
+        if (typeof tiles !== 'undefined') {
+            // Logic for brand-tiles.html
+            tileToAdd = tiles.find(t => t.id === tileId);
+        } else if (typeof currentTile !== 'undefined') {
+            // Logic for tile-detail.html
+            tileToAdd = currentTile;
+        }
+
+        if (!tileToAdd) return console.error("Tile not found");
+
+        // 3. Update Cart Array
+        const existingItem = cart.find(item => item.id === tileToAdd.id);
+        if (existingItem) {
+            existingItem.quantity = (existingItem.quantity || 1) + 1;
+        } else {
+            cart.push({
+                id: tileToAdd.id,
+                name: tileToAdd.name,
+                image: tileToAdd.image,
+                price: tileToAdd.price,
+                brand: tileToAdd.brand,
+                quantity: 1
+            });
+        }
+
+        // 4. Save to LocalStorage
+        localStorage.setItem('cart', JSON.stringify(cart));
+        
+        // 5. SAVE TO SUPABASE DATABASE (Cloud Sync)
+        await sbClient
+            .from('profiles')
+            .update({ cart: cart })
+            .eq('id', user.id);
+
+        // 6. Update UI
+        alert("✅ Item added to cart & saved to your account!");
+        if(window.headerShared) window.headerShared.updateCartCount();
+    }
+</script>
 </body>
 </html>

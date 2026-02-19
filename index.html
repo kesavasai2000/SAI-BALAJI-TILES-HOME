@@ -682,6 +682,30 @@
             }
         }
         window.addEventListener('resize', createStarsGlobal);
+
+        // --- SYNC CART ON LOAD ---
+async function syncCartFromDatabase() {
+    const { data: { session } } = await sbClient.auth.getSession();
+    
+    if (session) {
+        // Fetch cart from DB
+        const { data, error } = await sbClient
+            .from('profiles')
+            .select('cart')
+            .eq('id', session.user.id)
+            .single();
+
+        if (data && data.cart) {
+            // Update LocalStorage with DB data
+            localStorage.setItem('cart', JSON.stringify(data.cart));
+            // Update Header Counter
+            updateCartCountIndex(); 
+        }
+    }
+}
+
+// Call this function when page loads
+window.addEventListener('load', syncCartFromDatabase);
     </script>
 </body>
 </html>

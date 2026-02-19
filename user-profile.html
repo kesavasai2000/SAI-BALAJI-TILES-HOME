@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - Sai Balaji Tiles</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <style>
+        /* DARK UNIVERSE THEME */
+        html, body { height: 100%; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+        body { 
+            background-color: #000000;
+            background-image: radial-gradient(circle at 50% 50%, #111111 0%, #000000 100%);
+            color: #e2e8f0;
+            overflow-x: hidden;
+        }
+        .stars-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: -1; }
+        .star { position: absolute; background-color: white; border-radius: 50%; opacity: 0.8; animation: twinkle 4s infinite ease-in-out; }
+        @keyframes twinkle { 0%, 100% { opacity: 0.3; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.2); } }
+
+        /* GLASS CARD */
+        .glass-card {
+            background: rgba(20, 20, 20, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+        }
+
+        input {
+            width: 100%; padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px; color: white;
+            margin-bottom: 15px;
+        }
+        input:focus { outline: none; border-color: #22d3ee; }
+        
+        .btn-primary {
+            background: linear-gradient(to right, #06b6d4, #3b82f6);
+            color: white; padding: 12px 24px; border-radius: 8px; font-weight: bold; width: 100%;
+            transition: transform 0.2s;
+        }
+        .btn-primary:hover { transform: scale(1.02); }
+    </style>
+</head>
+<body>
+
+    <!-- Stars -->
+    <div class="stars-container" id="stars-bg-global"></div>
+
+    <!-- Header -->
+    <header class="p-6 flex justify-between items-center fixed w-full top-0 z-50 bg-black/50 backdrop-blur-md border-b border-white/10">
+        <a href="index.html" class="text-xl font-bold text-cyan-400">SAI BALAJI TILES</a>
+        <a href="index.html" class="text-gray-300 hover:text-white">← Back to Home</a>
+    </header>
+
+    <div class="min-h-screen flex items-center justify-center p-4 pt-24">
+        <div class="glass-card p-8 w-full max-w-lg">
+            <div class="text-center mb-8">
+                <div class="w-20 h-20 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full mx-auto flex items-center justify-center text-3xl font-bold text-white mb-4">
+                    <span id="avatar-initial">U</span>
+                </div>
+                <h2 class="text-2xl font-bold text-white" id="display-name">Loading...</h2>
+                <p class="text-gray-400" id="display-email">...</p>
+            </div>
+
+            <form id="profile-form">
+                <label class="block text-gray-400 text-sm mb-2">Full Name</label>
+                <input type="text" id="full_name" placeholder="Your Name">
+
+                <label class="block text-gray-400 text-sm mb-2">Phone Number</label>
+                <input type="text" id="phone" placeholder="+91 99999 99999">
+
+                <label class="block text-gray-400 text-sm mb-2">Delivery Address</label>
+                <input type="text" id="address" placeholder="House No, Street, City">
+
+                <button type="submit" class="btn-primary mt-4">Save Changes</button>
+            </form>
+
+            <button onclick="logout()" class="w-full mt-4 py-3 border border-red-500 text-red-400 rounded-lg hover:bg-red-500/10 transition">
+                Logout
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // 1. SUPABASE CONFIG
+        const supabaseUrl = 'YOUR_SUPABASE_URL_HERE';
+        const supabaseKey = 'YOUR_SUPABASE_ANON_KEY_HERE';
+        const sbClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+        // 2. STARS ANIMATION
+        function createStars() {
+            const container = document.getElementById('stars-bg-global');
+            container.innerHTML = '';
+            for(let i=0; i<100; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.width = Math.random() * 3 + 'px';
+                star.style.height = star.style.width;
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                container.appendChild(star);
+            }
+        }
+        createStars();
+
+        // 3. LOAD PROFILE DATA
+        async function loadProfile() {
+            const { data: { session } } = await sbClient.auth.getSession();
+            if (!session) {
+                window.location.href = 'auth.html';
+                return;
+            }
+
+            const user = session.user;
+            document.getElementById('display-email').textContent = user.email;
+
+            // Fetch extra details from 'profiles' table
+            const { data, error } = await sbClient
+                .from('profiles')
+                .select('*')
+                .eq('id', user.id)
+                .single();
+
+            if (data) {
+                document.getElementById('full_name').value = data.full_name || '';
+                document.getElementById('phone').value = data.phone || '';
+                document.getElementById('address').value = data.address || '';
+                document.getElementById('display-name').textContent = data.full_name || 'Customer';
+                document.getElementById('avatar-initial').textContent = (data.full_name || 'U')[0].toUpperCase();
+            }
+        }
+
+        // 4. UPDATE PROFILE
+        document.getElementById('profile-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const { data: { user } } = await sbClient.auth.getUser();
+            
+            const updates = {
+                id: user.id,
+                full_name: document.getElementById('full_name').value,
+                phone: document.getElementById('phone').value,
+                address: document.getElementById('address').value,
+                updated_at: new Date()
+            };
+
+            const { error } = await sbClient.from('profiles').upsert(updates);
+
+            if (error) alert(error.message);
+            else alert('✅ Profile Updated Successfully!');
+        });
+
+        async function logout() {
+            await sbClient.auth.signOut();
+            window.location.href = 'index.html';
+        }
+
+        loadProfile();
+    </script>
+</body>
+</html>
