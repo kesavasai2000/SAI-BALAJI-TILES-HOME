@@ -224,165 +224,154 @@
         </div>
     </div>
 
+    
+   
+    <!-- Supabase SDK -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
     <script>
-    // 1. CONFIGURATION
-    const supabaseUrl = 'https://jjseffkbreruegudlmnd.supabase.co'; 
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impqc2VmZmticmVydWVndWRsbW5kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxOTMwMTEsImV4cCI6MjA4MTc2OTAxMX0.xrCWARm6FbW-U98Qs13mMvlCeBiQWgmD73qverF7Brk';
+        const supabaseUrl = 'https://jjseffkbreruegudlmnd.supabase.co'; 
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impqc2VmZmticmVydWVndWRsbW5kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxOTMwMTEsImV4cCI6MjA4MTc2OTAxMX0.xrCWARm6FbW-U98Qs13mMvlCeBiQWgmD73qverF7Brk';
 
-    const sbClient = supabase.createClient(supabaseUrl, supabaseKey);
+        const sbClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-    // 2. UI FUNCTIONS
-    function switchTab(tab) {
-        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-        event.target.classList.add('active');
-        document.querySelectorAll('.auth-form').forEach(form => form.classList.remove('active'));
-        
-        if (tab === 'login') {
-            document.getElementById('loginForm').classList.add('active');
-            document.querySelector('.auth-header h2').textContent = 'Welcome Back';
-        } else {
-            document.getElementById('signupForm').classList.add('active');
-            document.querySelector('.auth-header h2').textContent = 'Create Account';
-        }
-        hideAlert();
-    }
-
-    function showAlert(message, type) {
-        const alert = document.getElementById('authAlert');
-        alert.className = `alert alert-${type} show`;
-        alert.textContent = message;
-    }
-
-    function hideAlert() { document.getElementById('authAlert').classList.remove('show'); }
-    function goBack() { window.history.back(); }
-
-    // ==========================================
-    // 3. AUTH LOGIC
-    // ==========================================
-
-    // --- A. EMAIL LOGIN ---
-    async function handleLogin(event) {
-        event.preventDefault();
-        const email = document.getElementById('loginEmail').value;
-        const password = document.getElementById('loginPassword').value;
-        const btn = document.getElementById('loginBtn');
-
-        btn.disabled = true; btn.textContent = 'Verifying...';
-
-        const { data, error } = await sbClient.auth.signInWithPassword({ email, password });
-
-        if (error) {
-            showAlert(error.message, 'error');
-            btn.disabled = false; btn.textContent = 'Sign In';
-        } else {
-            checkRoleAndRedirect(data.user.id);
-        }
-    }
-
-    // --- B. EMAIL SIGNUP (New Customer) ---
-    async function handleSignup(event) {
-        event.preventDefault();
-        const name = document.getElementById('signupName').value;
-        const email = document.getElementById('signupEmail').value;
-        const password = document.getElementById('signupPassword').value;
-        const confirmPassword = document.getElementById('signupConfirmPassword').value;
-        const btn = document.getElementById('signupBtn');
-
-        if (password !== confirmPassword) { showAlert('❌ Passwords do not match', 'error'); return; }
-
-        btn.disabled = true; btn.textContent = 'Creating Account...';
-
-        // 1. Create Auth User
-        const { data, error } = await sbClient.auth.signUp({
-            email: email,
-            password: password,
-            options: { data: { full_name: name } } // Store name in metadata
-        });
-
-        if (error) {
-            showAlert(error.message, 'error');
-            btn.disabled = false; btn.textContent = 'Create Account';
-            return;
-        }
-
-        // 2. Create Profile in Database
-        const { error: profileError } = await sbClient
-            .from('profiles')
-            .insert([{ id: data.user.id, full_name: name, role: 'user', email: email }]);
-
-        if (profileError) {
-            console.error(profileError); // Log error but don't stop flow
-        }
-
-        showAlert('✅ Account created! Logging you in...', 'success');
-        setTimeout(() => { window.location.href = 'user-dashboard.html'; }, 1500);
-    }
-
-    // --- C. GOOGLE LOGIN ---
-    async function googleSignIn() {
-        const { error } = await sbClient.auth.signInWithOAuth({
-            provider: 'google',
-            options: {
-                redirectTo: window.location.href // Comes back to this page
+        // --- UI FUNCTIONS ---
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            document.querySelectorAll('.auth-form').forEach(form => form.classList.remove('active'));
+            
+            if (tab === 'login') {
+                document.getElementById('loginForm').classList.add('active');
+                document.querySelector('.auth-header h2').textContent = 'Welcome Back';
+            } else {
+                document.getElementById('signupForm').classList.add('active');
+                document.querySelector('.auth-header h2').textContent = 'Create Account';
             }
-        });
-        if (error) showAlert(error.message, 'error');
-    }
-
-    // --- D. CHECK ROLE & REDIRECT ---
-    async function checkRoleAndRedirect(userId) {
-        const { data, error } = await sbClient
-            .from('profiles')
-            .select('role')
-            .eq('id', userId)
-            .single();
-
-        // If profile doesn't exist (e.g., first time Google Login)
-        if (!data) {
-            await createGoogleUserProfile(); // Create it now
-            return;
+            hideAlert();
         }
 
-        const role = data.role;
-        showAlert(`✅ Welcome! Redirecting...`, 'success');
+        function goBack() { window.history.back(); }
 
-        setTimeout(() => {
-            if (role === 'admin') window.location.href = 'admin-dashboard.html';
-            else if (role === 'worker') window.location.href = 'worker-dashboard.html';
-            else if (role === 'loader') window.location.href = 'loader-dashboard.html';
-            else window.location.href = 'user-dashboard.html'; // Default Customer
-        }, 1000);
-    }
+        function showAlert(message, type) {
+            const alert = document.getElementById('authAlert');
+            alert.className = `alert alert-${type} show`;
+            alert.textContent = message;
+        }
 
-    // --- E. HANDLE GOOGLE RETURN (First Time) ---
-    async function createGoogleUserProfile() {
-        const { data: { user } } = await sbClient.auth.getUser();
-        
-        if (user) {
-            // Insert into profiles table
-            const { error } = await sbClient
+        function hideAlert() { document.getElementById('authAlert').classList.remove('show'); }
+
+        // --- AUTH LOGIC ---
+        async function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const btn = document.getElementById('loginBtn');
+
+            btn.disabled = true; btn.textContent = 'Signing In...';
+
+            try {
+                const { data, error } = await sbClient.auth.signInWithPassword({ email, password });
+                if (error) throw error;
+                await checkRoleAndRedirect(data.user.id);
+            } catch (error) {
+                showAlert(error.message, 'error');
+                btn.disabled = false; btn.textContent = 'Sign In';
+            }
+        }
+
+        async function handleSignup(event) {
+            event.preventDefault();
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            const confirmPassword = document.getElementById('signupConfirmPassword').value;
+            const btn = document.getElementById('signupBtn');
+
+            if (password !== confirmPassword) { showAlert('❌ Passwords do not match', 'error'); return; }
+
+            btn.disabled = true; btn.textContent = 'Creating...';
+
+            try {
+                const { data, error } = await sbClient.auth.signUp({ 
+                    email, 
+                    password,
+                    options: { data: { full_name: name } } // Save name to metadata
+                });
+                if (error) throw error;
+
+                // Create Profile
+                await sbClient.from('profiles').insert([{ id: data.user.id, full_name: name, role: 'user', email: email }]);
+
+                showAlert('✅ Account created! Logging in...', 'success');
+                setTimeout(() => { window.location.href = 'index.html'; }, 1500); // Redirect to Home
+            } catch (error) {
+                showAlert(error.message, 'error');
+                btn.disabled = false; btn.textContent = 'Create Account';
+            }
+        }
+
+        async function googleSignIn() {
+            const { error } = await sbClient.auth.signInWithOAuth({
+                provider: 'google',
+                options: { redirectTo: window.location.href }
+            });
+            if (error) showAlert(error.message, 'error');
+        }
+
+        async function checkRoleAndRedirect(userId) {
+            const { data, error } = await sbClient
                 .from('profiles')
-                .insert([{ 
+                .select('role')
+                .eq('id', userId)
+                .single();
+
+            // If new Google user (no profile yet)
+            if (!data) {
+                await createGoogleProfile();
+                return;
+            }
+
+            const role = data.role;
+            showAlert(`✅ Verified. Welcome back!`, 'success');
+
+            setTimeout(() => {
+                if (role === 'admin') window.location.href = 'admin-dashboard.html';
+                else if (role === 'worker') window.location.href = 'worker-dashboard.html';
+                else if (role === 'loader') window.location.href = 'loader-dashboard.html';
+                else window.location.href = 'index.html'; // <--- FIXED: Customers go to Home Page
+            }, 1000);
+        }
+
+        async function createGoogleProfile() {
+            const { data: { user } } = await sbClient.auth.getUser();
+            if (user) {
+                await sbClient.from('profiles').insert([{ 
                     id: user.id, 
                     full_name: user.user_metadata.full_name || 'Google User', 
                     role: 'user', 
                     email: user.email 
                 }]);
-            
-            // Redirect to user dashboard
-            window.location.href = 'user-dashboard.html';
+                window.location.href = 'index.html'; // Redirect to Home
+            }
         }
-    }
 
-    // --- F. CHECK SESSION ON LOAD ---
-    (async function checkSession() {
-        const { data } = await sbClient.auth.getSession();
-        if (data.session) {
-            // If logged in, verify role and move them
-            checkRoleAndRedirect(data.session.user.id);
+        async function showForgotPassword() {
+            const email = document.getElementById('loginEmail').value;
+            if (!email) { showAlert('Please enter email first', 'error'); return; }
+            const { error } = await sbClient.auth.resetPasswordForEmail(email);
+            if (error) showAlert(error.message, 'error');
+            else showAlert('✅ Reset email sent!', 'success');
         }
-    })();
-</script>
+
+        // Check session on load (Handle Google Return)
+        (async function checkSession() {
+            const { data } = await sbClient.auth.getSession();
+            if (data.session) {
+                checkRoleAndRedirect(data.session.user.id);
+            }
+        })();
+    </script>
 
 </body>
 </html>
