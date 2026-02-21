@@ -184,7 +184,6 @@
             </form>
         </div>
     </div>
-
     <script>
         const supabaseUrl = 'https://jjseffkbreruegudlmnd.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impqc2VmZmticmVydWVndWRsbW5kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxOTMwMTEsImV4cCI6MjA4MTc2OTAxMX0.xrCWARm6FbW-U98Qs13mMvlCeBiQWgmD73qverF7Brk';
@@ -209,7 +208,7 @@
         // Tab switch
         function switchTab(tab, btn) {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
+            if(btn) btn.classList.add('active');
             document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
             if (tab === 'login') {
                 document.getElementById('loginForm').classList.add('active');
@@ -239,7 +238,9 @@
         }
         function hideAlert() { document.getElementById('authAlert').classList.remove('show'); }
 
-        // Login
+        // ==========================================
+        // LOGIN
+        // ==========================================
         async function handleLogin(e) {
             e.preventDefault();
             const email = document.getElementById('loginEmail').value.trim();
@@ -247,30 +248,17 @@
             const btn = document.getElementById('loginBtn');
 
             if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-                showAlert('❌ Please enter a valid email address (e.g. name@example.com)', 'error'); return;
+                showAlert('❌ Please enter a valid email address', 'error'); return;
             }
             btn.disabled = true; btn.textContent = 'Signing In...';
+            
             try {
                 const { data, error } = await sbClient.auth.signInWithPassword({ email, password });
                 if (error) throw error;
+                
                 showAlert('✅ Login successful! Redirecting...', 'success');
-
-                // Restore cart from Supabase → merge with any local items
-                try {
-                    const { data: profile } = await sbClient
-                        .from('profiles').select('cart').eq('id', data.user.id).single();
-                    const cloudCart = (profile && Array.isArray(profile.cart)) ? profile.cart : [];
-                    const localCart = JSON.parse(localStorage.getItem('cart') || '[]');
-
-                    if (cloudCart.length > 0) {
-                        // Cloud has items → use cloud as source of truth
-                        localStorage.setItem('cart', JSON.stringify(cloudCart));
-                    } else if (localCart.length > 0) {
-                        // Cloud empty, local has items → push local to cloud
-                        await sbClient.from('profiles').update({ cart: localCart }).eq('id', data.user.id);
-                    }
-                } catch (cartErr) { console.warn('Cart sync on login:', cartErr.message); }
-
+                
+                // Route user and sync their exact cart
                 await checkRoleAndRedirect(data.user.id);
             } catch (err) {
                 let msg = err.message;
@@ -280,20 +268,23 @@
                     msg = '📧 Email not verified. Please contact support.';
                 else if (msg.includes('Too many requests'))
                     msg = '⏳ Too many attempts. Please wait a moment.';
+                
                 showAlert(msg, 'error');
                 btn.disabled = false; btn.textContent = 'Sign In';
             }
         }
 
-        // Signup — saves name, phone, address to profiles table
+        // ==========================================
+        // SIGNUP
+        // ==========================================
         async function handleSignup(e) {
             e.preventDefault();
             const name     = document.getElementById('signupName').value.trim();
             const email    = document.getElementById('signupEmail').value.trim();
             const password = document.getElementById('signupPassword').value;
             const confirm  = document.getElementById('signupConfirmPassword').value;
-            const phone    = document.getElementById('signupPhone').value.trim();
-            const address  = document.getElementById('signupAddress').value.trim();
+            const phone    = document.getElementById('signupPhone') ? document.getElementById('signupPhone').value.trim() : null;
+            const address  = document.getElementById('signupAddress') ? document.getElementById('signupAddress').value.trim() : null;
             const btn = document.getElementById('signupBtn');
 
             if (!name) { showAlert('❌ Please enter your full name.', 'error'); return; }
@@ -302,40 +293,39 @@
             if (password !== confirm) { showAlert('❌ Passwords do not match.', 'error'); return; }
 
             btn.disabled = true; btn.textContent = 'Creating Account...';
+            
             try {
                 const { data, error } = await sbClient.auth.signUp({
                     email, password, options: { data: { full_name: name } }
                 });
                 if (error) throw error;
 
-                // Auto sign-in (requires email confirmation OFF in Supabase dashboard)
+                // Auto sign-in
                 const { data: loginData, error: loginErr } = await sbClient.auth.signInWithPassword({ email, password });
+                
                 if (loginErr || !loginData.session) {
-                    // Still try to save profile even if auto-login fails
                     await sbClient.from('profiles').upsert([{
                         id: data.user.id,
                         full_name: name, email: email,
-                        phone: phone || null, address: address || null,
-                        role: 'user', updated_at: new Date().toISOString()
+                        phone: phone, address: address,
+                        role: 'user', cart: [] // Force empty cart for new users
                     }]);
-                    showAlert('✅ Account created! Go to Supabase Dashboard → Auth → Email → turn OFF "Confirm email". Then log in.', 'success');
+                    showAlert('✅ Account created! Please log in.', 'success');
                     btn.disabled = false; btn.textContent = 'Create Account';
-                    switchTabToLogin(); return;
+                    switchTabToLogin(); 
+                    return;
                 }
 
-                // Save full profile with phone & address AFTER successful sign-in
+                // Save full profile
                 await sbClient.from('profiles').upsert([{
                     id: loginData.user.id,
                     full_name: name, email: email,
-                    phone: phone || null, address: address || null,
-                    role: 'user', updated_at: new Date().toISOString()
+                    phone: phone, address: address,
+                    role: 'user', cart: [] // Force empty cart for new users
                 }]);
 
-                // Sync any localStorage cart items to Supabase for the new user
-                const localCart = JSON.parse(localStorage.getItem('cart') || '[]');
-                if (localCart.length > 0) {
-                    await sbClient.from('profiles').update({ cart: localCart }).eq('id', loginData.user.id);
-                }
+                // Wipe browser cart clean for the new user
+                localStorage.setItem('cart', '[]');
 
                 showAlert('🎉 Welcome to Sai Balaji Tiles!', 'success');
                 setTimeout(() => { window.location.href = 'index.html'; }, 1200);
@@ -357,8 +347,10 @@
             if (error) showAlert(error.message, 'error');
         }
 
+        // ==========================================
+        // REDIRECT & STRICT CART SYNC
+        // ==========================================
         async function checkRoleAndRedirect(userId) {
-            // 1. Fetch user profile AND their saved cart
             const { data, error } = await sbClient
                 .from('profiles')
                 .select('role, cart')
@@ -367,24 +359,26 @@
 
             if (error || !data) {
                 console.warn('Profile not found, defaulting to user.');
-                window.location.href = 'user-dashboard.html';
+                window.location.href = 'index.html';
                 return;
             }
 
-            // 2. Download the saved cart from Database to the Browser
+            // --- STRICT CART SYNC ---
+            // If the user has a cart in the database, put it in the browser
             if (data.cart && data.cart.length > 0) {
                 localStorage.setItem('cart', JSON.stringify(data.cart));
+            } else {
+                // If the user's database cart is EMPTY, force the browser cart to be empty!
+                localStorage.setItem('cart', '[]');
             }
 
             const role = data.role;
-            showAlert(`✅ Verified. Welcome back!`, 'success');
-
             setTimeout(() => {
                 if (role === 'admin') window.location.href = 'admin-dashboard.html';
                 else if (role === 'worker') window.location.href = 'worker-dashboard.html';
                 else if (role === 'loader') window.location.href = 'loader-dashboard.html';
-                else window.location.href = 'index.html'; // Customers go to Home Page
-            }, 1000);
+                else window.location.href = 'index.html'; 
+            }, 500);
         }
 
         async function createGoogleProfile() {
@@ -392,8 +386,11 @@
             if (user) {
                 await sbClient.from('profiles').upsert([{
                     id: user.id, full_name: user.user_metadata.full_name || 'Customer',
-                    role: 'user', email: user.email
+                    role: 'user', email: user.email, cart: []
                 }]);
+                
+                // Clear browser cart for new Google user
+                localStorage.setItem('cart', '[]');
                 window.location.href = 'index.html';
             }
         }
@@ -414,5 +411,6 @@
             if (data.session) checkRoleAndRedirect(data.session.user.id);
         })();
     </script>
+
 </body>
 </html>
