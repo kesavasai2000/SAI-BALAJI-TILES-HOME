@@ -254,6 +254,23 @@
                 const { data, error } = await sbClient.auth.signInWithPassword({ email, password });
                 if (error) throw error;
                 showAlert('✅ Login successful! Redirecting...', 'success');
+
+                // Restore cart from Supabase → merge with any local items
+                try {
+                    const { data: profile } = await sbClient
+                        .from('profiles').select('cart').eq('id', data.user.id).single();
+                    const cloudCart = (profile && Array.isArray(profile.cart)) ? profile.cart : [];
+                    const localCart = JSON.parse(localStorage.getItem('cart') || '[]');
+
+                    if (cloudCart.length > 0) {
+                        // Cloud has items → use cloud as source of truth
+                        localStorage.setItem('cart', JSON.stringify(cloudCart));
+                    } else if (localCart.length > 0) {
+                        // Cloud empty, local has items → push local to cloud
+                        await sbClient.from('profiles').update({ cart: localCart }).eq('id', data.user.id);
+                    }
+                } catch (cartErr) { console.warn('Cart sync on login:', cartErr.message); }
+
                 await checkRoleAndRedirect(data.user.id);
             } catch (err) {
                 let msg = err.message;
@@ -291,24 +308,35 @@
                 });
                 if (error) throw error;
 
-                // Save full profile with phone & address
-                await sbClient.from('profiles').upsert([{
-                    id: data.user.id,
-                    full_name: name,
-                    email: email,
-                    phone: phone || null,
-                    address: address || null,
-                    role: 'user',
-                    updated_at: new Date()
-                }]);
-
                 // Auto sign-in (requires email confirmation OFF in Supabase dashboard)
                 const { data: loginData, error: loginErr } = await sbClient.auth.signInWithPassword({ email, password });
                 if (loginErr || !loginData.session) {
+                    // Still try to save profile even if auto-login fails
+                    await sbClient.from('profiles').upsert([{
+                        id: data.user.id,
+                        full_name: name, email: email,
+                        phone: phone || null, address: address || null,
+                        role: 'user', updated_at: new Date().toISOString()
+                    }]);
                     showAlert('✅ Account created! Go to Supabase Dashboard → Auth → Email → turn OFF "Confirm email". Then log in.', 'success');
                     btn.disabled = false; btn.textContent = 'Create Account';
                     switchTabToLogin(); return;
                 }
+
+                // Save full profile with phone & address AFTER successful sign-in
+                await sbClient.from('profiles').upsert([{
+                    id: loginData.user.id,
+                    full_name: name, email: email,
+                    phone: phone || null, address: address || null,
+                    role: 'user', updated_at: new Date().toISOString()
+                }]);
+
+                // Sync any localStorage cart items to Supabase for the new user
+                const localCart = JSON.parse(localStorage.getItem('cart') || '[]');
+                if (localCart.length > 0) {
+                    await sbClient.from('profiles').update({ cart: localCart }).eq('id', loginData.user.id);
+                }
+
                 showAlert('🎉 Welcome to Sai Balaji Tiles!', 'success');
                 setTimeout(() => { window.location.href = 'index.html'; }, 1200);
             } catch (err) {

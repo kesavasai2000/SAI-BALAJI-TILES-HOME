@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -9,62 +10,162 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 
   <style>
-    :root { --accent: #22d3ee; --card-bg: rgba(17,24,39,0.7); }
-    html,body { 
-        background-color: #000000;
-        /* Deep Space Radial Gradient */
-        background-image: radial-gradient(circle at 50% 50%, #111111 0%, #000000 100%);
-        overflow-x: hidden; 
-        color: #e2e8f0; /* Soft White Text */
+    :root {
+      --accent: #22d3ee;
+      --card-bg: rgba(17, 24, 39, 0.7);
     }
-        @keyframes gradientBG { 0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%} }
 
-    .stars-container { position: fixed; inset:0; pointer-events: none; z-index:-1; }
-    #page-main-content { padding-top: 5.25rem; position: relative; z-index: 1; }
-    .card { background: var(--card-bg); border:1px solid rgba(148,163,184,0.06); border-radius: 12px; padding:1rem; box-shadow: 0 10px 30px rgba(2,6,23,0.6); }
+    html,
+    body {
+      background-color: #000000;
+      /* Deep Space Radial Gradient */
+      background-image: radial-gradient(circle at 50% 50%, #111111 0%, #000000 100%);
+      overflow-x: hidden;
+      color: #e2e8f0;
+      /* Soft White Text */
+    }
 
-    .thumbnail { width:84px; height:64px; object-fit:cover; border-radius:8px; border:2px solid rgba(107,114,128,0.15); cursor:pointer; }
-    .thumbnail-active { box-shadow: 0 0 0 3px rgba(34,211,238,0.13); border-color: var(--accent) !important; }
+    @keyframes gradientBG {
+      0% {
+        background-position: 0% 50%
+      }
 
-    .btn-theme-primary { display:inline-block; padding:.6rem 1rem; border-radius:10px; font-weight:600; border:2px solid rgba(6,182,212,0.9); color:rgba(7,17,38,1); background:var(--accent); cursor:pointer; }
-    .btn-theme-secondary { display:inline-block; padding:.45rem .9rem; border-radius:8px; border:1px solid rgba(99,102,241,0.6); color:#c7d2fe; background:transparent; cursor:pointer; }
+      50% {
+        background-position: 100% 50%
+      }
+
+      100% {
+        background-position: 0% 50%
+      }
+    }
+
+    .stars-container {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    #page-main-content {
+      padding-top: 5.25rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid rgba(148, 163, 184, 0.06);
+      border-radius: 12px;
+      padding: 1rem;
+      box-shadow: 0 10px 30px rgba(2, 6, 23, 0.6);
+    }
+
+    .thumbnail {
+      width: 84px;
+      height: 64px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 2px solid rgba(107, 114, 128, 0.15);
+      cursor: pointer;
+    }
+
+    .thumbnail-active {
+      box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.13);
+      border-color: var(--accent) !important;
+    }
+
+    .btn-theme-primary {
+      display: inline-block;
+      padding: .6rem 1rem;
+      border-radius: 10px;
+      font-weight: 600;
+      border: 2px solid rgba(6, 182, 212, 0.9);
+      color: rgba(7, 17, 38, 1);
+      background: var(--accent);
+      cursor: pointer;
+    }
+
+    .btn-theme-secondary {
+      display: inline-block;
+      padding: .45rem .9rem;
+      border-radius: 8px;
+      border: 1px solid rgba(99, 102, 241, 0.6);
+      color: #c7d2fe;
+      background: transparent;
+      cursor: pointer;
+    }
 
     #site-snackbar {
-      position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%) translateY(20px);
-      background: rgba(15,23,42,0.96); color: #e6f9ff; padding: 0.6rem 1rem; border-radius: 10px;
-      box-shadow: 0 10px 30px rgba(2,6,23,0.6); opacity: 0; pointer-events: none;
-      transition: transform .25s ease, opacity .25s ease; z-index: 99999;
-      display:flex; align-items:center; gap:0.6rem;
+      position: fixed;
+      left: 50%;
+      bottom: 28px;
+      transform: translateX(-50%) translateY(20px);
+      background: rgba(15, 23, 42, 0.96);
+      color: #e6f9ff;
+      padding: 0.6rem 1rem;
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(2, 6, 23, 0.6);
+      opacity: 0;
+      pointer-events: none;
+      transition: transform .25s ease, opacity .25s ease;
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
     }
-    #site-snackbar.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
-    #site-snackbar.success { background: rgba(2,113,103,0.95); color: #e6fff9; }
-    #site-snackbar.error { background: rgba(127,29,29,0.95); color: #fff3f3; }
 
-    @media (max-width:640px) { .thumbnail { width:72px; height:56px; } }
+    #site-snackbar.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+      pointer-events: auto;
+    }
+
+    #site-snackbar.success {
+      background: rgba(2, 113, 103, 0.95);
+      color: #e6fff9;
+    }
+
+    #site-snackbar.error {
+      background: rgba(127, 29, 29, 0.95);
+      color: #fff3f3;
+    }
+
+    @media (max-width:640px) {
+      .thumbnail {
+        width: 72px;
+        height: 56px;
+      }
+    }
   </style>
 </head>
+
 <body>
 
   <div id="stars-bg-global" class="stars-container"></div>
 
-  <header id="main-header" class="fixed w-full top-0 left-0 bg-gray-900/80 backdrop-blur-md shadow-2xl flex items-center justify-between p-3 sm:p-4 z-40 border-b border-cyan-500/30">
-    <div class="flex-none"><button id="toggle-btn-detail" aria-label="Toggle menu" aria-expanded="false" class="text-2xl text-cyan-400 hover:text-cyan-300">☰</button></div>
-    <div class="flex-grow text-center px-2"><a href="index.html" class="text-xl font-bold text-cyan-1 truncate hover:text-cyan-10">SAI BALAJI TILES & SANITARYWARE</a></div>
+  <header id="main-header"
+    class="fixed w-full top-0 left-0 bg-gray-900/80 backdrop-blur-md shadow-2xl flex items-center justify-between p-3 sm:p-4 z-40 border-b border-cyan-500/30">
+    <div class="flex-none"><button id="toggle-btn-detail" aria-label="Toggle menu" aria-expanded="false"
+        class="text-2xl text-cyan-400 hover:text-cyan-300">☰</button></div>
+    <div class="flex-grow text-center px-2"><a href="index.html"
+        class="text-xl font-bold text-cyan-1 truncate hover:text-cyan-10">SAI BALAJI TILES & SANITARYWARE</a></div>
     <div class="flex-none"><a href="cart.html" class="text-cyan-400">🛒 <span id="cart-count-detail">0</span></a></div>
   </header>
 
-  <nav id="main-navbar-detail" class="navbar fixed top-0 left-0 w-72 h-screen bg-gray-900/80 backdrop-blur-md shadow-lg transform -translate-x-full transition-transform duration-300 z-30 border-r border-cyan-500/30">
+  <nav id="main-navbar-detail"
+    class="navbar fixed top-0 left-0 w-72 h-screen bg-gray-900/80 backdrop-blur-md shadow-lg transform -translate-x-full transition-transform duration-300 z-30 border-r border-cyan-500/30">
     <ul class="nav-menu mt-20 space-y-4 p-4">
       <li><a href="index.html#home" class="block py-2 text-indigo-300 hover:text-indigo-200">Home</a></li>
       <li><a href="brands.html" class="block py-2 text-indigo-300 hover:text-indigo-200">Brands</a></li>
-      <li><a href="cart.html" class="block py-2 text-indigo-300 hover:text-indigo-200">Cart (<span id="cart-count-nav">0</span>)</a></li>
+      <li><a href="cart.html" class="block py-2 text-indigo-300 hover:text-indigo-200">Cart (<span
+            id="cart-count-nav">0</span>)</a></li>
     </ul>
   </nav>
 
   <main id="page-main-content" class="relative z-10 pt-20">
     <section class="tile-detail py-12 bg-transparent min-h-screen">
       <div class="container mx-auto px-4">
-        
+
         <!-- Breadcrumb -->
         <div class="mb-6">
           <a href="brands.html" class="text-cyan-400 hover:text-cyan-300">← Back to Brands</a>
@@ -76,25 +177,33 @@
         <div id="tileViewContainer" class="card">
           <div id="view-image-gallery" class="tile-view-step">
             <div class="main-image-container mb-6 cursor-pointer" id="gallery-image-interactive-area">
-              <img id="detail-image" src="" alt="Main Tile Image" class="w-full max-w-xl mx-auto rounded-lg shadow-2xl object-cover h-96 border-2 border-gray-600">
+              <img id="detail-image" src="" alt="Main Tile Image"
+                class="w-full max-w-xl mx-auto rounded-lg shadow-2xl object-cover h-96 border-2 border-gray-600">
             </div>
             <div id="related-images-list" class="flex justify-center gap-3 flex-wrap mb-8"></div>
-            <p class="text-center text-sm text-gray-400 mb-4">Click thumbnail to change image. Swipe or use buttons for more details.</p>
+            <p class="text-center text-sm text-gray-400 mb-4">Click thumbnail to change image. Swipe or use buttons for
+              more details.</p>
           </div>
 
           <div id="view-tile-specs" class="tile-view-step hidden">
             <h3 class="text-2xl font-semibold text-indigo-300 mb-6 text-center">Specifications & Details</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
               <div class="flex flex-col items-center md:items-start">
-                <img id="specs-tile-thumbnail" src="" alt="Tile Thumbnail" class="w-56 h-56 mx-auto md:mx-0 rounded-md shadow-lg border-2 border-gray-600 mb-4 object-cover">
+                <img id="specs-tile-thumbnail" src="" alt="Tile Thumbnail"
+                  class="w-56 h-56 mx-auto md:mx-0 rounded-md shadow-lg border-2 border-gray-600 mb-4 object-cover">
                 <p id="detail-description" class="text-base text-gray-300 leading-relaxed text-center md:text-left"></p>
               </div>
               <div class="specs-list space-y-2 text-base bg-gray-700/50 p-4 rounded-md">
-                <p><strong class="text-indigo-300 w-28 inline-block">Brand:</strong> <span id="spec-brand" class="text-gray-200"></span></p>
-                <p><strong class="text-indigo-300 w-28 inline-block">Name:</strong> <span id="spec-title" class="text-gray-200"></span></p>
-                <p><strong class="text-indigo-300 w-28 inline-block">Size:</strong> <span id="spec-size" class="text-gray-200"></span></p>
-                <p><strong class="text-indigo-300 w-28 inline-block">Category:</strong> <span id="spec-category" class="text-gray-200"></span></p>
-                <p class="mt-4"><strong class="text-cyan-400 text-lg w-28 inline-block">Price:</strong> <span id="spec-price" class="text-lg text-cyan-400 font-semibold"></span></p>
+                <p><strong class="text-indigo-300 w-28 inline-block">Brand:</strong> <span id="spec-brand"
+                    class="text-gray-200"></span></p>
+                <p><strong class="text-indigo-300 w-28 inline-block">Name:</strong> <span id="spec-title"
+                    class="text-gray-200"></span></p>
+                <p><strong class="text-indigo-300 w-28 inline-block">Size:</strong> <span id="spec-size"
+                    class="text-gray-200"></span></p>
+                <p><strong class="text-indigo-300 w-28 inline-block">Category:</strong> <span id="spec-category"
+                    class="text-gray-200"></span></p>
+                <p class="mt-4"><strong class="text-cyan-400 text-lg w-28 inline-block">Price:</strong> <span
+                    id="spec-price" class="text-lg text-cyan-400 font-semibold"></span></p>
                 <div class="mt-8 pt-6 border-t border-gray-600/50 flex flex-col items-center gap-4">
                   <button id="add-to-cart-btn" class="btn-theme-primary w-full max-w-xs text-base">Add to Cart</button>
                   <a href="cart.html" class="btn-theme-secondary w-full max-w-xs text-center text-sm">View Cart</a>
@@ -105,7 +214,8 @@
 
           <div id="view-ar-room" class="tile-view-step hidden text-center">
             <h3 class="text-2xl font-semibold text-indigo-300 mb-4">View Tiles in AR</h3>
-            <img id="ar-tile-thumbnail" src="" alt="Tile for AR" class="w-56 h-56 mx-auto rounded-md shadow-lg border-2 border-gray-600 mb-6 object-cover">
+            <img id="ar-tile-thumbnail" src="" alt="Tile for AR"
+              class="w-56 h-56 mx-auto rounded-md shadow-lg border-2 border-gray-600 mb-6 object-cover">
             <div class="text-left bg-gray-700/30 p-4 rounded-md mb-6 max-w-lg mx-auto">
               <p class="text-sm text-indigo-200 font-semibold mb-2">📱 AR Experience:</p>
               <ul class="list-disc list-inside text-sm text-gray-300 space-y-1">
@@ -115,12 +225,15 @@
                 <li>Tap to place tiles in your space</li>
               </ul>
             </div>
-            <a id="ar-launch-button" href="#" class="btn-theme-primary text-lg" target="_blank" rel="noopener noreferrer">🚀 Launch AR Viewer</a>
+            <a id="ar-launch-button" href="#" class="btn-theme-primary text-lg" target="_blank"
+              rel="noopener noreferrer">🚀 Launch AR Viewer</a>
           </div>
 
-          <div id="slider-navigation-controls" class="mt-8 flex justify-between items-center border-t border-gray-700/50 pt-6">
+          <div id="slider-navigation-controls"
+            class="mt-8 flex justify-between items-center border-t border-gray-700/50 pt-6">
             <button id="prevViewBtn" class="btn-theme-secondary text-sm">← Previous</button>
-            <div class="view-step-indicator text-sm text-indigo-300">Step <span id="currentViewStep">1</span> of <span id="totalViewSteps">3</span></div>
+            <div class="view-step-indicator text-sm text-indigo-300">Step <span id="currentViewStep">1</span> of <span
+                id="totalViewSteps">3</span></div>
             <button id="nextViewBtn" class="btn-theme-primary text-sm">Next →</button>
           </div>
         </div>
@@ -138,7 +251,7 @@
 
   <!-- 1. Include Supabase SDK -->
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-  
+
   <!-- 2. Include Header JS (for stars/navbar) -->
   <script src="header.js"></script>
 
@@ -154,7 +267,7 @@
     document.addEventListener('DOMContentLoaded', () => {
       // --- 1. SETUP TILE DATA ---
       const storedTile = JSON.parse(localStorage.getItem('selectedTile') || '{}');
-      
+
       const defaultTile = {
         id: 'default',
         name: 'Premium Tile',
@@ -188,8 +301,8 @@
         if (index < 0 || index >= totalViews) return;
         viewSteps.forEach((step, i) => step.classList.toggle('hidden', i !== index));
         currentViewIndex = index;
-        if(currentViewStepEl) currentViewStepEl.textContent = index + 1;
-        if(totalViewStepsEl) totalViewStepsEl.textContent = totalViews;
+        if (currentViewStepEl) currentViewStepEl.textContent = index + 1;
+        if (totalViewStepsEl) totalViewStepsEl.textContent = totalViews;
         if (prevViewBtn) prevViewBtn.disabled = (index === 0);
         if (nextViewBtn) nextViewBtn.disabled = (index === totalViews - 1);
       }
@@ -228,7 +341,7 @@
         currentTile.related.forEach((imgSrc, idx) => {
           const img = document.createElement('img');
           img.src = imgSrc;
-          img.alt = `${currentTile.name} thumbnail ${idx+1}`;
+          img.alt = `${currentTile.name} thumbnail ${idx + 1}`;
           img.className = 'thumbnail' + (idx === 0 ? ' thumbnail-active' : '');
           img.addEventListener('click', () => {
             const main = document.getElementById('detail-image');
@@ -263,14 +376,14 @@
       const addBtn = document.getElementById('add-to-cart-btn');
       if (addBtn) {
         addBtn.addEventListener('click', async () => {
-          
+
           // A. CHECK LOGIN STATUS
           const { data: { session } } = await sbClient.auth.getSession();
 
           if (!session) {
             // If not logged in, ask to login
-            if(confirm("Please login to add items to your cart. Go to Login page?")) {
-               window.location.href = 'auth.html';
+            if (confirm("Please login to add items to your cart. Go to Login page?")) {
+              window.location.href = 'auth.html';
             }
             return; // Stop here
           }
@@ -335,7 +448,22 @@
       }
 
       window.showSnackbar = showSnackbar;
+
+      // Restore cart from cloud on page load
+      async function restoreCartFromCloud() {
+        const { data: { session } } = await sbClient.auth.getSession();
+        if (!session) return;
+        const { data } = await sbClient.from('profiles').select('cart').eq('id', session.user.id).single();
+        if (data && Array.isArray(data.cart) && data.cart.length > 0) {
+          localStorage.setItem('cart', JSON.stringify(data.cart));
+          if (window.headerShared && window.headerShared.updateCartCount) {
+            window.headerShared.updateCartCount();
+          }
+        }
+      }
+      restoreCartFromCloud();
     });
   </script>
 </body>
+
 </html>

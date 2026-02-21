@@ -1,16 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sai Balaji Tiles Home</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <style>
         /* 1. BASE */
-        html, body { height: 100%; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
-        html { scroll-behavior: smooth; }
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
 
         /* 2. DARK UNIVERSE BACKGROUND */
         body {
@@ -21,86 +31,198 @@
         }
 
         /* 3. STARS */
-        .stars-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: -1; }
-        .star {
-            position: absolute; background-color: white; border-radius: 50%; opacity: 0.8;
-            animation: twinkle 4s infinite ease-in-out;
-            box-shadow: 0 0 4px rgba(255,255,255,0.8);
+        .stars-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: -1;
         }
-        @keyframes twinkle { 0%, 100% { opacity: 0.3; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.2); } }
+
+        .star {
+            position: absolute;
+            background-color: white;
+            border-radius: 50%;
+            opacity: 0.8;
+            animation: twinkle 4s infinite ease-in-out;
+            box-shadow: 0 0 4px rgba(255, 255, 255, 0.8);
+        }
+
+        @keyframes twinkle {
+
+            0%,
+            100% {
+                opacity: 0.3;
+                transform: scale(0.8);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.2);
+            }
+        }
 
         /* 4. GLASS CARD */
         .glass-card {
-            background: rgba(20,20,20,0.6); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 8px 32px 0 rgba(0,0,0,0.5);
+            background: rgba(20, 20, 20, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
             transition: all 0.3s ease;
         }
+
         .glass-card:hover {
-            border-color: rgba(34,211,238,0.5); transform: translateY(-5px);
-            box-shadow: 0 10px 40px rgba(34,211,238,0.1);
+            border-color: rgba(34, 211, 238, 0.5);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(34, 211, 238, 0.1);
         }
 
         /* 5. SPLASH SCREEN */
         #splash-screen {
-            z-index: 99999 !important; position: fixed; top: 0; left: 0;
-            width: 100%; height: 100%; background-color: #000;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 99999 !important;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             transition: opacity 0.8s ease-out, visibility 0.8s;
         }
-        .splash-content { opacity: 0; transform: scale(0.9); transition: opacity 1s ease-out, transform 1s ease-out; }
-        .splash-content.visible { opacity: 1; transform: scale(1); }
+
+        .splash-content {
+            opacity: 0;
+            transform: scale(0.9);
+            transition: opacity 1s ease-out, transform 1s ease-out;
+        }
+
+        .splash-content.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
 
         /* 6. ANIMATIONS */
-        .animate-on-scroll { opacity: 0; transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
-        .init-slide-up { transform: translateY(40px); }
-        .init-fade-in  { transform: translateY(20px); }
-        .animate-on-scroll.is-visible { opacity: 1; transform: translateY(0); }
+        .animate-on-scroll {
+            opacity: 0;
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+
+        .init-slide-up {
+            transform: translateY(40px);
+        }
+
+        .init-fade-in {
+            transform: translateY(20px);
+        }
+
+        .animate-on-scroll.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
 
         /* 7. NAVBAR */
-        .navbar.translate-x-0 { transform: translateX(0%); }
-        .navbar.-translate-x-full { transform: translateX(-100%); }
+        .navbar.translate-x-0 {
+            transform: translateX(0%);
+        }
+
+        .navbar.-translate-x-full {
+            transform: translateX(-100%);
+        }
 
         /* 8. HERO SLIDER */
-        .hero-slide { position: absolute; inset: 0; opacity: 0; transition: opacity 1.5s ease-in-out; z-index: -1; }
-        .hero-slide.active { opacity: 1; z-index: 0; }
-        .hero-content { z-index: 10; position: relative; }
-        .hero-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,0.2), #000000); z-index: 1; }
+        .hero-slide {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+            z-index: -1;
+        }
+
+        .hero-slide.active {
+            opacity: 1;
+            z-index: 0;
+        }
+
+        .hero-content {
+            z-index: 10;
+            position: relative;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.2), #000000);
+            z-index: 1;
+        }
 
         /* 9. HEADER SCROLL */
         .header-scrolled {
-            background-color: rgba(0,0,0,0.9) !important; backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            padding-top: 0.75rem !important; padding-bottom: 0.75rem !important;
+            background-color: rgba(0, 0, 0, 0.9) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 0.75rem !important;
+            padding-bottom: 0.75rem !important;
         }
 
         /* 10. BUTTONS */
         .btn-theme-primary {
-            display: inline-block; padding: 0.75rem 1.75rem; border-radius: 9999px;
-            font-weight: 600; font-size: 0.95rem;
+            display: inline-block;
+            padding: 0.75rem 1.75rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            font-size: 0.95rem;
             background: linear-gradient(to right, #06b6d4, #8b5cf6);
-            color: white; transition: all 0.3s ease-in-out; text-decoration: none;
-            box-shadow: 0 4px 15px rgba(6,182,212,0.2);
+            color: white;
+            transition: all 0.3s ease-in-out;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(6, 182, 212, 0.2);
         }
-        .btn-theme-primary:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(6,182,212,0.4); }
 
-        input, textarea {
-            color: #fff !important; background: rgba(255,255,255,0.05) !important;
-            border: 1px solid rgba(255,255,255,0.2) !important;
+        .btn-theme-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(6, 182, 212, 0.4);
         }
-        input::placeholder, textarea::placeholder { color: #aaa; }
-        .hidden { display: none !important; }
+
+        input,
+        textarea {
+            color: #fff !important;
+            background: rgba(255, 255, 255, 0.05) !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+            color: #aaa;
+        }
+
+        .hidden {
+            display: none !important;
+        }
 
         /* 11. HEADER AVATAR CIRCLE */
         #header-avatar {
-            display: inline-flex; align-items: center; justify-content: center;
-            width: 32px; height: 32px; border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
             background: linear-gradient(135deg, #06b6d4, #8b5cf6);
-            color: white; font-size: 13px; font-weight: 700;
-            box-shadow: 0 0 10px rgba(34,211,238,0.4);
+            color: white;
+            font-size: 13px;
+            font-weight: 700;
+            box-shadow: 0 0 10px rgba(34, 211, 238, 0.4);
             flex-shrink: 0;
         }
     </style>
 </head>
+
 <body class="bg-black text-gray-200">
 
     <div class="stars-container" id="stars-bg-global"></div>
@@ -110,7 +232,8 @@
     ============================== -->
     <div id="splash-screen">
         <img src="images/logo1.jpg" alt="Logo" class="w-3/4 sm:w-1/3 h-auto splash-content">
-        <h1 class="text-xl sm:text-3xl font-bold text-white mt-4 text-center splash-content" style="transition-delay: 0.3s;">
+        <h1 class="text-xl sm:text-3xl font-bold text-white mt-4 text-center splash-content"
+            style="transition-delay: 0.3s;">
             SAI BALAJI TILES &amp; SANITARYWARE
         </h1>
     </div>
@@ -121,7 +244,8 @@
     <div id="page-container" style="display: none; position: relative; min-height: 100vh;">
 
         <!-- ===== HEADER ===== -->
-        <header id="main-header" class="fixed w-full top-0 left-0 bg-transparent transition-all duration-300 flex items-center justify-between px-4 sm:px-6 py-5 z-50">
+        <header id="main-header"
+            class="fixed w-full top-0 left-0 bg-transparent transition-all duration-300 flex items-center justify-between px-4 sm:px-6 py-5 z-50">
 
             <!-- Hamburger menu button -->
             <div class="flex-none">
@@ -168,15 +292,20 @@
             class="navbar fixed top-0 left-0 w-64 h-screen bg-gray-900/90 backdrop-blur-md shadow-lg transform -translate-x-full transition-transform duration-300 z-40 border-r border-cyan-500/30">
             <div class="p-5 mt-20">
                 <ul class="space-y-4">
-                    <li><a href="#home"        class="block text-indigo-300 hover:text-white text-lg" onclick="toggleMenuIndex()">Home</a></li>
-                    <li><a href="#brands"      class="block text-indigo-300 hover:text-white text-lg" onclick="toggleMenuIndex()">Brands</a></li>
-                    <li><a href="#about"       class="block text-indigo-300 hover:text-white text-lg" onclick="toggleMenuIndex()">About Us</a></li>
-                    <li><a href="#collections" class="block text-indigo-300 hover:text-white text-lg" onclick="toggleMenuIndex()">Collections</a></li>
-                    <li><a href="#contact"     class="block text-indigo-300 hover:text-white text-lg" onclick="toggleMenuIndex()">Contact</a></li>
+                    <li><a href="#home" class="block text-indigo-300 hover:text-white text-lg"
+                            onclick="toggleMenuIndex()">Home</a></li>
+                    <li><a href="#brands" class="block text-indigo-300 hover:text-white text-lg"
+                            onclick="toggleMenuIndex()">Brands</a></li>
+                    <li><a href="#about" class="block text-indigo-300 hover:text-white text-lg"
+                            onclick="toggleMenuIndex()">About Us</a></li>
+                    <li><a href="#collections" class="block text-indigo-300 hover:text-white text-lg"
+                            onclick="toggleMenuIndex()">Collections</a></li>
+                    <li><a href="#contact" class="block text-indigo-300 hover:text-white text-lg"
+                            onclick="toggleMenuIndex()">Contact</a></li>
                     <!-- JS changes this to "My Profile" when logged in -->
                     <li id="nav-auth-item">
-                        <a href="auth.html" id="nav-auth-link"
-                            class="block text-cyan-400 font-bold mt-4" onclick="toggleMenuIndex()">Login / Sign Up</a>
+                        <a href="auth.html" id="nav-auth-link" class="block text-cyan-400 font-bold mt-4"
+                            onclick="toggleMenuIndex()">Login / Sign Up</a>
                     </li>
                 </ul>
             </div>
@@ -200,10 +329,12 @@
                     <div class="hero-overlay"></div>
                 </div>
                 <div class="hero-content text-center px-4 sm:px-6 relative z-10 animate-on-scroll init-slide-up">
-                    <h1 class="text-4xl sm:text-6xl md:text-7xl font-bold text-white mb-6 leading-tight drop-shadow-2xl">
+                    <h1
+                        class="text-4xl sm:text-6xl md:text-7xl font-bold text-white mb-6 leading-tight drop-shadow-2xl">
                         Welcome to Sai Balaji Tiles &amp; Sanitaryware
                     </h1>
-                    <p class="text-lg sm:text-2xl text-indigo-300 mb-10 font-light max-w-2xl mx-auto leading-relaxed drop-shadow-md">
+                    <p
+                        class="text-lg sm:text-2xl text-indigo-300 mb-10 font-light max-w-2xl mx-auto leading-relaxed drop-shadow-md">
                         Discover Elegance &amp; Durability for Your Spaces.
                     </p>
                     <a href="#brands"
@@ -222,15 +353,19 @@
                 </div>
                 <div class="container mx-auto px-4 text-center relative z-10">
                     <div class="mb-6">
-                        <span class="inline-block px-6 py-2 bg-cyan-400/20 text-cyan-400 rounded-full text-sm font-semibold mb-4 animate-pulse">
+                        <span
+                            class="inline-block px-6 py-2 bg-cyan-400/20 text-cyan-400 rounded-full text-sm font-semibold mb-4 animate-pulse">
                             ✨ PREMIUM QUALITY
                         </span>
                     </div>
-                    <h2 class="animate-on-scroll init-slide-up text-4xl sm:text-5xl lg:text-6xl font-extrabold mb-6 text-white drop-shadow-2xl">
+                    <h2
+                        class="animate-on-scroll init-slide-up text-4xl sm:text-5xl lg:text-6xl font-extrabold mb-6 text-white drop-shadow-2xl">
                         Our Premium Brands
                     </h2>
-                    <p class="animate-on-scroll init-fade-in text-lg sm:text-xl text-gray-200 mb-10 max-w-3xl mx-auto leading-relaxed" style="transition-delay:0.1s;">
-                        We partner with <strong class="text-cyan-400">India's leading tile manufacturers</strong> to bring you the finest quality and designs
+                    <p class="animate-on-scroll init-fade-in text-lg sm:text-xl text-gray-200 mb-10 max-w-3xl mx-auto leading-relaxed"
+                        style="transition-delay:0.1s;">
+                        We partner with <strong class="text-cyan-400">India's leading tile manufacturers</strong> to
+                        bring you the finest quality and designs
                     </p>
                     <div class="mb-16 animate-on-scroll init-fade-in" style="transition-delay:0.2s;">
                         <a href="brands.html"
@@ -240,35 +375,51 @@
                         </a>
                     </div>
                     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6 max-w-6xl mx-auto">
-                        <div class="bg-white p-4 rounded-xl shadow-lg hover:scale-105 transition transform flex items-center justify-center h-32">
+                        <div
+                            class="bg-white p-4 rounded-xl shadow-lg hover:scale-105 transition transform flex items-center justify-center h-32">
                             <img src="images/brands/kar.png" alt="Kajaria" class="max-h-20 max-w-full object-contain">
                         </div>
-                        <div class="bg-white p-4 rounded-xl shadow-lg hover:scale-105 transition transform flex items-center justify-center h-32">
+                        <div
+                            class="bg-white p-4 rounded-xl shadow-lg hover:scale-105 transition transform flex items-center justify-center h-32">
                             <img src="images/brands/brand2.png" alt="Qtone" class="max-h-20 max-w-full object-contain">
                         </div>
-                        <div class="bg-white p-4 rounded-xl shadow-lg hover:scale-105 transition transform flex items-center justify-center h-32">
-                            <img src="images/brands/Somany-logo.png" alt="Somany" class="max-h-20 max-w-full object-contain">
+                        <div
+                            class="bg-white p-4 rounded-xl shadow-lg hover:scale-105 transition transform flex items-center justify-center h-32">
+                            <img src="images/brands/Somany-logo.png" alt="Somany"
+                                class="max-h-20 max-w-full object-contain">
                         </div>
-                        <div class="bg-white p-4 rounded-xl shadow-lg hover:scale-105 transition transform flex items-center justify-center h-32">
+                        <div
+                            class="bg-white p-4 rounded-xl shadow-lg hover:scale-105 transition transform flex items-center justify-center h-32">
                             <img src="images/brands/itaca.png" alt="Itaca" class="max-h-20 max-w-full object-contain">
                         </div>
-                        <div class="bg-white p-4 rounded-xl shadow-lg hover:scale-105 transition transform flex items-center justify-center h-32">
-                            <img src="images/brands/colourtile.jpg" alt="Colortile" class="max-h-20 max-w-full object-contain">
+                        <div
+                            class="bg-white p-4 rounded-xl shadow-lg hover:scale-105 transition transform flex items-center justify-center h-32">
+                            <img src="images/brands/colourtile.jpg" alt="Colortile"
+                                class="max-h-20 max-w-full object-contain">
                         </div>
-                        <div class="bg-white p-4 rounded-xl shadow-lg hover:scale-105 transition transform flex items-center justify-center h-32">
-                            <img src="images/brands/blackberry.jpg" alt="Blackberry" class="max-h-20 max-w-full object-contain">
+                        <div
+                            class="bg-white p-4 rounded-xl shadow-lg hover:scale-105 transition transform flex items-center justify-center h-32">
+                            <img src="images/brands/blackberry.jpg" alt="Blackberry"
+                                class="max-h-20 max-w-full object-contain">
                         </div>
-                        <div class="bg-white p-4 rounded-xl shadow-lg hover:scale-105 transition transform flex items-center justify-center h-32">
-                            <img src="images/brands/kerovit.png" alt="Kerovit" class="max-h-20 max-w-full object-contain">
+                        <div
+                            class="bg-white p-4 rounded-xl shadow-lg hover:scale-105 transition transform flex items-center justify-center h-32">
+                            <img src="images/brands/kerovit.png" alt="Kerovit"
+                                class="max-h-20 max-w-full object-contain">
                         </div>
-                        <div class="bg-white p-4 rounded-xl shadow-lg hover:scale-105 transition transform flex items-center justify-center h-32">
+                        <div
+                            class="bg-white p-4 rounded-xl shadow-lg hover:scale-105 transition transform flex items-center justify-center h-32">
                             <img src="images/brands/weber.jpg" alt="Weber" class="max-h-20 max-w-full object-contain">
                         </div>
-                        <div class="bg-white p-4 rounded-xl shadow-lg hover:scale-105 transition transform flex items-center justify-center h-32">
-                            <img src="images/brands/parryware.jpg" alt="Parryware" class="max-h-20 max-w-full object-contain">
+                        <div
+                            class="bg-white p-4 rounded-xl shadow-lg hover:scale-105 transition transform flex items-center justify-center h-32">
+                            <img src="images/brands/parryware.jpg" alt="Parryware"
+                                class="max-h-20 max-w-full object-contain">
                         </div>
-                        <div class="bg-white p-4 rounded-xl shadow-lg hover:scale-105 transition transform flex items-center justify-center h-32">
-                            <img src="images/brands/carysil.jpg" alt="Carysil" class="max-h-20 max-w-full object-contain">
+                        <div
+                            class="bg-white p-4 rounded-xl shadow-lg hover:scale-105 transition transform flex items-center justify-center h-32">
+                            <img src="images/brands/carysil.jpg" alt="Carysil"
+                                class="max-h-20 max-w-full object-contain">
                         </div>
                     </div>
                     <div class="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
@@ -291,12 +442,19 @@
             <!-- ABOUT SECTION -->
             <section id="about" class="py-16 sm:py-20 bg-gray-900/60 backdrop-blur-sm">
                 <div class="container mx-auto px-4 text-center">
-                    <h2 class="animate-on-scroll init-slide-up text-2xl sm:text-3xl md:text-4xl font-bold mb-8 sm:mb-10 text-cyan-400">About Sai Balaji Tiles</h2>
-                    <p class="animate-on-scroll init-fade-in text-base sm:text-lg text-gray-300 max-w-2xl mx-auto leading-relaxed" style="transition-delay:0.1s;">
-                        At Sai Balaji Tiles, we are passionate about providing high-quality tiles that transform spaces. With years of experience in the industry, we offer a curated selection of tiles from India's most trusted brands including Kajaria, Qtone, Somany, Johnson, Nitco, and Orient Bell.
+                    <h2
+                        class="animate-on-scroll init-slide-up text-2xl sm:text-3xl md:text-4xl font-bold mb-8 sm:mb-10 text-cyan-400">
+                        About Sai Balaji Tiles</h2>
+                    <p class="animate-on-scroll init-fade-in text-base sm:text-lg text-gray-300 max-w-2xl mx-auto leading-relaxed"
+                        style="transition-delay:0.1s;">
+                        At Sai Balaji Tiles, we are passionate about providing high-quality tiles that transform spaces.
+                        With years of experience in the industry, we offer a curated selection of tiles from India's
+                        most trusted brands including Kajaria, Qtone, Somany, Johnson, Nitco, and Orient Bell.
                     </p>
-                    <p class="animate-on-scroll init-fade-in text-base sm:text-lg text-gray-300 max-w-2xl mx-auto mt-4 leading-relaxed" style="transition-delay:0.2s;">
-                        Our commitment is to quality, durability, and customer satisfaction. Explore our extensive catalog and let us help you find the perfect tiles for your project.
+                    <p class="animate-on-scroll init-fade-in text-base sm:text-lg text-gray-300 max-w-2xl mx-auto mt-4 leading-relaxed"
+                        style="transition-delay:0.2s;">
+                        Our commitment is to quality, durability, and customer satisfaction. Explore our extensive
+                        catalog and let us help you find the perfect tiles for your project.
                     </p>
                 </div>
             </section>
@@ -304,32 +462,42 @@
             <!-- COLLECTIONS SECTION -->
             <section id="collections" class="relative py-12 sm:py-16 bg-gray-900/70 backdrop-blur-md">
                 <div class="container mx-auto px-4">
-                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-8 sm:mb-12 text-cyan-400 animate-on-scroll init-slide-up">
+                    <h2
+                        class="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-8 sm:mb-12 text-cyan-400 animate-on-scroll init-slide-up">
                         Featured Collections
                     </h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
-                        <div class="animate-on-scroll init-fade-in bg-gray-800/80 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-700 hover:border-cyan-500/50" style="transition-delay:0.1s;">
-                            <img src="images/tile1.jpg" alt="Modern Minimalist" class="w-full h-40 sm:h-48 object-cover rounded-t-lg">
+                        <div class="animate-on-scroll init-fade-in bg-gray-800/80 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-700 hover:border-cyan-500/50"
+                            style="transition-delay:0.1s;">
+                            <img src="images/tile1.jpg" alt="Modern Minimalist"
+                                class="w-full h-40 sm:h-48 object-cover rounded-t-lg">
                             <div class="p-3 sm:p-4 text-center">
                                 <h3 class="text-lg sm:text-xl font-bold text-indigo-300">Modern Minimalist</h3>
                                 <p class="text-gray-400 mt-1 text-sm">Sleek designs for a contemporary look.</p>
-                                <a href="brands.html" class="inline-block mt-3 text-indigo-300 hover:text-indigo-200 font-semibold text-sm">Explore</a>
+                                <a href="brands.html"
+                                    class="inline-block mt-3 text-indigo-300 hover:text-indigo-200 font-semibold text-sm">Explore</a>
                             </div>
                         </div>
-                        <div class="animate-on-scroll init-fade-in bg-gray-800/80 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-700 hover:border-cyan-500/50" style="transition-delay:0.2s;">
-                            <img src="images/tile2.jpg" alt="Rustic Charm" class="w-full h-40 sm:h-48 object-cover rounded-t-lg">
+                        <div class="animate-on-scroll init-fade-in bg-gray-800/80 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-700 hover:border-cyan-500/50"
+                            style="transition-delay:0.2s;">
+                            <img src="images/tile2.jpg" alt="Rustic Charm"
+                                class="w-full h-40 sm:h-48 object-cover rounded-t-lg">
                             <div class="p-3 sm:p-4 text-center">
                                 <h3 class="text-lg sm:text-xl font-bold text-indigo-300">Rustic Charm</h3>
                                 <p class="text-gray-400 mt-1 text-sm">Warm tones for a cozy vibe.</p>
-                                <a href="brands.html" class="inline-block mt-3 text-indigo-300 hover:text-indigo-200 font-semibold text-sm">Explore</a>
+                                <a href="brands.html"
+                                    class="inline-block mt-3 text-indigo-300 hover:text-indigo-200 font-semibold text-sm">Explore</a>
                             </div>
                         </div>
-                        <div class="animate-on-scroll init-fade-in bg-gray-800/80 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-700 hover:border-cyan-500/50" style="transition-delay:0.3s;">
-                            <img src="images/tiles3.jpg" alt="Luxury Marble" class="w-full h-40 sm:h-48 object-cover rounded-t-lg">
+                        <div class="animate-on-scroll init-fade-in bg-gray-800/80 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-700 hover:border-cyan-500/50"
+                            style="transition-delay:0.3s;">
+                            <img src="images/tiles3.jpg" alt="Luxury Marble"
+                                class="w-full h-40 sm:h-48 object-cover rounded-t-lg">
                             <div class="p-3 sm:p-4 text-center">
                                 <h3 class="text-lg sm:text-xl font-bold text-indigo-300">Luxury Marble</h3>
                                 <p class="text-gray-400 mt-1 text-sm">Elegant finishes for a premium feel.</p>
-                                <a href="brands.html" class="inline-block mt-3 text-indigo-300 hover:text-indigo-200 font-semibold text-sm">Explore</a>
+                                <a href="brands.html"
+                                    class="inline-block mt-3 text-indigo-300 hover:text-indigo-200 font-semibold text-sm">Explore</a>
                             </div>
                         </div>
                     </div>
@@ -339,10 +507,14 @@
             <!-- CONTACT SECTION -->
             <section id="contact" class="py-16 sm:py-20 bg-gray-900/60 backdrop-blur-sm">
                 <div class="container mx-auto px-4">
-                    <h2 class="animate-on-scroll init-slide-up text-2xl sm:text-3xl md:text-4xl font-bold mb-8 sm:mb-10 text-cyan-400 text-center">Get in Touch</h2>
-                    <div class="animate-on-scroll init-fade-in max-w-2xl mx-auto text-center mb-10" style="transition-delay:0.1s;">
+                    <h2
+                        class="animate-on-scroll init-slide-up text-2xl sm:text-3xl md:text-4xl font-bold mb-8 sm:mb-10 text-cyan-400 text-center">
+                        Get in Touch</h2>
+                    <div class="animate-on-scroll init-fade-in max-w-2xl mx-auto text-center mb-10"
+                        style="transition-delay:0.1s;">
                         <p class="text-base sm:text-lg text-gray-300">
-                            Have questions about our tiles or need a custom quote? Reach out using the form below or visit our showroom.
+                            Have questions about our tiles or need a custom quote? Reach out using the form below or
+                            visit our showroom.
                         </p>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start max-w-5xl mx-auto">
@@ -363,32 +535,47 @@
                             </a>
                         </div>
                     </div>
-                    <p class="animate-on-scroll init-fade-in text-base sm:text-lg text-gray-300 max-w-2xl mx-auto text-center mt-12 mb-8" style="transition-delay:0.3s;">
+                    <p class="animate-on-scroll init-fade-in text-base sm:text-lg text-gray-300 max-w-2xl mx-auto text-center mt-12 mb-8"
+                        style="transition-delay:0.3s;">
                         Or send us a message directly:
                     </p>
-                    <form id="contactForm" class="animate-on-scroll init-fade-in max-w-xl mx-auto bg-gray-800/70 p-6 sm:p-8 rounded-lg shadow-xl border border-gray-700/50" style="transition-delay:0.4s;">
+                    <form id="contactForm"
+                        class="animate-on-scroll init-fade-in max-w-xl mx-auto bg-gray-800/70 p-6 sm:p-8 rounded-lg shadow-xl border border-gray-700/50"
+                        style="transition-delay:0.4s;">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-6">
                             <div>
-                                <label for="cname" class="block text-sm font-medium text-indigo-300 text-left mb-1">Full Name</label>
-                                <input type="text" name="name" id="cname" required class="w-full px-3 py-2 rounded bg-gray-200 text-black border border-gray-600 focus:outline-none focus:ring-2 focus:ring-cyan-400" placeholder="John Doe">
+                                <label for="cname" class="block text-sm font-medium text-indigo-300 text-left mb-1">Full
+                                    Name</label>
+                                <input type="text" name="name" id="cname" required
+                                    class="w-full px-3 py-2 rounded bg-gray-200 text-black border border-gray-600 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                                    placeholder="John Doe">
                             </div>
                             <div>
-                                <label for="cemail" class="block text-sm font-medium text-indigo-300 text-left mb-1">Email Address</label>
-                                <input type="email" name="email" id="cemail" required class="w-full px-3 py-2 rounded bg-gray-200 text-black border border-gray-600 focus:outline-none focus:ring-2 focus:ring-cyan-400" placeholder="john@example.com">
+                                <label for="cemail"
+                                    class="block text-sm font-medium text-indigo-300 text-left mb-1">Email
+                                    Address</label>
+                                <input type="email" name="email" id="cemail" required
+                                    class="w-full px-3 py-2 rounded bg-gray-200 text-black border border-gray-600 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                                    placeholder="john@example.com">
                             </div>
                         </div>
                         <div class="mb-4 sm:mb-6">
-                            <label for="subject" class="block text-sm font-medium text-indigo-300 text-left mb-1">Subject</label>
-                            <input type="text" name="subject" id="subject" class="w-full px-3 py-2 rounded bg-gray-200 text-black border border-gray-600 focus:outline-none focus:ring-2 focus:ring-cyan-400" placeholder="Inquiry">
+                            <label for="subject"
+                                class="block text-sm font-medium text-indigo-300 text-left mb-1">Subject</label>
+                            <input type="text" name="subject" id="subject"
+                                class="w-full px-3 py-2 rounded bg-gray-200 text-black border border-gray-600 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                                placeholder="Inquiry">
                         </div>
                         <div class="mb-6 sm:mb-8">
-                            <label for="message" class="block text-sm font-medium text-indigo-300 text-left mb-1">Message</label>
+                            <label for="message"
+                                class="block text-sm font-medium text-indigo-300 text-left mb-1">Message</label>
                             <textarea name="message" id="message" rows="4" required
                                 class="w-full px-3 py-2 rounded bg-gray-200 text-black border border-gray-600 focus:outline-none focus:ring-2 focus:ring-cyan-400 resize-none"
                                 placeholder="Message..."></textarea>
                         </div>
                         <div>
-                            <button type="submit" id="sendMessageBtn" class="btn-theme-primary w-full sm:w-auto text-lg">Send Message</button>
+                            <button type="submit" id="sendMessageBtn"
+                                class="btn-theme-primary w-full sm:w-auto text-lg">Send Message</button>
                         </div>
                         <div id="form-status" class="mt-4 text-sm text-center"></div>
                     </form>
@@ -405,10 +592,14 @@
                     <div>
                         <h3 class="text-xl font-bold mb-6">About Us</h3>
                         <p class="text-gray-400 text-sm leading-relaxed mb-6">
-                            A global hi-tech manufacturer of premium ceramics lifestyle solutions. We bring elegance, durability, and innovation to your living spaces.
+                            A global hi-tech manufacturer of premium ceramics lifestyle solutions. We bring elegance,
+                            durability, and innovation to your living spaces.
                         </p>
                         <div class="flex items-center gap-3 text-gray-300">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
+                            </svg>
                             <span class="font-semibold">+91 9985899853</span>
                         </div>
                     </div>
@@ -416,10 +607,10 @@
                     <div>
                         <h3 class="text-xl font-bold mb-6">Navigate</h3>
                         <ul class="space-y-4 text-gray-400 text-sm">
-                            <li><a href="#brands"     class="hover:text-cyan-400 transition">Brands</a></li>
-                            <li><a href="cart.html"   class="hover:text-cyan-400 transition">Cart</a></li>
+                            <li><a href="#brands" class="hover:text-cyan-400 transition">Brands</a></li>
+                            <li><a href="cart.html" class="hover:text-cyan-400 transition">Cart</a></li>
                             <li><a href="brands.html" class="hover:text-cyan-400 transition">Catalog</a></li>
-                            <li><a href="#about"      class="hover:text-cyan-400 transition">About</a></li>
+                            <li><a href="#about" class="hover:text-cyan-400 transition">About</a></li>
                         </ul>
                     </div>
 
@@ -437,15 +628,24 @@
                         <h3 class="text-xl font-bold mb-6">Our Office</h3>
                         <ul class="space-y-6 text-gray-400 text-sm">
                             <li class="flex items-start gap-3">
-                                <svg class="w-6 h-6 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                                <svg class="w-6 h-6 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                                    <path
+                                        d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                                </svg>
                                 <span>123 Tile Street, Palamaner Road, Chittoor, Andhra Pradesh</span>
                             </li>
                             <li class="flex items-center gap-3">
-                                <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+                                <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                                    <path
+                                        d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
+                                </svg>
                                 <span>+91 9985899853</span>
                             </li>
                             <li class="flex items-center gap-3">
-                                <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                                <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                                    <path
+                                        d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+                                </svg>
                                 <span>info@saibalajitiles.com</span>
                             </li>
                         </ul>
@@ -476,8 +676,8 @@
         // 2. SPLASH SCREEN
         // ==========================================
         window.addEventListener('load', () => {
-            const splashScreen   = document.getElementById('splash-screen');
-            const pageContainer  = document.getElementById('page-container');
+            const splashScreen = document.getElementById('splash-screen');
+            const pageContainer = document.getElementById('page-container');
             const splashContents = document.querySelectorAll('.splash-content');
 
             if (pageContainer) {
@@ -523,13 +723,13 @@
                 document.getElementById('auth-logged-out').style.display = 'none';
                 const loggedIn = document.getElementById('auth-logged-in');
                 loggedIn.style.display = 'flex';
-                document.getElementById('header-avatar').textContent    = firstName[0].toUpperCase();
-                document.getElementById('header-username').textContent  = 'Hi, ' + firstName;
+                document.getElementById('header-avatar').textContent = firstName[0].toUpperCase();
+                document.getElementById('header-username').textContent = 'Hi, ' + firstName;
 
                 // Sidebar: change "Login / Sign Up" → "My Profile"
                 const navLink = document.getElementById('nav-auth-link');
                 if (navLink) {
-                    navLink.href        = 'user-profile.html';
+                    navLink.href = 'user-profile.html';
                     navLink.textContent = '👤 My Profile';
                 }
             }
@@ -567,7 +767,7 @@
         function initializeMainContentScripts() {
             // Navbar toggle
             let menuVisible = false;
-            const navbar    = document.getElementById('main-navbar-index');
+            const navbar = document.getElementById('main-navbar-index');
             const toggleBtn = document.getElementById('toggle-btn-index');
 
             window.toggleMenuIndex = function () {
@@ -609,7 +809,7 @@
             if (contactForm) {
                 contactForm.addEventListener('submit', function (e) {
                     e.preventDefault();
-                    const btn    = document.getElementById('sendMessageBtn');
+                    const btn = document.getElementById('sendMessageBtn');
                     const status = document.getElementById('form-status');
                     btn.disabled = true;
                     btn.textContent = 'Sending...';
@@ -617,7 +817,7 @@
                         btn.textContent = 'Sent Successfully!';
                         btn.classList.add('bg-green-600');
                         status.textContent = 'We will contact you shortly.';
-                        status.className   = 'text-green-400 text-sm mt-2';
+                        status.className = 'text-green-400 text-sm mt-2';
                         contactForm.reset();
                         setTimeout(() => {
                             btn.disabled = false;
@@ -641,12 +841,12 @@
                 const star = document.createElement('div');
                 star.className = 'star';
                 const size = Math.random() * 2 + 1;
-                star.style.width             = `${size}px`;
-                star.style.height            = `${size}px`;
-                star.style.left              = `${Math.random() * 100}%`;
-                star.style.top               = `${Math.random() * 100}%`;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
                 star.style.animationDuration = `${Math.random() * 3 + 4}s`;
-                star.style.animationDelay    = `${Math.random() * 4}s`;
+                star.style.animationDelay = `${Math.random() * 4}s`;
                 container.appendChild(star);
             }
         }
@@ -660,12 +860,26 @@
             if (session) {
                 const { data } = await sbClient
                     .from('profiles').select('cart').eq('id', session.user.id).single();
-                if (data && data.cart) {
-                    localStorage.setItem('cart', JSON.stringify(data.cart));
+                const cloudCart = (data && Array.isArray(data.cart)) ? data.cart : [];
+                const localCart = JSON.parse(localStorage.getItem('cart') || '[]');
+
+                if (cloudCart.length > 0) {
+                    // Cloud has items → restore to localStorage
+                    localStorage.setItem('cart', JSON.stringify(cloudCart));
+                } else if (localCart.length > 0) {
+                    // Cloud empty, local has items → push local to cloud
+                    await sbClient.from('profiles').update({ cart: localCart }).eq('id', session.user.id);
                 }
+
+                // Update cart count badge in header
+                const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+                document.querySelectorAll('#cart-count-header, #cart-count-index').forEach(el => {
+                    el.textContent = cart.length;
+                });
             }
         }
         window.addEventListener('load', syncCartFromDatabase);
     </script>
 </body>
+
 </html>

@@ -1,77 +1,180 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Brand Tiles - Sai Balaji Tiles</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <style>
-        html, body { height: 100%; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
         body {
             background-color: #000000;
             background-image: radial-gradient(circle at 50% 50%, #111111 0%, #000000 100%);
-            overflow-x: hidden; color: #e2e8f0;
+            overflow-x: hidden;
+            color: #e2e8f0;
         }
-        .stars-container { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
-        .star { position: absolute; background-color: rgba(255,255,255,0.7); border-radius: 50%; animation: twinkle 6s infinite ease-in-out; }
-        @keyframes twinkle { 0%, 100% { opacity: 0.1; } 50% { opacity: 0.7; } }
+
+        .stars-container {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .star {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+            animation: twinkle 6s infinite ease-in-out;
+        }
+
+        @keyframes twinkle {
+
+            0%,
+            100% {
+                opacity: 0.1;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
+        }
 
         .tile-card {
-            background: rgba(17,24,39,0.8); border: 2px solid rgba(148,163,184,0.1);
-            border-radius: 12px; overflow: hidden; transition: all 0.3s ease; cursor: pointer;
+            background: rgba(17, 24, 39, 0.8);
+            border: 2px solid rgba(148, 163, 184, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
         }
-        .tile-card:hover { transform: translateY(-5px); border-color: rgba(34,211,238,0.5); box-shadow: 0 15px 30px rgba(34,211,238,0.2); }
-        .tile-image { width: 100%; height: 250px; object-fit: cover; transition: transform 0.3s ease; }
-        .tile-card:hover .tile-image { transform: scale(1.05); }
+
+        .tile-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(34, 211, 238, 0.5);
+            box-shadow: 0 15px 30px rgba(34, 211, 238, 0.2);
+        }
+
+        .tile-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .tile-card:hover .tile-image {
+            transform: scale(1.05);
+        }
 
         .btn-add-cart {
-            padding: 0.6rem 1rem; border-radius: 0.75rem; font-weight: 600;
-            border: 2px solid rgba(6,182,212,0.9); color: #071126; background: #22d3ee;
-            transition: all 0.3s ease; cursor: pointer; font-family: 'Poppins', sans-serif;
-            width: 100%; text-align: center;
+            padding: 0.6rem 1rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            border: 2px solid rgba(6, 182, 212, 0.9);
+            color: #071126;
+            background: #22d3ee;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            width: 100%;
+            text-align: center;
         }
-        .btn-add-cart:hover { background: #06b6d4; }
-        .btn-add-cart:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        .btn-add-cart:hover {
+            background: #06b6d4;
+        }
+
+        .btn-add-cart:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
 
         .btn-secondary {
-            padding: 0.5rem 1rem; border-radius: 0.5rem;
-            border: 1px solid rgba(99,102,241,0.7); color: #c7d2fe;
-            background: transparent; transition: all 0.3s ease; cursor: pointer;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid rgba(99, 102, 241, 0.7);
+            color: #c7d2fe;
+            background: transparent;
+            transition: all 0.3s ease;
+            cursor: pointer;
             font-family: 'Poppins', sans-serif;
         }
 
         .filter-section {
-            background: rgba(17,24,39,0.7); border: 1px solid rgba(148,163,184,0.1);
-            border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem;
+            background: rgba(17, 24, 39, 0.7);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
         }
+
         .filter-btn {
-            padding: 0.5rem 1rem; border-radius: 20px;
-            border: 1px solid rgba(148,163,184,0.2); background: rgba(31,41,55,0.6);
-            color: #94a3b8; cursor: pointer; transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            background: rgba(31, 41, 55, 0.6);
+            color: #94a3b8;
+            cursor: pointer;
+            transition: all 0.3s ease;
             font-family: 'Poppins', sans-serif;
         }
-        .filter-btn.active { background: rgba(34,211,238,0.2); border-color: #22d3ee; color: #22d3ee; }
-        .filter-btn:hover { border-color: #22d3ee; }
+
+        .filter-btn.active {
+            background: rgba(34, 211, 238, 0.2);
+            border-color: #22d3ee;
+            color: #22d3ee;
+        }
+
+        .filter-btn:hover {
+            border-color: #22d3ee;
+        }
 
         #cart-toast {
-            position: fixed; bottom: 28px; left: 50%;
+            position: fixed;
+            bottom: 28px;
+            left: 50%;
             transform: translateX(-50%) translateY(80px);
-            background: rgba(2,113,103,0.96); color: #e6fff9;
-            padding: 12px 24px; border-radius: 30px; font-size: 14px; font-weight: 600;
-            z-index: 9999; transition: transform 0.3s ease, opacity 0.3s ease;
-            opacity: 0; pointer-events: none; box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+            background: rgba(2, 113, 103, 0.96);
+            color: #e6fff9;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 600;
+            z-index: 9999;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            opacity: 0;
+            pointer-events: none;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
         }
-        #cart-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-        #cart-toast.error { background: rgba(127,29,29,0.96); color: #fff3f3; }
+
+        #cart-toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        #cart-toast.error {
+            background: rgba(127, 29, 29, 0.96);
+            color: #fff3f3;
+        }
     </style>
 </head>
+
 <body>
     <div class="stars-container" id="stars-bg-global"></div>
     <div id="cart-toast"></div>
 
-    <header class="fixed w-full top-0 left-0 bg-gray-900/80 backdrop-blur-md shadow-2xl flex items-center justify-between p-3 sm:p-4 z-40 border-b border-cyan-500/30">
+    <header
+        class="fixed w-full top-0 left-0 bg-gray-900/80 backdrop-blur-md shadow-2xl flex items-center justify-between p-3 sm:p-4 z-40 border-b border-cyan-500/30">
         <div class="flex items-center gap-3">
             <a href="brands.html" class="text-cyan-400 hover:text-cyan-300 text-xl">←</a>
             <span id="brand-title" class="text-xl font-bold text-cyan-400">Brand Tiles</span>
@@ -89,7 +192,8 @@
 
             <div class="text-center mb-8">
                 <div class="bg-white/95 inline-block p-6 rounded-xl mb-4">
-                    <img id="brand-logo" src="" alt="Brand Logo" class="h-20 mx-auto" onerror="this.style.display='none'">
+                    <img id="brand-logo" src="" alt="Brand Logo" class="h-20 mx-auto"
+                        onerror="this.style.display='none'">
                 </div>
                 <h1 id="brand-name" class="text-4xl font-bold text-cyan-400 mb-2"></h1>
                 <p id="brand-description" class="text-gray-300 max-w-2xl mx-auto"></p>
@@ -120,92 +224,92 @@
     </footer>
 
     <script>
-    // ============================================================
-    // SUPABASE SETUP  (No Firebase — removed completely)
-    // ============================================================
-    const SUPABASE_URL = 'https://jjseffkbreruegudlmnd.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impqc2VmZmticmVydWVndWRsbW5kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxOTMwMTEsImV4cCI6MjA4MTc2OTAxMX0.xrCWARm6FbW-U98Qs13mMvlCeBiQWgmD73qverF7Brk';
-    const sbClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        // ============================================================
+        // SUPABASE SETUP  (No Firebase — removed completely)
+        // ============================================================
+        const SUPABASE_URL = 'https://jjseffkbreruegudlmnd.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impqc2VmZmticmVydWVndWRsbW5kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxOTMwMTEsImV4cCI6MjA4MTc2OTAxMX0.xrCWARm6FbW-U98Qs13mMvlCeBiQWgmD73qverF7Brk';
+        const sbClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // ============================================================
-    // TILE DATA
-    // ============================================================
-    const brandTilesData = {
-        kajaria: [
-            { id: 'kaj-1', name: 'Statuario Marble', image: 'images/tiles1.jpg', category: 'polished', price: 95,  size: '800x800mm' },
-            { id: 'kaj-2', name: 'Rustic Wood',       image: 'images/tiles2.jpg', category: 'ceramic',  price: 52,  size: '600x600mm' },
-            { id: 'kaj-3', name: 'Calacatta Gold',    image: 'images/tiles3.jpg', category: 'glazed',   price: 120, size: '600x1200mm' },
-            { id: 'kaj-4', name: 'Dark Emperador',    image: 'images/tile1.jpg',  category: 'marble',   price: 110, size: '800x800mm' },
-            { id: 'kaj-5', name: 'Granite Speckle',   image: 'images/tile2.jpg',  category: 'outdoor',  price: 65,  size: '600x600mm' },
-            { id: 'kaj-6', name: 'Concrete Gray',     image: 'images/tiles1.jpg', category: 'polished', price: 85,  size: '800x800mm' }
-        ],
-        qtone: [
-            { id: 'qt-1', name: 'Onyx Supreme',    image: 'images/tiles2.jpg', category: 'polished', price: 135, size: '1200x1200mm' },
-            { id: 'qt-2', name: 'Terrazzo Classic', image: 'images/tiles3.jpg', category: 'ceramic',  price: 75,  size: '600x600mm' },
-            { id: 'qt-3', name: 'Porcelain White',  image: 'images/tile1.jpg',  category: 'glazed',   price: 140, size: '800x1600mm' },
-            { id: 'qt-4', name: 'Sandstone Beige',  image: 'images/tile2.jpg',  category: 'outdoor',  price: 80,  size: '600x600mm' }
-        ],
-        somany: [
-            { id: 'som-1', name: 'Ivory Elegance',  image: 'images/tiles1.jpg', category: 'polished', price: 88,  size: '800x800mm' },
-            { id: 'som-2', name: 'Metro Brick',      image: 'images/tiles2.jpg', category: 'ceramic',  price: 45,  size: '300x600mm' },
-            { id: 'som-3', name: 'Travertine Beige', image: 'images/tiles3.jpg', category: 'marble',   price: 105, size: '600x1200mm' },
-            { id: 'som-4', name: 'Slate Gray',        image: 'images/tile1.jpg',  category: 'outdoor',  price: 70,  size: '600x600mm' },
-            { id: 'som-5', name: 'Glossy White',      image: 'images/tile2.jpg',  category: 'glazed',   price: 92,  size: '600x600mm' }
-        ],
-        nitco: [
-            { id: 'nit-1', name: 'Nero Marquina',  image: 'images/tiles1.jpg', category: 'marble',   price: 115, size: '800x800mm' },
-            { id: 'nit-2', name: 'Bianco Crystal', image: 'images/tiles2.jpg', category: 'polished', price: 98,  size: '600x1200mm' },
-            { id: 'nit-3', name: 'Urban Concrete',  image: 'images/tiles3.jpg', category: 'outdoor',  price: 72,  size: '600x600mm' }
-        ],
-        orientbell: [
-            { id: 'ob-1', name: 'Royal Ivory',  image: 'images/tiles1.jpg', category: 'polished', price: 90, size: '800x800mm' },
-            { id: 'ob-2', name: 'Arctic White', image: 'images/tiles2.jpg', category: 'glazed',   price: 78, size: '600x600mm' },
-            { id: 'ob-3', name: 'Forest Brown', image: 'images/tiles3.jpg', category: 'ceramic',  price: 55, size: '300x600mm' }
-        ]
-    };
+        // ============================================================
+        // TILE DATA
+        // ============================================================
+        const brandTilesData = {
+            kajaria: [
+                { id: 'kaj-1', name: 'Statuario Marble', image: 'images/tiles1.jpg', category: 'polished', price: 95, size: '800x800mm' },
+                { id: 'kaj-2', name: 'Rustic Wood', image: 'images/tiles2.jpg', category: 'ceramic', price: 52, size: '600x600mm' },
+                { id: 'kaj-3', name: 'Calacatta Gold', image: 'images/tiles3.jpg', category: 'glazed', price: 120, size: '600x1200mm' },
+                { id: 'kaj-4', name: 'Dark Emperador', image: 'images/tile1.jpg', category: 'marble', price: 110, size: '800x800mm' },
+                { id: 'kaj-5', name: 'Granite Speckle', image: 'images/tile2.jpg', category: 'outdoor', price: 65, size: '600x600mm' },
+                { id: 'kaj-6', name: 'Concrete Gray', image: 'images/tiles1.jpg', category: 'polished', price: 85, size: '800x800mm' }
+            ],
+            qtone: [
+                { id: 'qt-1', name: 'Onyx Supreme', image: 'images/tiles2.jpg', category: 'polished', price: 135, size: '1200x1200mm' },
+                { id: 'qt-2', name: 'Terrazzo Classic', image: 'images/tiles3.jpg', category: 'ceramic', price: 75, size: '600x600mm' },
+                { id: 'qt-3', name: 'Porcelain White', image: 'images/tile1.jpg', category: 'glazed', price: 140, size: '800x1600mm' },
+                { id: 'qt-4', name: 'Sandstone Beige', image: 'images/tile2.jpg', category: 'outdoor', price: 80, size: '600x600mm' }
+            ],
+            somany: [
+                { id: 'som-1', name: 'Ivory Elegance', image: 'images/tiles1.jpg', category: 'polished', price: 88, size: '800x800mm' },
+                { id: 'som-2', name: 'Metro Brick', image: 'images/tiles2.jpg', category: 'ceramic', price: 45, size: '300x600mm' },
+                { id: 'som-3', name: 'Travertine Beige', image: 'images/tiles3.jpg', category: 'marble', price: 105, size: '600x1200mm' },
+                { id: 'som-4', name: 'Slate Gray', image: 'images/tile1.jpg', category: 'outdoor', price: 70, size: '600x600mm' },
+                { id: 'som-5', name: 'Glossy White', image: 'images/tile2.jpg', category: 'glazed', price: 92, size: '600x600mm' }
+            ],
+            nitco: [
+                { id: 'nit-1', name: 'Nero Marquina', image: 'images/tiles1.jpg', category: 'marble', price: 115, size: '800x800mm' },
+                { id: 'nit-2', name: 'Bianco Crystal', image: 'images/tiles2.jpg', category: 'polished', price: 98, size: '600x1200mm' },
+                { id: 'nit-3', name: 'Urban Concrete', image: 'images/tiles3.jpg', category: 'outdoor', price: 72, size: '600x600mm' }
+            ],
+            orientbell: [
+                { id: 'ob-1', name: 'Royal Ivory', image: 'images/tiles1.jpg', category: 'polished', price: 90, size: '800x800mm' },
+                { id: 'ob-2', name: 'Arctic White', image: 'images/tiles2.jpg', category: 'glazed', price: 78, size: '600x600mm' },
+                { id: 'ob-3', name: 'Forest Brown', image: 'images/tiles3.jpg', category: 'ceramic', price: 55, size: '300x600mm' }
+            ]
+        };
 
-    const brandInfo = {
-        kajaria:    { name: 'Kajaria',   logo: 'images/brands/kar.png',        desc: "India's No.1 Tile Company" },
-        qtone:      { name: 'Qtone',     logo: 'images/brands/brand2.png',      desc: 'Premium Luxury Tiles' },
-        somany:     { name: 'Somany',    logo: 'images/brands/Somany-logo.png', desc: 'Complete Surface Solutions' },
-        nitco:      { name: 'Itaca',     logo: 'images/brands/itaca.png',       desc: 'Innovative Tile Solutions' },
-        orientbell: { name: 'Colortile', logo: 'images/brands/colourtile.jpg',  desc: 'Aesthetics and Durability' }
-    };
+        const brandInfo = {
+            kajaria: { name: 'Kajaria', logo: 'images/brands/kar.png', desc: "India's No.1 Tile Company" },
+            qtone: { name: 'Qtone', logo: 'images/brands/brand2.png', desc: 'Premium Luxury Tiles' },
+            somany: { name: 'Somany', logo: 'images/brands/Somany-logo.png', desc: 'Complete Surface Solutions' },
+            nitco: { name: 'Itaca', logo: 'images/brands/itaca.png', desc: 'Innovative Tile Solutions' },
+            orientbell: { name: 'Colortile', logo: 'images/brands/colourtile.jpg', desc: 'Aesthetics and Durability' }
+        };
 
-    const urlParams    = new URLSearchParams(window.location.search);
-    const currentBrand = urlParams.get('brand') || 'kajaria';
-    const tiles        = brandTilesData[currentBrand] || [];
-    const brand        = brandInfo[currentBrand] || { name: 'Brand', logo: '', desc: '' };
-    let   currentFilter = 'all';
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentBrand = urlParams.get('brand') || 'kajaria';
+        const tiles = brandTilesData[currentBrand] || [];
+        const brand = brandInfo[currentBrand] || { name: 'Brand', logo: '', desc: '' };
+        let currentFilter = 'all';
 
-    // Set brand info in page
-    document.getElementById('brand-title').textContent       = brand.name;
-    document.getElementById('brand-name').textContent        = brand.name;
-    document.getElementById('brand-description').textContent = brand.desc;
-    document.getElementById('brand-logo').src                = brand.logo;
-    document.title = `${brand.name} Tiles - Sai Balaji Tiles`;
+        // Set brand info in page
+        document.getElementById('brand-title').textContent = brand.name;
+        document.getElementById('brand-name').textContent = brand.name;
+        document.getElementById('brand-description').textContent = brand.desc;
+        document.getElementById('brand-logo').src = brand.logo;
+        document.title = `${brand.name} Tiles - Sai Balaji Tiles`;
 
-    // ============================================================
-    // RENDER TILES
-    // ============================================================
-    function renderTiles(filter = 'all') {
-        const grid     = document.getElementById('tiles-grid');
-        const empty    = document.getElementById('empty-state');
-        const filtered = filter === 'all' ? tiles : tiles.filter(t => t.category === filter);
+        // ============================================================
+        // RENDER TILES
+        // ============================================================
+        function renderTiles(filter = 'all') {
+            const grid = document.getElementById('tiles-grid');
+            const empty = document.getElementById('empty-state');
+            const filtered = filter === 'all' ? tiles : tiles.filter(t => t.category === filter);
 
-        if (!filtered.length) { grid.classList.add('hidden'); empty.classList.remove('hidden'); return; }
-        grid.classList.remove('hidden');
-        empty.classList.add('hidden');
-        grid.innerHTML = '';
+            if (!filtered.length) { grid.classList.add('hidden'); empty.classList.remove('hidden'); return; }
+            grid.classList.remove('hidden');
+            empty.classList.add('hidden');
+            grid.innerHTML = '';
 
-        filtered.forEach(tile => {
-            const card = document.createElement('div');
-            card.className = 'tile-card';
-            card.onclick = () => {
-                localStorage.setItem('selectedTile', JSON.stringify({ ...tile, brand: brand.name }));
-                window.location.href = `tile-detail.html?id=${tile.id}`;
-            };
-            card.innerHTML = `
+            filtered.forEach(tile => {
+                const card = document.createElement('div');
+                card.className = 'tile-card';
+                card.onclick = () => {
+                    localStorage.setItem('selectedTile', JSON.stringify({ ...tile, brand: brand.name }));
+                    window.location.href = `tile-detail.html?id=${tile.id}`;
+                };
+                card.innerHTML = `
                 <img src="${tile.image}" alt="${tile.name}" class="tile-image">
                 <div class="p-4">
                     <h3 class="text-lg font-semibold text-indigo-300 mb-2">${tile.name}</h3>
@@ -220,137 +324,150 @@
                     </div>
                 </div>
             `;
-            grid.appendChild(card);
-        });
-    }
+                grid.appendChild(card);
+            });
+        }
 
-    // ============================================================
-    // CART HELPERS
-    // ============================================================
-    function loadLocalCart() {
-        try { return JSON.parse(localStorage.getItem('cart') || '[]'); } catch { return []; }
-    }
-    function saveLocalCart(cart) {
-        localStorage.setItem('cart', JSON.stringify(cart));
-        updateCartCount();
-    }
-    function updateCartCount() {
-        document.getElementById('cart-count').textContent = loadLocalCart().length;
-    }
+        // ============================================================
+        // CART HELPERS
+        // ============================================================
+        function loadLocalCart() {
+            try { return JSON.parse(localStorage.getItem('cart') || '[]'); } catch { return []; }
+        }
+        function saveLocalCart(cart) {
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartCount();
+        }
+        function updateCartCount() {
+            document.getElementById('cart-count').textContent = loadLocalCart().length;
+        }
 
-    // ============================================================
-    // ADD TO CART
-    // Saves to localStorage immediately, then syncs to Supabase DB.
-    // This means the cart is stored in the cloud under the user's
-    // profile and can be restored on any device/browser at login.
-    // ============================================================
-    async function addToCart(tileId, btnEl) {
-        // 1. Check login
-        const { data: { session } } = await sbClient.auth.getSession();
-        if (!session) {
-            if (confirm('You need to be logged in to add items to cart. Go to Login?')) {
-                window.location.href = 'auth.html';
+        // ============================================================
+        // ADD TO CART
+        // Saves to localStorage immediately, then syncs to Supabase DB.
+        // This means the cart is stored in the cloud under the user's
+        // profile and can be restored on any device/browser at login.
+        // ============================================================
+        async function addToCart(tileId, btnEl) {
+            // 1. Check login
+            const { data: { session } } = await sbClient.auth.getSession();
+            if (!session) {
+                if (confirm('You need to be logged in to add items to cart. Go to Login?')) {
+                    window.location.href = 'auth.html';
+                }
+                return;
             }
-            return;
+
+            // 2. Find tile
+            const tile = tiles.find(t => t.id === tileId);
+            if (!tile) return;
+
+            // 3. Disable button
+            if (btnEl) { btnEl.disabled = true; btnEl.textContent = 'Adding...'; }
+
+            // 4. Update cart in localStorage
+            const cart = loadLocalCart();
+            const existing = cart.find(item => item.id === tile.id);
+            if (existing) {
+                existing.quantity = (existing.quantity || 1) + 1;
+            } else {
+                cart.push({ id: tile.id, name: tile.name, image: tile.image, price: tile.price, brand: brand.name, quantity: 1 });
+            }
+            saveLocalCart(cart);
+
+            // 5. Save to Supabase so cart persists across logins/devices
+            const { error } = await sbClient
+                .from('profiles')
+                .update({ cart: cart })
+                .eq('id', session.user.id);
+
+            if (error) console.warn('Supabase cart save error:', error.message);
+
+            // 6. Re-enable button & show toast
+            if (btnEl) { btnEl.disabled = false; btnEl.textContent = '🛒 Add to Cart'; }
+            showToast(`✅ ${tile.name} added to cart!`);
         }
 
-        // 2. Find tile
-        const tile = tiles.find(t => t.id === tileId);
-        if (!tile) return;
+        // Export for tile-detail.html
+        window.addToCart = addToCart;
 
-        // 3. Disable button
-        if (btnEl) { btnEl.disabled = true; btnEl.textContent = 'Adding...'; }
-
-        // 4. Update cart in localStorage
-        const cart = loadLocalCart();
-        const existing = cart.find(item => item.id === tile.id);
-        if (existing) {
-            existing.quantity = (existing.quantity || 1) + 1;
-        } else {
-            cart.push({ id: tile.id, name: tile.name, image: tile.image, price: tile.price, brand: brand.name, quantity: 1 });
+        // ============================================================
+        // TOAST
+        // ============================================================
+        let toastTimer;
+        function showToast(msg, type = '') {
+            const t = document.getElementById('cart-toast');
+            t.textContent = msg;
+            t.className = 'show' + (type ? ' ' + type : '');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => { t.className = ''; }, 2800);
         }
-        saveLocalCart(cart);
 
-        // 5. Save to Supabase so cart persists across logins/devices
-        const { error } = await sbClient
-            .from('profiles')
-            .update({ cart: cart })
-            .eq('id', session.user.id);
+        // ============================================================
+        // FILTER
+        // ============================================================
+        document.getElementById('filter-buttons').addEventListener('click', e => {
+            if (!e.target.classList.contains('filter-btn')) return;
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            e.target.classList.add('active');
+            currentFilter = e.target.dataset.filter;
+            renderTiles(currentFilter);
+        });
 
-        if (error) console.warn('Supabase cart save error:', error.message);
-
-        // 6. Re-enable button & show toast
-        if (btnEl) { btnEl.disabled = false; btnEl.textContent = '🛒 Add to Cart'; }
-        showToast(`✅ ${tile.name} added to cart!`);
-    }
-
-    // Export for tile-detail.html
-    window.addToCart = addToCart;
-
-    // ============================================================
-    // TOAST
-    // ============================================================
-    let toastTimer;
-    function showToast(msg, type = '') {
-        const t = document.getElementById('cart-toast');
-        t.textContent = msg;
-        t.className = 'show' + (type ? ' ' + type : '');
-        clearTimeout(toastTimer);
-        toastTimer = setTimeout(() => { t.className = ''; }, 2800);
-    }
-
-    // ============================================================
-    // FILTER
-    // ============================================================
-    document.getElementById('filter-buttons').addEventListener('click', e => {
-        if (!e.target.classList.contains('filter-btn')) return;
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-        e.target.classList.add('active');
-        currentFilter = e.target.dataset.filter;
-        renderTiles(currentFilter);
-    });
-
-    // ============================================================
-    // STARS
-    // ============================================================
-    function createStars() {
-        const c = document.getElementById('stars-bg-global');
-        c.innerHTML = '';
-        const n = Math.min(200, Math.floor(window.innerWidth / 18));
-        for (let i = 0; i < n; i++) {
-            const s = document.createElement('div');
-            s.className = 'star';
-            const sz = Math.random() * 2.5 + 0.5;
-            s.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;animation-duration:${(Math.random()*3+4).toFixed(1)}s;`;
-            c.appendChild(s);
+        // ============================================================
+        // STARS
+        // ============================================================
+        function createStars() {
+            const c = document.getElementById('stars-bg-global');
+            c.innerHTML = '';
+            const n = Math.min(200, Math.floor(window.innerWidth / 18));
+            for (let i = 0; i < n; i++) {
+                const s = document.createElement('div');
+                s.className = 'star';
+                const sz = Math.random() * 2.5 + 0.5;
+                s.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random() * 100}%;top:${Math.random() * 100}%;animation-duration:${(Math.random() * 3 + 4).toFixed(1)}s;`;
+                c.appendChild(s);
+            }
         }
-    }
 
-    // ============================================================
-    // AUTH INDICATOR
-    // ============================================================
-    async function checkAuth() {
-        const { data: { session } } = await sbClient.auth.getSession();
-        if (!session) return;
-        const { data } = await sbClient.from('profiles').select('full_name').eq('id', session.user.id).single();
-        const name = data?.full_name || session.user.email || 'Account';
-        const el = document.getElementById('auth-indicator');
-        el.textContent = '👤 ' + name.split(' ')[0];
-        el.classList.remove('hidden');
-        el.onclick = () => window.location.href = 'user-profile.html';
-    }
+        // ============================================================
+        // AUTH INDICATOR
+        // ============================================================
+        async function checkAuth() {
+            const { data: { session } } = await sbClient.auth.getSession();
+            if (!session) return;
+            const { data } = await sbClient.from('profiles').select('full_name').eq('id', session.user.id).single();
+            const name = data?.full_name || session.user.email || 'Account';
+            const el = document.getElementById('auth-indicator');
+            el.textContent = '👤 ' + name.split(' ')[0];
+            el.classList.remove('hidden');
+            el.onclick = () => window.location.href = 'user-profile.html';
+        }
 
-    // ============================================================
-    // INIT
-    // ============================================================
-    window.addEventListener('load', () => {
-        createStars();
-        renderTiles();
-        updateCartCount();
-        checkAuth();
-    });
-    window.addEventListener('resize', createStars);
-    window.addEventListener('storage', e => { if (e.key === 'cart') updateCartCount(); });
+        // ============================================================
+        // INIT
+        // ============================================================
+        // Restore cart from Supabase on page load so local cart stays in sync
+        async function restoreCartFromCloud() {
+            const { data: { session } } = await sbClient.auth.getSession();
+            if (!session) return;
+            const { data } = await sbClient.from('profiles').select('cart').eq('id', session.user.id).single();
+            if (data && Array.isArray(data.cart) && data.cart.length > 0) {
+                localStorage.setItem('cart', JSON.stringify(data.cart));
+                updateCartCount();
+            }
+        }
+
+        window.addEventListener('load', () => {
+            createStars();
+            renderTiles();
+            updateCartCount();
+            checkAuth();
+            restoreCartFromCloud();
+        });
+        window.addEventListener('resize', createStars);
+        window.addEventListener('storage', e => { if (e.key === 'cart') updateCartCount(); });
     </script>
 </body>
+
 </html>
