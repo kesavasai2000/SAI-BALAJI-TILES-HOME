@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Sai Balaji Tiles</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Supabase SDK -->
+    <!-- Supabase SDK (loaded ONCE only) -->
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -31,7 +31,7 @@
 
     /* GLASS LOGIN BOX */
     .auth-container {
-        background: rgba(20, 20, 20, 0.6); /* Dark Glass */
+        background: rgba(20, 20, 20, 0.6);
         backdrop-filter: blur(15px);
         -webkit-backdrop-filter: blur(15px);
         border: 1px solid rgba(255, 255, 255, 0.1);
@@ -76,6 +76,7 @@
         color: #888;
         font-size: 14px; font-weight: 600;
         border-radius: 8px; cursor: pointer; transition: 0.3s;
+        font-family: 'Poppins', sans-serif;
     }
     .tab-btn.active { background: rgba(255, 255, 255, 0.15); color: #fff; border: 1px solid rgba(255, 255, 255, 0.2); }
 
@@ -90,8 +91,10 @@
         border-radius: 8px;
         font-size: 14px; color: #fff;
         transition: 0.3s;
+        font-family: 'Poppins', sans-serif;
     }
     .form-input:focus { border-color: #22d3ee; outline: none; background: rgba(0, 0, 0, 0.8); }
+    .form-input::placeholder { color: #555; }
 
     /* BUTTONS */
     .submit-btn {
@@ -100,10 +103,12 @@
         color: #fff; border: none; border-radius: 8px;
         font-size: 15px; font-weight: 600;
         cursor: pointer; margin-top: 5px; transition: 0.2s;
+        font-family: 'Poppins', sans-serif;
     }
     .submit-btn:hover { transform: translateY(-2px); }
+    .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
-    /* GOOGLE BUTTON (NEW STYLE) */
+    /* GOOGLE BUTTON */
     .google-btn {
         display: flex;
         align-items: center;
@@ -112,7 +117,7 @@
         background-color: #ffffff;
         color: #333333;
         border: none;
-        border-radius: 30px; /* Pill shape */
+        border-radius: 30px;
         padding: 12px 20px;
         font-size: 15px;
         font-weight: 600;
@@ -122,40 +127,39 @@
         margin-top: 15px;
         font-family: 'Poppins', sans-serif;
     }
-
     .google-btn:hover {
         background-color: #f2f2f2;
         transform: translateY(-2px);
         box-shadow: 0 5px 15px rgba(255, 255, 255, 0.1);
     }
-
-    .google-btn img {
-        width: 20px;
-        height: 20px;
-    }
+    .google-btn img { width: 20px; height: 20px; }
 
     .divider { text-align: center; margin: 20px 0; position: relative; }
     .divider::before { content: ''; position: absolute; left: 0; top: 50%; width: 100%; height: 1px; background: rgba(255,255,255,0.1); }
     .divider span { background: #111; padding: 0 10px; position: relative; color: #666; font-size: 12px; }
 
     /* UTILS */
-    .hidden { display: none; }
     .auth-form { display: none; }
     .auth-form.active { display: block; animation: fadeIn 0.3s; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     
     .forgot-password { text-align: right; margin-bottom: 15px; }
-    .forgot-password a { font-size: 12px; color: #aaa; text-decoration: none; }
-    .alert { padding: 10px; border-radius: 6px; font-size: 13px; margin-bottom: 15px; display: none; }
+    .forgot-password a { font-size: 12px; color: #aaa; text-decoration: none; cursor: pointer; }
+    .forgot-password a:hover { color: #22d3ee; }
+
+    .alert { padding: 12px; border-radius: 6px; font-size: 13px; margin-bottom: 15px; display: none; line-height: 1.5; }
     .alert.show { display: block; }
     .alert-error { background: rgba(220, 38, 38, 0.2); color: #fecaca; border: 1px solid rgba(220, 38, 38, 0.5); }
     .alert-success { background: rgba(22, 163, 74, 0.2); color: #bbf7d0; border: 1px solid rgba(22, 163, 74, 0.5); }
-</style>
+    </style>
 </head>
 <body>
 
+    <!-- Stars Background -->
+    <div class="stars-container" id="stars-bg-global"></div>
+
     <div class="auth-container">
-        <!-- Header with Close Button -->
+        <!-- Header -->
         <div class="auth-header">
             <button class="close-auth" onclick="goBack()">×</button>
             <h2 class="auth-title">Welcome Back</h2>
@@ -165,26 +169,27 @@
         <div class="auth-body">
             <!-- Tabs -->
             <div class="auth-tabs">
-                <button class="tab-btn active" onclick="switchTab('login')">Login</button>
-                <button class="tab-btn" onclick="switchTab('signup')">Sign Up</button>
+                <button class="tab-btn active" onclick="switchTab('login', this)">Login</button>
+                <button class="tab-btn" onclick="switchTab('signup', this)">Sign Up</button>
             </div>
 
+            <!-- Alert Box -->
             <div id="authAlert" class="alert"></div>
 
-            <!-- LOGIN FORM -->
+            <!-- ===== LOGIN FORM ===== -->
             <form id="loginForm" class="auth-form active" onsubmit="handleLogin(event)">
                 <div class="form-group">
                     <label>Email Address</label>
-                    <input type="email" class="form-input" id="loginEmail" placeholder="your@email.com" required>
+                    <input type="email" class="form-input" id="loginEmail" placeholder="your@email.com" required autocomplete="email">
                 </div>
 
                 <div class="form-group">
                     <label>Password</label>
-                    <input type="password" class="form-input" id="loginPassword" placeholder="Enter password" required>
+                    <input type="password" class="form-input" id="loginPassword" placeholder="Enter your password" required autocomplete="current-password">
                 </div>
 
                 <div class="forgot-password">
-                    <a href="#" onclick="showForgotPassword()">Forgot Password?</a>
+                    <a onclick="showForgotPassword()">Forgot Password?</a>
                 </div>
 
                 <button type="submit" class="submit-btn" id="loginBtn">Sign In</button>
@@ -197,26 +202,26 @@
                 </button>
             </form>
 
-            <!-- SIGNUP FORM -->
+            <!-- ===== SIGNUP FORM ===== -->
             <form id="signupForm" class="auth-form" onsubmit="handleSignup(event)">
                 <div class="form-group">
                     <label>Full Name</label>
-                    <input type="text" class="form-input" id="signupName" placeholder="John Doe" required>
+                    <input type="text" class="form-input" id="signupName" placeholder="Your Full Name" required autocomplete="name">
                 </div>
 
                 <div class="form-group">
                     <label>Email Address</label>
-                    <input type="email" class="form-input" id="signupEmail" placeholder="your@email.com" required>
+                    <input type="email" class="form-input" id="signupEmail" placeholder="your@email.com" required autocomplete="email">
                 </div>
 
                 <div class="form-group">
                     <label>Password</label>
-                    <input type="password" class="form-input" id="signupPassword" placeholder="Min. 6 characters" required minlength="6">
+                    <input type="password" class="form-input" id="signupPassword" placeholder="Min. 6 characters" required minlength="6" autocomplete="new-password">
                 </div>
 
                 <div class="form-group">
                     <label>Confirm Password</label>
-                    <input type="password" class="form-input" id="signupConfirmPassword" placeholder="Confirm password" required>
+                    <input type="password" class="form-input" id="signupConfirmPassword" placeholder="Re-enter your password" required autocomplete="new-password">
                 </div>
 
                 <button type="submit" class="submit-btn" id="signupBtn">Create Account</button>
@@ -225,178 +230,282 @@
     </div>
 
     <script>
-        const supabaseUrl = 'https://jjseffkbreruegudlmnd.supabase.co'; 
+        // ==========================================
+        // SUPABASE CONFIG
+        // ==========================================
+        const supabaseUrl = 'https://jjseffkbreruegudlmnd.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impqc2VmZmticmVydWVndWRsbW5kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxOTMwMTEsImV4cCI6MjA4MTc2OTAxMX0.xrCWARm6FbW-U98Qs13mMvlCeBiQWgmD73qverF7Brk';
 
         const sbClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-        // --- UI FUNCTIONS ---
-        function switchTab(tab) {
+        // ==========================================
+        // STARS ANIMATION
+        // ==========================================
+        function createStars() {
+            const container = document.getElementById('stars-bg-global');
+            container.innerHTML = '';
+            const count = Math.min(200, Math.floor(window.innerWidth / 8));
+            for (let i = 0; i < count; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                const size = Math.random() * 2.5 + 0.5;
+                star.style.cssText = `
+                    width:${size}px; height:${size}px;
+                    left:${Math.random() * 100}%;
+                    top:${Math.random() * 100}%;
+                    animation-duration:${(Math.random() * 3 + 3).toFixed(1)}s;
+                    animation-delay:${(Math.random() * 3).toFixed(1)}s;
+                `;
+                container.appendChild(star);
+            }
+        }
+        createStars();
+        window.addEventListener('resize', createStars);
+
+        // ==========================================
+        // UI HELPERS
+        // ==========================================
+        function switchTab(tab, clickedBtn) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+            clickedBtn.classList.add('active');
             document.querySelectorAll('.auth-form').forEach(form => form.classList.remove('active'));
-            
+
             if (tab === 'login') {
                 document.getElementById('loginForm').classList.add('active');
-                document.querySelector('.auth-header h2').textContent = 'Welcome Back';
+                document.querySelector('.auth-title').textContent = 'Welcome Back';
+                document.querySelector('.auth-subtitle').textContent = 'Sign in to access your account';
             } else {
                 document.getElementById('signupForm').classList.add('active');
-                document.querySelector('.auth-header h2').textContent = 'Create Account';
+                document.querySelector('.auth-title').textContent = 'Create Account';
+                document.querySelector('.auth-subtitle').textContent = 'Join Sai Balaji Tiles today';
             }
             hideAlert();
         }
 
-        // Switch tab programmatically (without needing click event)
-        function switchTabByName(tab) {
-            document.querySelectorAll('.tab-btn').forEach((btn, i) => {
-                btn.classList.toggle('active', (tab === 'login' && i === 0) || (tab === 'signup' && i === 1));
-            });
-            document.querySelectorAll('.auth-form').forEach(form => form.classList.remove('active'));
-            if (tab === 'login') {
-                document.getElementById('loginForm').classList.add('active');
-                document.querySelector('.auth-header h2').textContent = 'Welcome Back';
-            } else {
-                document.getElementById('signupForm').classList.add('active');
-                document.querySelector('.auth-header h2').textContent = 'Create Account';
-            }
+        // Switch to login tab programmatically (no click event needed)
+        function switchTabToLogin() {
+            const loginBtn = document.querySelector('.tab-btn:first-child');
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            loginBtn.classList.add('active');
+            document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+            document.getElementById('loginForm').classList.add('active');
+            document.querySelector('.auth-title').textContent = 'Welcome Back';
+            document.querySelector('.auth-subtitle').textContent = 'Sign in to access your account';
         }
 
-        function goBack() { window.history.back(); }
+        function goBack() {
+            if (document.referrer) window.history.back();
+            else window.location.href = 'index.html';
+        }
 
         function showAlert(message, type) {
-            const alert = document.getElementById('authAlert');
-            alert.className = `alert alert-${type} show`;
-            alert.textContent = message;
+            const alertEl = document.getElementById('authAlert');
+            alertEl.className = `alert alert-${type} show`;
+            alertEl.textContent = message;
         }
 
-        function hideAlert() { document.getElementById('authAlert').classList.remove('show'); }
+        function hideAlert() {
+            document.getElementById('authAlert').classList.remove('show');
+        }
 
-        // --- AUTH LOGIC ---
+        // ==========================================
+        // LOGIN
+        // ==========================================
         async function handleLogin(event) {
             event.preventDefault();
-            const email = document.getElementById('loginEmail').value;
+            const email = document.getElementById('loginEmail').value.trim();
             const password = document.getElementById('loginPassword').value;
             const btn = document.getElementById('loginBtn');
 
-            btn.disabled = true; btn.textContent = 'Signing In...';
-
-            // Basic email format check
+            // Email format check
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(email)) {
                 showAlert('❌ Please enter a valid email address (e.g. name@example.com)', 'error');
-                btn.disabled = false; btn.textContent = 'Sign In';
                 return;
             }
+
+            btn.disabled = true;
+            btn.textContent = 'Signing In...';
 
             try {
                 const { data, error } = await sbClient.auth.signInWithPassword({ email, password });
                 if (error) throw error;
+
+                showAlert('✅ Login successful! Redirecting...', 'success');
                 await checkRoleAndRedirect(data.user.id);
+
             } catch (error) {
                 let msg = error.message;
-                if (msg.includes('Invalid login credentials')) {
-                    msg = '❌ Wrong email or password. If you just signed up, please verify your email first.';
+                if (msg.includes('Invalid login credentials') || msg.includes('invalid_credentials')) {
+                    msg = '❌ Wrong email or password. Please check and try again.';
                 } else if (msg.includes('Email not confirmed')) {
-                    msg = '📧 Please verify your email address before logging in. Check your inbox!';
+                    msg = '📧 Email not verified. Please contact support or disable email confirmation in Supabase.';
+                } else if (msg.includes('Too many requests')) {
+                    msg = '⏳ Too many attempts. Please wait a moment and try again.';
                 }
                 showAlert(msg, 'error');
-                btn.disabled = false; btn.textContent = 'Sign In';
+                btn.disabled = false;
+                btn.textContent = 'Sign In';
             }
         }
 
+        // ==========================================
+        // SIGNUP — Auto login after signup
+        // NOTE: For instant login to work, you MUST go to:
+        // Supabase Dashboard → Authentication → Providers → Email
+        // and turn OFF "Confirm email"
+        // ==========================================
         async function handleSignup(event) {
             event.preventDefault();
-            const name = document.getElementById('signupName').value;
-            const email = document.getElementById('signupEmail').value;
+            const name = document.getElementById('signupName').value.trim();
+            const email = document.getElementById('signupEmail').value.trim();
             const password = document.getElementById('signupPassword').value;
             const confirmPassword = document.getElementById('signupConfirmPassword').value;
             const btn = document.getElementById('signupBtn');
 
-            if (password !== confirmPassword) { showAlert('❌ Passwords do not match', 'error'); return; }
+            // Validations
+            if (!name) {
+                showAlert('❌ Please enter your full name.', 'error');
+                return;
+            }
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showAlert('❌ Please enter a valid email address.', 'error');
+                return;
+            }
+            if (password.length < 6) {
+                showAlert('❌ Password must be at least 6 characters long.', 'error');
+                return;
+            }
+            if (password !== confirmPassword) {
+                showAlert('❌ Passwords do not match. Please re-enter.', 'error');
+                return;
+            }
 
-            btn.disabled = true; btn.textContent = 'Creating...';
+            btn.disabled = true;
+            btn.textContent = 'Creating Account...';
 
             try {
-                const { data, error } = await sbClient.auth.signUp({ 
-                    email, 
+                // Step 1: Create auth account
+                const { data, error } = await sbClient.auth.signUp({
+                    email,
                     password,
-                    options: { data: { full_name: name } } // Save name to metadata
+                    options: { data: { full_name: name } }
                 });
                 if (error) throw error;
 
-                // Create Profile
-                await sbClient.from('profiles').insert([{ id: data.user.id, full_name: name, role: 'user', email: email }]);
+                // Step 2: Save profile
+                await sbClient.from('profiles').insert([{
+                    id: data.user.id,
+                    full_name: name,
+                    role: 'user',
+                    email: email
+                }]);
 
-                // If session exists, email confirmation is OFF — redirect immediately
-                if (data.session) {
-                    showAlert('✅ Account created! Redirecting...', 'success');
-                    setTimeout(() => { window.location.href = 'index.html'; }, 1500);
-                } else {
-                    // Email confirmation is ON — tell the user to verify
-                    showAlert('✅ Account created! Please check your email to verify your account, then log in.', 'success');
-                    btn.disabled = false; btn.textContent = 'Create Account';
-                    switchTabByName('login');
+                // Step 3: Auto sign-in (works when email confirmation is OFF)
+                const { data: loginData, error: loginError } = await sbClient.auth.signInWithPassword({ email, password });
+
+                if (loginError || !loginData.session) {
+                    // Email confirmation is still ON in Supabase dashboard
+                    showAlert('✅ Account created! Please go to Supabase Dashboard → Authentication → Providers → Email → Turn OFF "Confirm email". Then you can log in instantly.', 'success');
+                    btn.disabled = false;
+                    btn.textContent = 'Create Account';
+                    switchTabToLogin();
+                    return;
                 }
+
+                // All good — redirect
+                showAlert('🎉 Welcome to Sai Balaji Tiles!', 'success');
+                setTimeout(() => { window.location.href = 'index.html'; }, 1200);
+
             } catch (error) {
-                showAlert(error.message, 'error');
-                btn.disabled = false; btn.textContent = 'Create Account';
+                let msg = error.message;
+                if (msg.includes('already registered') || msg.includes('User already registered')) {
+                    msg = '⚠️ This email is already registered. Please login instead.';
+                    setTimeout(() => switchTabToLogin(), 2000);
+                }
+                showAlert(msg, 'error');
+                btn.disabled = false;
+                btn.textContent = 'Create Account';
             }
         }
 
+        // ==========================================
+        // GOOGLE SIGN IN
+        // ==========================================
         async function googleSignIn() {
             const { error } = await sbClient.auth.signInWithOAuth({
                 provider: 'google',
-                options: { redirectTo: window.location.href }
+                options: { redirectTo: window.location.origin + '/index.html' }
             });
             if (error) showAlert(error.message, 'error');
         }
 
+        // ==========================================
+        // ROLE-BASED REDIRECT AFTER LOGIN
+        // ==========================================
         async function checkRoleAndRedirect(userId) {
-            const { data, error } = await sbClient
+            const { data } = await sbClient
                 .from('profiles')
                 .select('role')
                 .eq('id', userId)
                 .single();
 
-            // If new Google user (no profile yet)
+            // New Google user — no profile yet
             if (!data) {
                 await createGoogleProfile();
                 return;
             }
 
             const role = data.role;
-            showAlert(`✅ Verified. Welcome back!`, 'success');
-
             setTimeout(() => {
-                if (role === 'admin') window.location.href = 'admin-dashboard.html';
+                if (role === 'admin')       window.location.href = 'admin-dashboard.html';
                 else if (role === 'worker') window.location.href = 'worker-dashboard.html';
                 else if (role === 'loader') window.location.href = 'loader-dashboard.html';
-                else window.location.href = 'index.html'; // <--- FIXED: Customers go to Home Page
+                else                        window.location.href = 'index.html'; // Regular customers
             }, 1000);
         }
 
+        // ==========================================
+        // CREATE PROFILE FOR NEW GOOGLE USERS
+        // ==========================================
         async function createGoogleProfile() {
             const { data: { user } } = await sbClient.auth.getUser();
             if (user) {
-                await sbClient.from('profiles').insert([{ 
-                    id: user.id, 
-                    full_name: user.user_metadata.full_name || 'Google User', 
-                    role: 'user', 
-                    email: user.email 
+                await sbClient.from('profiles').insert([{
+                    id: user.id,
+                    full_name: user.user_metadata.full_name || 'Customer',
+                    role: 'user',
+                    email: user.email
                 }]);
-                window.location.href = 'index.html'; // Redirect to Home
+                window.location.href = 'index.html';
             }
         }
 
+        // ==========================================
+        // FORGOT PASSWORD
+        // ==========================================
         async function showForgotPassword() {
-            const email = document.getElementById('loginEmail').value;
-            if (!email) { showAlert('Please enter email first', 'error'); return; }
-            const { error } = await sbClient.auth.resetPasswordForEmail(email);
+            const email = document.getElementById('loginEmail').value.trim();
+            if (!email) {
+                showAlert('📧 Please type your email address in the field above, then click Forgot Password.', 'error');
+                return;
+            }
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showAlert('❌ Please enter a valid email address.', 'error');
+                return;
+            }
+            const { error } = await sbClient.auth.resetPasswordForEmail(email, {
+                redirectTo: window.location.origin + '/auth.html'
+            });
             if (error) showAlert(error.message, 'error');
-            else showAlert('✅ Reset email sent!', 'success');
+            else showAlert('✅ Password reset email sent! Please check your inbox.', 'success');
         }
 
-        // Check session on load (Handle Google Return)
+        // ==========================================
+        // AUTO-REDIRECT IF ALREADY LOGGED IN
+        // ==========================================
         (async function checkSession() {
             const { data } = await sbClient.auth.getSession();
             if (data.session) {
