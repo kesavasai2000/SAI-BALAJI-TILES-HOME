@@ -78,7 +78,7 @@
       <h1 class="text-2xl sm:text-3xl font-bold text-cyan-400 mb-6 text-center">Your Shopping Cart</h1>
 
       <!-- Shown while restoring cart from cloud -->
-      <div id="sync-banner" class="show">⏳ Restoring your cart from your account...</div>
+      <div id="sync-banner" class="show">⏳ Syncing with your account...</div>
 
       <div class="grid gap-6">
         <div class="card p-4">
@@ -184,11 +184,13 @@
     'use strict';
 
     // ============================================================
-    // SUPABASE
+    // 🚀 SUPABASE CONFIGURATION
+    // PASTE YOUR URL AND KEY HERE
     // ============================================================
-    const SUPABASE_URL = 'https://jjseffkbreruegudlmnd.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impqc2VmZmticmVydWVndWRsbW5kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxOTMwMTEsImV4cCI6MjA4MTc2OTAxMX0.xrCWARm6FbW-U98Qs13mMvlCeBiQWgmD73qverF7Brk';
-    const sbClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const supabaseUrl = 'https://jjseffkbreruegudlmnd.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impqc2VmZmticmVydWVndWRsbW5kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxOTMwMTEsImV4cCI6MjA4MTc2OTAxMX0.xrCWARm6FbW-U98Qs13mMvlCeBiQWgmD73qverF7Brk';
+
+    const sbClient = supabase.createClient(supabaseUrl, supabaseKey);
 
     let currentUserId = null;
 
@@ -239,7 +241,6 @@
       if (error) console.warn('Cart save error:', error.message);
     }
 
-    // Save to BOTH localStorage and Supabase, then re-render
     function saveCart(cart) {
       saveLocalCart(cart);
       saveToSupabase(cart);
@@ -247,10 +248,7 @@
     }
 
     // ============================================================
-    // RESTORE CART FROM SUPABASE ON PAGE LOAD
-    // This is the key fix: when user is logged in, we always pull
-    // the latest cart from Supabase (their cloud save) and use that
-    // as the source of truth, replacing stale localStorage data.
+    // RESTORE CART & AUTO-FILL PROFILE DETAILS
     // ============================================================
     async function initCartFromCloud() {
       const { data: { session } } = await sbClient.auth.getSession();
@@ -263,31 +261,38 @@
         const profileLink = document.getElementById('header-profile-link');
         if (profileLink) profileLink.classList.remove('hidden');
 
-        // Fetch cart from Supabase
+        // Fetch Cart AND Profile Data (Phone/Address)
         const { data, error } = await sbClient
           .from('profiles')
-          .select('cart')
+          .select('cart, full_name, phone, address')
           .eq('id', currentUserId)
           .single();
 
-        if (!error && data && Array.isArray(data.cart) && data.cart.length > 0) {
-          // ✅ Cloud has items — restore them to localStorage
-          saveLocalCart(data.cart);
-          banner.textContent = '✅ Cart restored from your account';
-          setTimeout(() => { banner.classList.remove('show'); }, 2500);
-        } else {
-          // Cloud is empty — check if localStorage has items to push up
-          const local = loadLocalCart();
-          if (local.length > 0) {
-            await saveToSupabase(local);
-            banner.textContent = '✅ Cart synced to your account';
-            setTimeout(() => { banner.classList.remove('show'); }, 2000);
+        if (!error && data) {
+          
+          // --- 1. AUTO FILL FORM DATA ---
+          if (data.full_name) document.getElementById('customerName').value = data.full_name;
+          if (data.phone) document.getElementById('customerPhone').value = data.phone;
+          if (data.address) document.getElementById('customerAddress').value = data.address;
+
+          // --- 2. RESTORE CART DATA ---
+          if (Array.isArray(data.cart) && data.cart.length > 0) {
+            saveLocalCart(data.cart);
+            banner.textContent = '✅ Synced with your account';
+            setTimeout(() => { banner.classList.remove('show'); }, 2500);
           } else {
-            banner.classList.remove('show');
+            // Push local cart to empty cloud
+            const local = loadLocalCart();
+            if (local.length > 0) {
+              await saveToSupabase(local);
+              banner.textContent = '✅ Cart saved to cloud';
+              setTimeout(() => { banner.classList.remove('show'); }, 2000);
+            } else {
+              banner.classList.remove('show');
+            }
           }
         }
       } else {
-        // Not logged in — just use localStorage as-is
         banner.classList.remove('show');
       }
 
@@ -452,7 +457,7 @@
     }
     function closeModal() {
       checkoutModal.classList.add('hidden');
-      document.getElementById('checkoutForm')?.reset();
+      // Document NOT resetting form here so user doesn't lose pre-filled info
     }
 
     document.getElementById('checkout-btn').addEventListener('click', openModal);

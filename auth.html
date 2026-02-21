@@ -358,13 +358,32 @@
         }
 
         async function checkRoleAndRedirect(userId) {
-            const { data } = await sbClient.from('profiles').select('role').eq('id', userId).single();
-            if (!data) { await createGoogleProfile(); return; }
+            // 1. Fetch user profile AND their saved cart
+            const { data, error } = await sbClient
+                .from('profiles')
+                .select('role, cart')
+                .eq('id', userId)
+                .single();
+
+            if (error || !data) {
+                console.warn('Profile not found, defaulting to user.');
+                window.location.href = 'user-dashboard.html';
+                return;
+            }
+
+            // 2. Download the saved cart from Database to the Browser
+            if (data.cart && data.cart.length > 0) {
+                localStorage.setItem('cart', JSON.stringify(data.cart));
+            }
+
+            const role = data.role;
+            showAlert(`✅ Verified. Welcome back!`, 'success');
+
             setTimeout(() => {
-                if (data.role === 'admin')       window.location.href = 'admin-dashboard.html';
-                else if (data.role === 'worker') window.location.href = 'worker-dashboard.html';
-                else if (data.role === 'loader') window.location.href = 'loader-dashboard.html';
-                else                             window.location.href = 'index.html';
+                if (role === 'admin') window.location.href = 'admin-dashboard.html';
+                else if (role === 'worker') window.location.href = 'worker-dashboard.html';
+                else if (role === 'loader') window.location.href = 'loader-dashboard.html';
+                else window.location.href = 'index.html'; // Customers go to Home Page
             }, 1000);
         }
 
