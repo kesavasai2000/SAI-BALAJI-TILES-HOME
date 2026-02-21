@@ -221,6 +221,22 @@
             box-shadow: 0 0 10px rgba(34, 211, 238, 0.4);
             flex-shrink: 0;
         }
+
+        /* FORCE MAIN CONTENT TO START AT THE VERY TOP (IGNORE HEADER.JS PADDING) */
+#page-main-content {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+}
+
+/* ENSURE HERO SLIDER FILLS THE ENTIRE SCREEN STARTING FROM THE TOP EDGE */
+#home {
+    height: 100vh;
+    min-height: 100vh;
+    width: 100vw;
+    top: 0;
+    position: relative;
+    padding-top: 0;
+}
     </style>
 </head>
 
@@ -290,7 +306,7 @@
 
         <!-- ===== SIDEBAR NAV ===== -->
         <!-- SIDEBAR -->
-            <nav id="main-navbar-index" class="navbar fixed top-0 left-0 w-64 h-screen bg-gray-900 shadow-2xl transform -translate-x-full transition-transform duration-300 z-40 border-r border-gray-700">
+           <nav id="main-navbar-index" class="navbar fixed top-0 left-0 w-64 h-screen bg-gray-900 shadow-2xl transform -translate-x-full transition-transform duration-300 z-40 border-r border-gray-700">
             <div class="p-5 mt-20">
                 <ul class="space-y-4">
                     <li><a href="#home" class="block text-indigo-300 hover:text-white text-lg"
