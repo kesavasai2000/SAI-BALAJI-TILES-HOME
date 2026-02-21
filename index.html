@@ -660,7 +660,6 @@
 
     </div><!-- end #page-container -->
 
-    <!-- Scripts — Supabase loaded once -->
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <script src="header.js"></script>
 
@@ -670,6 +669,7 @@
         // ==========================================
         const supabaseUrl = 'https://jjseffkbreruegudlmnd.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impqc2VmZmticmVydWVndWRsbW5kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxOTMwMTEsImV4cCI6MjA4MTc2OTAxMX0.xrCWARm6FbW-U98Qs13mMvlCeBiQWgmD73qverF7Brk';
+
         const sbClient = supabase.createClient(supabaseUrl, supabaseKey);
 
         // ==========================================
@@ -720,11 +720,15 @@
                 const firstName = name.split(' ')[0];
 
                 // Header: hide Login, show avatar + "Hi, Name"
-                document.getElementById('auth-logged-out').style.display = 'none';
+                const loggedOutBtn = document.getElementById('auth-logged-out');
+                if (loggedOutBtn) loggedOutBtn.style.display = 'none';
+                
                 const loggedIn = document.getElementById('auth-logged-in');
-                loggedIn.style.display = 'flex';
-                document.getElementById('header-avatar').textContent = firstName[0].toUpperCase();
-                document.getElementById('header-username').textContent = 'Hi, ' + firstName;
+                if (loggedIn) {
+                    loggedIn.style.display = 'flex';
+                    document.getElementById('header-avatar').textContent = firstName[0].toUpperCase();
+                    document.getElementById('header-username').textContent = 'Hi, ' + firstName;
+                }
 
                 // Sidebar: change "Login / Sign Up" → "My Profile"
                 const navLink = document.getElementById('nav-auth-link');
@@ -733,7 +737,20 @@
                     navLink.textContent = '👤 My Profile';
                 }
             }
-            // Logged out: nothing to change — defaults already show Login
+        }
+
+        // --- NEW: FIX FOR CART MIXING ON LOGOUT ---
+        async function logoutUser() {
+            if(confirm('Are you sure you want to logout?')) {
+                // 1. Clear the cart from the browser memory
+                localStorage.removeItem('cart');
+                
+                // 2. Sign out of Supabase
+                await sbClient.auth.signOut();
+                
+                // 3. Reload the page to reset the UI
+                window.location.reload();
+            }
         }
 
         // ==========================================
@@ -860,6 +877,7 @@
             if (session) {
                 const { data } = await sbClient
                     .from('profiles').select('cart').eq('id', session.user.id).single();
+                
                 const cloudCart = (data && Array.isArray(data.cart)) ? data.cart : [];
                 const localCart = JSON.parse(localStorage.getItem('cart') || '[]');
 

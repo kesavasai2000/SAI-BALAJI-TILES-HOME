@@ -232,10 +232,9 @@
 
             const updates = {
                 id: user.id,
-                full_name: document.getElementById('full_name').value.trim(),
-                phone:     document.getElementById('phone').value.trim(),
-                address:   document.getElementById('address').value.trim(),
-                updated_at: new Date()
+                full_name: document.getElementById('full_name').value,
+                phone: document.getElementById('phone').value,
+                address: document.getElementById('address').value
             };
 
             const { error } = await sbClient.from('profiles').upsert(updates);
@@ -256,10 +255,9 @@
         }
 
         async function logout() {
-            if (confirm('Are you sure you want to logout?')) {
-                await sbClient.auth.signOut();
-                window.location.href = 'index.html';
-            }
+            localStorage.removeItem('cart'); 
+            await sbClient.auth.signOut();
+            window.location.href = 'index.html';
         }
 
         loadProfile();
