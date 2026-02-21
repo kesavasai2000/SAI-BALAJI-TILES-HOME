@@ -136,14 +136,25 @@
     <div id="site-snackbar-message">Message</div>
   </div>
 
+  <!-- 1. Include Supabase SDK -->
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  
+  <!-- 2. Include Header JS (for stars/navbar) -->
   <script src="header.js"></script>
 
   <script>
+    // ==========================================
+    // 🚀 PASTE YOUR SUPABASE KEYS HERE
+    // ==========================================
+    const supabaseUrl = 'https://jjseffkbreruegudlmnd.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impqc2VmZmticmVydWVndWRsbW5kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxOTMwMTEsImV4cCI6MjA4MTc2OTAxMX0.xrCWARm6FbW-U98Qs13mMvlCeBiQWgmD73qverF7Brk';
+
+    const sbClient = supabase.createClient(supabaseUrl, supabaseKey);
+
     document.addEventListener('DOMContentLoaded', () => {
-      // Get tile data from localStorage (set by brand-tiles.html)
+      // --- 1. SETUP TILE DATA ---
       const storedTile = JSON.parse(localStorage.getItem('selectedTile') || '{}');
       
-      // Default tile data (fallback)
       const defaultTile = {
         id: 'default',
         name: 'Premium Tile',
@@ -157,12 +168,12 @@
 
       const currentTile = Object.keys(storedTile).length > 0 ? storedTile : defaultTile;
 
-      // Related images (you can add more logic here)
+      // Setup Models & Images
       currentTile.related = currentTile.related || [currentTile.image];
       currentTile.arModelGLB = 'aug/modules/tilear.glb';
       currentTile.arModelUSDZ = 'aug/modules/tilear.usdz';
 
-      // View mechanics
+      // --- 2. VIEW LOGIC (Tabs/Slider) ---
       const viewSteps = document.querySelectorAll(".tile-view-step");
       const prevViewBtn = document.getElementById("prevViewBtn");
       const nextViewBtn = document.getElementById("nextViewBtn");
@@ -177,15 +188,15 @@
         if (index < 0 || index >= totalViews) return;
         viewSteps.forEach((step, i) => step.classList.toggle('hidden', i !== index));
         currentViewIndex = index;
-        currentViewStepEl && (currentViewStepEl.textContent = index + 1);
-        totalViewStepsEl && (totalViewStepsEl.textContent = totalViews);
+        if(currentViewStepEl) currentViewStepEl.textContent = index + 1;
+        if(totalViewStepsEl) totalViewStepsEl.textContent = totalViews;
         if (prevViewBtn) prevViewBtn.disabled = (index === 0);
         if (nextViewBtn) nextViewBtn.disabled = (index === totalViews - 1);
       }
       function nextView() { showView(currentViewIndex + 1); }
       function prevView() { showView(currentViewIndex - 1); }
 
-      // Populate tile details
+      // Populate UI
       function setText(id, text) { const el = document.getElementById(id); if (el) el.textContent = text; }
       function setSrc(id, src) { const el = document.getElementById(id); if (el) el.src = src; }
 
@@ -201,7 +212,7 @@
       setText("spec-price", `₹${currentTile.price}/sq.ft`);
       setSrc("ar-tile-thumbnail", currentTile.image);
 
-      // AR link
+      // AR Button
       const arLaunchButton = document.getElementById('ar-launch-button');
       if (arLaunchButton) {
         const glbPath = encodeURIComponent(currentTile.arModelGLB);
@@ -236,7 +247,7 @@
       if (prevViewBtn) prevViewBtn.addEventListener('click', prevView);
       if (galleryImageInteractiveArea) galleryImageInteractiveArea.addEventListener('click', nextView);
 
-      // Swipe support
+      // Swipe Support
       let touchstartX = 0;
       if (tileViewContainerEl) {
         tileViewContainerEl.addEventListener('touchstart', e => { touchstartX = e.changedTouches[0].screenX; }, { passive: true });
@@ -248,10 +259,23 @@
         });
       }
 
-      // Add to cart
+      // --- 3. SMART ADD TO CART LOGIC ---
       const addBtn = document.getElementById('add-to-cart-btn');
       if (addBtn) {
-        addBtn.addEventListener('click', () => {
+        addBtn.addEventListener('click', async () => {
+          
+          // A. CHECK LOGIN STATUS
+          const { data: { session } } = await sbClient.auth.getSession();
+
+          if (!session) {
+            // If not logged in, ask to login
+            if(confirm("Please login to add items to your cart. Go to Login page?")) {
+               window.location.href = 'auth.html';
+            }
+            return; // Stop here
+          }
+
+          // B. PREPARE ITEM
           const tile = window.currentTile;
           if (!tile) { showSnackbar('No tile selected.', 'error'); return; }
 
@@ -260,11 +284,12 @@
             name: tile.name || 'Tile',
             image: tile.image || 'images/placeholder.jpg',
             price: tile.price || 0,
-            quantity: 1,
-            brand: tile.brand || 'Unknown'
+            brand: tile.brand || 'Unknown',
+            quantity: 1
           };
 
-          const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+          // C. UPDATE LOCAL STORAGE
+          let cart = JSON.parse(localStorage.getItem('cart') || '[]');
           const existingIndex = cart.findIndex(ci => ci.id === item.id);
           if (existingIndex >= 0) {
             cart[existingIndex].quantity = (Number(cart[existingIndex].quantity) || 1) + 1;
@@ -273,6 +298,14 @@
           }
           localStorage.setItem('cart', JSON.stringify(cart));
 
+          // D. SYNC TO DATABASE (So they see it next time they login)
+          const user = session.user;
+          await sbClient
+            .from('profiles')
+            .update({ cart: cart })
+            .eq('id', user.id);
+
+          // E. UI FEEDBACK
           if (window.headerShared && typeof window.headerShared.updateCartCount === 'function') {
             window.headerShared.updateCartCount();
           }
@@ -282,7 +315,7 @@
           addBtn.disabled = true;
           setTimeout(() => { addBtn.textContent = prevText; addBtn.disabled = false; }, 1400);
 
-          showSnackbar(`${item.name} added to cart.`, 'success');
+          showSnackbar(`${item.name} added to cart!`, 'success');
         });
       }
 
@@ -304,79 +337,5 @@
       window.showSnackbar = showSnackbar;
     });
   </script>
-  <!-- Supabase SDK -->
-<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-
-<script>
-    // 1. CONFIGURATION
-    const supabaseUrl = 'https://jjseffkbreruegudlmnd.supabase.co'; 
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impqc2VmZmticmVydWVndWRsbW5kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxOTMwMTEsImV4cCI6MjA4MTc2OTAxMX0.xrCWARm6FbW-U98Qs13mMvlCeBiQWgmD73qverF7Brk';
-
-    const sbClient = supabase.createClient(supabaseUrl, supabaseKey);
-
-    // 2. SMART ADD TO CART FUNCTION
-    async function addToCart(tileId) {
-        // A. Check if User is Logged In
-        const { data: { session } } = await sbClient.auth.getSession();
-
-        if (!session) {
-            // User NOT logged in
-            if(confirm("You must login to add items to your cart. Go to Login?")) {
-                // Save where they were so we can come back later (Optional advanced step)
-                window.location.href = 'auth.html';
-            }
-            return;
-        }
-
-        // User IS logged in - Proceed to add
-        const user = session.user;
-        
-        // 1. Get current cart from LocalStorage
-        let cart = JSON.parse(localStorage.getItem('cart') || '[]');
-
-        // 2. Find item details (Assuming you have a 'tiles' array in your page script)
-        // If this is tile-detail.html, use 'currentTile'. 
-        // If brand-tiles.html, we find it from the list.
-        let tileToAdd;
-        
-        if (typeof tiles !== 'undefined') {
-            // Logic for brand-tiles.html
-            tileToAdd = tiles.find(t => t.id === tileId);
-        } else if (typeof currentTile !== 'undefined') {
-            // Logic for tile-detail.html
-            tileToAdd = currentTile;
-        }
-
-        if (!tileToAdd) return console.error("Tile not found");
-
-        // 3. Update Cart Array
-        const existingItem = cart.find(item => item.id === tileToAdd.id);
-        if (existingItem) {
-            existingItem.quantity = (existingItem.quantity || 1) + 1;
-        } else {
-            cart.push({
-                id: tileToAdd.id,
-                name: tileToAdd.name,
-                image: tileToAdd.image,
-                price: tileToAdd.price,
-                brand: tileToAdd.brand,
-                quantity: 1
-            });
-        }
-
-        // 4. Save to LocalStorage
-        localStorage.setItem('cart', JSON.stringify(cart));
-        
-        // 5. SAVE TO SUPABASE DATABASE (Cloud Sync)
-        await sbClient
-            .from('profiles')
-            .update({ cart: cart })
-            .eq('id', user.id);
-
-        // 6. Update UI
-        alert("Item added to cart & saved to your account!");
-        if(window.headerShared) window.headerShared.updateCartCount();
-    }
-</script>
 </body>
 </html>
