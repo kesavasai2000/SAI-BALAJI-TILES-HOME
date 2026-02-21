@@ -155,15 +155,20 @@
             🛒 <span id="cart-count-header" class="text-xs font-bold absolute -top-2 -right-2 bg-red-500 text-white rounded-full px-1">0</span>
         </a>
         
-        <!-- Auth Container (JS targets this ID to show User Name) -->
+        <!-- Auth Container — JS swaps based on login state -->
         <div id="auth-container-header" class="flex items-center gap-2">
-            <!-- Desktop Login Button -->
-            <button onclick="window.location.href='auth.html'" class="hidden sm:inline-block text-cyan-400 font-semibold border border-cyan-500 px-4 py-1 rounded hover:bg-cyan-500 hover:text-white transition">
-                Login
-            </button>
-
-            <!-- Mobile Login Icon -->
-            <a href="auth.html" class="sm:hidden text-cyan-400 text-xl">👤</a>
+            <!-- LOGGED OUT state -->
+            <div id="auth-logged-out" class="flex items-center gap-2">
+                <button onclick="window.location.href='auth.html'" class="hidden sm:inline-block text-cyan-400 font-semibold border border-cyan-500 px-4 py-1 rounded hover:bg-cyan-500 hover:text-white transition">Login</button>
+                <a href="auth.html" class="sm:hidden text-cyan-400 text-xl">👤</a>
+            </div>
+            <!-- LOGGED IN state (hidden by default, JS unhides) -->
+            <div id="auth-logged-in" style="display:none;" class="flex items-center gap-2">
+                <a href="user-profile.html" class="flex items-center gap-2 text-cyan-400 hover:text-cyan-300 transition group">
+                    <span id="header-avatar" class="w-8 h-8 rounded-full bg-gradient-to-r from-cyan-500 to-purple-500 flex items-center justify-center text-white text-sm font-bold">?</span>
+                    <span id="header-username" class="hidden sm:block text-sm font-semibold">Account</span>
+                </a>
+            </div>
         </div>
     </div>
 </header>
@@ -177,8 +182,7 @@
                     <li><a href="#about" class="block text-indigo-300 hover:text-white text-lg" onclick="toggleMenuIndex()">About Us</a></li>
                     <li><a href="#collections" class="block text-indigo-300 hover:text-white text-lg" onclick="toggleMenuIndex()">Collections</a></li>
                     <li><a href="#contact" class="block text-indigo-300 hover:text-white text-lg" onclick="toggleMenuIndex()">Contact</a></li>
-                    <li><a href="user-profile.html" class="block text-indigo-300 hover:text-white text-lg" onclick="toggleMenuIndex()">Profile</a></li>
-                    <li><a href="auth.html" class="block text-cyan-400 font-bold mt-4" onclick="toggleMenuIndex()">Login / Sign Up</a></li>
+                    <li id="nav-auth-item"><a href="auth.html" id="nav-auth-link" class="block text-cyan-400 font-bold mt-4" onclick="toggleMenuIndex()">Login / Sign Up</a></li>
                 </ul>
             </div>
         </nav>
@@ -363,7 +367,7 @@
                             <h3 class="text-xl font-bold text-cyan-400 mb-4">Contact Info</h3>
                             <p class="text-gray-300 mb-2"><strong>Address:</strong> 123 Tile Street, Chittoor</p>
                             <p class="text-gray-300 mb-2"><strong>Phone:</strong> +91 7680943539</p>
-                            <p class="text-gray-300 mb-4"><strong>Email:</strong> info@saibalajitiles.com</p>
+                            <p class="text-gray-300 mb-4"><strong>Email:</strong> <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="bfd6d1d9d0ffccded6ddded3ded5d6cbd6d3dacc91dcd0d2">[email&#160;protected]</a></p>
                             <a href="https://maps.app.goo.gl/ePv4dAQ9iEprLneLA" target="_blank" class="block w-full text-center bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-3 rounded-lg mt-4 transition">
                                 Get Directions
                             </a>
@@ -430,7 +434,6 @@
                     <li><a href="#" class="hover:text-cyan-400 transition duration-300">Cart</a></li>
                     <li><a href="#" class="hover:text-cyan-400 transition duration-300">catalog</a></li>
                     <li><a href="#" class="hover:text-cyan-400 transition duration-300">About</a></li>
-                    <li><a href="#" class="hover:text-cyan-400 transition duration-300">Profile</a></li>
                 </ul>
             </div>
 
@@ -462,7 +465,7 @@
                     <li class="flex items-center gap-3">
                         <!-- Email Icon -->
                         <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
-                        <span>info@saibalajitiles.com</span>
+                        <span><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="dfb6b1b9b09facbeb6bdbeb3beb5b6abb6b3baacf1bcb0b2">[email&#160;protected]</a></span>
                     </li>
                 </ul>
             </div>
@@ -477,7 +480,7 @@
     </div>
 
    <!-- 1. Include Supabase SDK -->
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     
     <!-- 2. Include Header JS -->
     <script src="header.js"></script>
@@ -531,56 +534,33 @@
         // ==========================================
         async function checkUserLogin() {
             const { data: { session } } = await sbClient.auth.getSession();
-            
+
             if (session) {
                 const user = session.user;
-                // Get Name (from Google metadata or DB profile)
-                let name = user.user_metadata.full_name || 'Customer';
-                
-                // If name missing in metadata, fetch from DB
-                if(name === 'Customer') {
-                    const { data } = await sbClient.from('profiles').select('full_name').eq('id', user.id).single();
-                    if(data && data.full_name) name = data.full_name;
-                }
 
-                // Get first name
+                // Get name from DB profile (most reliable)
+                let name = '';
+                const { data: profile } = await sbClient.from('profiles').select('full_name').eq('id', user.id).single();
+                if (profile && profile.full_name) name = profile.full_name;
+                else name = user.user_metadata?.full_name || user.email || 'Account';
+
                 const firstName = name.split(' ')[0];
 
-                // --- UPDATE UI ---
-                const header = document.getElementById('main-header');
-                
-                // 1. Find the Login Button (Desktop)
-                const loginBtn = header.querySelector("button[onclick*='auth.html']");
-                
-                // 2. Find the Icon (Mobile)
-                const mobileIcon = header.querySelector("a[href='auth.html']");
+                // ---- HEADER: hide login, show profile ----
+                document.getElementById('auth-logged-out').style.display = 'none';
+                const loggedInEl = document.getElementById('auth-logged-in');
+                loggedInEl.style.display = 'flex';
+                document.getElementById('header-avatar').textContent = firstName[0].toUpperCase();
+                document.getElementById('header-username').textContent = 'Hi, ' + firstName;
 
-                if (loginBtn) {
-                    // Create User Display Element
-                    const userDisplay = document.createElement('div');
-                    userDisplay.className = "flex items-center gap-3";
-                    userDisplay.innerHTML = `
-                        <span class="text-cyan-400 font-semibold text-sm hidden sm:block">Hi, ${firstName}</span>
-                        <button onclick="logoutUser()" class="border border-red-500 text-red-400 hover:bg-red-500 hover:text-white px-3 py-1 rounded text-xs font-bold transition">Logout</button>
-                    `;
-                    // Replace Login Button with User Display
-                    loginBtn.parentNode.replaceChild(userDisplay, loginBtn);
-                }
-
-                if (mobileIcon) {
-                    // Change Mobile Icon link to Logout or Profile
-                    mobileIcon.href = "#";
-                    mobileIcon.onclick = (e) => { e.preventDefault(); logoutUser(); };
-                    mobileIcon.innerHTML = "🚪"; // Change icon to door/logout
+                // ---- SIDEBAR: change login link to profile link ----
+                const navLink = document.getElementById('nav-auth-link');
+                if (navLink) {
+                    navLink.href = 'user-profile.html';
+                    navLink.textContent = '👤 My Profile';
                 }
             }
-        }
-
-        async function logoutUser() {
-            if(confirm('Are you sure you want to logout?')) {
-                await sbClient.auth.signOut();
-                window.location.reload();
-            }
+            // If not logged in — nothing to do, defaults already show login
         }
 
         // ==========================================
@@ -697,17 +677,4 @@ async function syncCartFromDatabase() {
             .eq('id', session.user.id)
             .single();
 
-        if (data && data.cart) {
-            // Update LocalStorage with DB data
-            localStorage.setItem('cart', JSON.stringify(data.cart));
-            // Update Header Counter
-            updateCartCountIndex(); 
-        }
-    }
-}
-
-// Call this function when page loads
-window.addEventListener('load', syncCartFromDatabase);
-    </script>
-</body>
-</html>
+        if (data &&

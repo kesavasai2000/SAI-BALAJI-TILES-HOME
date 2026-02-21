@@ -8,156 +8,258 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <style>
-        /* DARK UNIVERSE THEME */
         html, body { height: 100%; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
-        body { 
+        body {
             background-color: #000000;
             background-image: radial-gradient(circle at 50% 50%, #111111 0%, #000000 100%);
-            color: #e2e8f0;
-            overflow-x: hidden;
+            color: #e2e8f0; overflow-x: hidden;
         }
         .stars-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: -1; }
-        .star { position: absolute; background-color: white; border-radius: 50%; opacity: 0.8; animation: twinkle 4s infinite ease-in-out; }
+        .star { position: absolute; background-color: white; border-radius: 50%; animation: twinkle 4s infinite ease-in-out; }
         @keyframes twinkle { 0%, 100% { opacity: 0.3; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.2); } }
 
-        /* GLASS CARD */
         .glass-card {
-            background: rgba(20, 20, 20, 0.6);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+            background: rgba(20, 20, 20, 0.65);
+            backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
         }
 
-        input {
-            width: 100%; padding: 12px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px; color: white;
-            margin-bottom: 15px;
+        .form-input {
+            width: 100%; padding: 12px 14px;
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px; color: white; font-family: 'Poppins', sans-serif;
+            font-size: 14px; transition: 0.3s; margin-bottom: 0;
         }
-        input:focus { outline: none; border-color: #22d3ee; }
-        
-        .btn-primary {
+        .form-input:focus { outline: none; border-color: #22d3ee; background: rgba(255,255,255,0.08); }
+        .form-input::placeholder { color: #444; }
+        .form-input:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .btn-save {
             background: linear-gradient(to right, #06b6d4, #3b82f6);
-            color: white; padding: 12px 24px; border-radius: 8px; font-weight: bold; width: 100%;
-            transition: transform 0.2s;
+            color: white; padding: 13px 24px; border-radius: 8px;
+            font-weight: bold; width: 100%; font-family: 'Poppins', sans-serif;
+            font-size: 15px; border: none; cursor: pointer; transition: 0.2s;
         }
-        .btn-primary:hover { transform: scale(1.02); }
+        .btn-save:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(6,182,212,0.3); }
+        .btn-save:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+        .btn-logout {
+            width: 100%; padding: 12px; margin-top: 10px;
+            border: 1px solid rgba(239,68,68,0.6); color: #f87171;
+            background: rgba(239,68,68,0.08); border-radius: 8px;
+            font-family: 'Poppins', sans-serif; font-size: 14px; font-weight: 600;
+            cursor: pointer; transition: 0.2s;
+        }
+        .btn-logout:hover { background: rgba(239,68,68,0.2); border-color: #ef4444; }
+
+        .label { display: block; font-size: 12px; font-weight: 500; color: #888; margin-bottom: 5px; }
+        .form-group { margin-bottom: 16px; }
+
+        .info-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: rgba(34,211,238,0.1); color: #22d3ee;
+            border: 1px solid rgba(34,211,238,0.2); padding: 5px 12px;
+            border-radius: 20px; font-size: 12px; font-weight: 600;
+        }
+
+        .section-title {
+            font-size: 11px; text-transform: uppercase; letter-spacing: 1.3px;
+            color: #444; margin: 20px 0 12px; padding-bottom: 6px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .alert { padding: 11px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; display: none; }
+        .alert.show { display: block; }
+        .alert-success { background: rgba(22,163,74,0.2); color: #bbf7d0; border: 1px solid rgba(22,163,74,0.4); }
+        .alert-error   { background: rgba(220,38,38,0.2);  color: #fecaca;  border: 1px solid rgba(220,38,38,0.4);  }
+
+        .avatar-ring {
+            width: 80px; height: 80px;
+            background: linear-gradient(135deg, #06b6d4, #8b5cf6);
+            border-radius: 50%; display: flex; align-items: center;
+            justify-content: center; font-size: 28px; font-weight: bold; color: white;
+            margin: 0 auto 12px; box-shadow: 0 0 20px rgba(34,211,238,0.3);
+        }
     </style>
 </head>
 <body>
-
-    <!-- Stars -->
     <div class="stars-container" id="stars-bg-global"></div>
 
-    <!-- Header -->
-    <header class="p-6 flex justify-between items-center fixed w-full top-0 z-50 bg-black/50 backdrop-blur-md border-b border-white/10">
-        <a href="index.html" class="text-xl font-bold text-cyan-400">SAI BALAJI TILES</a>
-        <a href="index.html" class="text-gray-300 hover:text-white">← Back to Home</a>
+    <!-- Header — NO logout button here -->
+    <header class="p-4 sm:p-5 flex justify-between items-center fixed w-full top-0 z-50 bg-black/50 backdrop-blur-md border-b border-white/10">
+        <a href="index.html" class="text-lg font-bold text-cyan-400 tracking-wide">SAI BALAJI TILES</a>
+        <a href="index.html" class="text-sm text-gray-400 hover:text-white transition">← Back to Home</a>
     </header>
 
-    <div class="min-h-screen flex items-center justify-center p-4 pt-24">
-        <div class="glass-card p-8 w-full max-w-lg">
-            <div class="text-center mb-8">
-                <div class="w-20 h-20 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full mx-auto flex items-center justify-center text-3xl font-bold text-white mb-4">
-                    <span id="avatar-initial">U</span>
-                </div>
-                <h2 class="text-2xl font-bold text-white" id="display-name">Loading...</h2>
-                <p class="text-gray-400" id="display-email">...</p>
+    <div class="min-h-screen pt-24 pb-10 px-4 flex items-start justify-center">
+        <div class="glass-card p-6 sm:p-8 w-full max-w-lg">
+
+            <!-- Loading state -->
+            <div id="loading-state" class="text-center py-8">
+                <div class="text-cyan-400 text-4xl mb-3">⏳</div>
+                <p class="text-gray-400">Loading your profile...</p>
             </div>
 
-            <form id="profile-form">
-                <label class="block text-gray-400 text-sm mb-2">Full Name</label>
-                <input type="text" id="full_name" placeholder="Your Name">
+            <!-- Profile content (hidden until loaded) -->
+            <div id="profile-content" style="display:none;">
 
-                <label class="block text-gray-400 text-sm mb-2">Phone Number</label>
-                <input type="text" id="phone" placeholder="+91 99999 99999">
+                <!-- Avatar & Name -->
+                <div class="text-center mb-6">
+                    <div class="avatar-ring">
+                        <span id="avatar-initial">?</span>
+                    </div>
+                    <h2 class="text-xl font-bold text-white" id="display-name">—</h2>
+                    <p class="text-gray-400 text-sm mt-1" id="display-email">—</p>
+                    <div class="mt-2">
+                        <span class="info-badge" id="role-badge">👤 Customer</span>
+                    </div>
+                </div>
 
-                <label class="block text-gray-400 text-sm mb-2">Delivery Address</label>
-                <input type="text" id="address" placeholder="House No, Street, City">
+                <!-- Alert box -->
+                <div id="profileAlert" class="alert"></div>
 
-                <button type="submit" class="btn-primary mt-4">Save Changes</button>
-            </form>
+                <!-- Profile Form -->
+                <form id="profile-form" onsubmit="saveProfile(event)">
 
-            <button onclick="logout()" class="w-full mt-4 py-3 border border-red-500 text-red-400 rounded-lg hover:bg-red-500/10 transition">
-                Logout
-            </button>
+                    <p class="section-title">Personal Info</p>
+
+                    <div class="form-group">
+                        <label class="label">Full Name</label>
+                        <input type="text" class="form-input" id="full_name" placeholder="Your Full Name">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="label">Email Address</label>
+                        <input type="email" class="form-input" id="email_display" placeholder="—" disabled>
+                    </div>
+
+                    <p class="section-title">Contact Details</p>
+
+                    <div class="form-group">
+                        <label class="label">Phone Number</label>
+                        <input type="tel" class="form-input" id="phone" placeholder="+91 98765 43210">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="label">Delivery Address</label>
+                        <input type="text" class="form-input" id="address" placeholder="House No, Street, City">
+                    </div>
+
+                    <button type="submit" class="btn-save" id="save-btn">💾 Save Changes</button>
+                </form>
+
+                <!-- Logout — lives here, NOT in header -->
+                <button class="btn-logout" onclick="logout()">🚪 Logout</button>
+
+            </div>
         </div>
     </div>
 
     <script>
-        // 1. SUPABASE CONFIG
-        const supabaseUrl = 'https://jjseffkbreruegudlmnd.supabase.co'; 
+        const supabaseUrl = 'https://jjseffkbreruegudlmnd.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impqc2VmZmticmVydWVndWRsbW5kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxOTMwMTEsImV4cCI6MjA4MTc2OTAxMX0.xrCWARm6FbW-U98Qs13mMvlCeBiQWgmD73qverF7Brk';
-
         const sbClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-        // 2. STARS ANIMATION
+        // Stars
         function createStars() {
-            const container = document.getElementById('stars-bg-global');
-            container.innerHTML = '';
-            for(let i=0; i<100; i++) {
-                const star = document.createElement('div');
-                star.className = 'star';
-                star.style.width = Math.random() * 3 + 'px';
-                star.style.height = star.style.width;
-                star.style.left = Math.random() * 100 + '%';
-                star.style.top = Math.random() * 100 + '%';
-                container.appendChild(star);
+            const c = document.getElementById('stars-bg-global');
+            c.innerHTML = '';
+            for (let i = 0; i < 100; i++) {
+                const s = document.createElement('div');
+                s.className = 'star';
+                const sz = Math.random() * 2.5 + 0.5;
+                s.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;animation-duration:${(Math.random()*3+3).toFixed(1)}s;`;
+                c.appendChild(s);
             }
         }
         createStars();
 
-        // 3. LOAD PROFILE DATA
-        async function loadProfile() {
-            const { data: { session } } = await sbClient.auth.getSession();
-            if (!session) {
-                window.location.href = 'auth.html';
-                return;
-            }
-
-            const user = session.user;
-            document.getElementById('display-email').textContent = user.email;
-
-            // Fetch extra details from 'profiles' table
-            const { data, error } = await sbClient
-                .from('profiles')
-                .select('*')
-                .eq('id', user.id)
-                .single();
-
-            if (data) {
-                document.getElementById('full_name').value = data.full_name || '';
-                document.getElementById('phone').value = data.phone || '';
-                document.getElementById('address').value = data.address || '';
-                document.getElementById('display-name').textContent = data.full_name || 'Customer';
-                document.getElementById('avatar-initial').textContent = (data.full_name || 'U')[0].toUpperCase();
-            }
+        function showAlert(msg, type) {
+            const el = document.getElementById('profileAlert');
+            el.className = `alert alert-${type} show`;
+            el.textContent = msg;
+            setTimeout(() => el.classList.remove('show'), 4000);
         }
 
-        // 4. UPDATE PROFILE
-        document.getElementById('profile-form').addEventListener('submit', async (e) => {
+        // Load profile
+        async function loadProfile() {
+            const { data: { session } } = await sbClient.auth.getSession();
+            if (!session) { window.location.href = 'auth.html'; return; }
+
+            const user = session.user;
+
+            // Fetch from profiles table
+            const { data, error } = await sbClient
+                .from('profiles').select('*').eq('id', user.id).single();
+
+            // Hide loading, show content
+            document.getElementById('loading-state').style.display = 'none';
+            document.getElementById('profile-content').style.display = 'block';
+
+            // Populate fields
+            const fullName = data?.full_name || user.user_metadata?.full_name || '';
+            const email    = user.email || '';
+            const phone    = data?.phone || '';
+            const address  = data?.address || '';
+            const role     = data?.role || 'user';
+
+            document.getElementById('full_name').value    = fullName;
+            document.getElementById('email_display').value = email;
+            document.getElementById('phone').value        = phone;
+            document.getElementById('address').value      = address;
+
+            // Avatar initial
+            const initial = fullName ? fullName[0].toUpperCase() : email[0].toUpperCase();
+            document.getElementById('avatar-initial').textContent = initial;
+
+            // Display name & email
+            document.getElementById('display-name').textContent  = fullName || 'Customer';
+            document.getElementById('display-email').textContent = email;
+
+            // Role badge
+            const roleMap = { admin: '👑 Admin', worker: '👷 Worker', loader: '📦 Loader', user: '👤 Customer' };
+            document.getElementById('role-badge').textContent = roleMap[role] || '👤 Customer';
+        }
+
+        // Save profile
+        async function saveProfile(e) {
             e.preventDefault();
             const { data: { user } } = await sbClient.auth.getUser();
-            
+            const btn = document.getElementById('save-btn');
+
+            btn.disabled = true; btn.textContent = 'Saving...';
+
             const updates = {
                 id: user.id,
-                full_name: document.getElementById('full_name').value,
-                phone: document.getElementById('phone').value,
-                address: document.getElementById('address').value,
+                full_name: document.getElementById('full_name').value.trim(),
+                phone:     document.getElementById('phone').value.trim(),
+                address:   document.getElementById('address').value.trim(),
                 updated_at: new Date()
             };
 
             const { error } = await sbClient.from('profiles').upsert(updates);
 
-            if (error) alert(error.message);
-            else alert('✅ Profile Updated Successfully!');
-        });
+            if (error) {
+                showAlert('❌ Error: ' + error.message, 'error');
+            } else {
+                // Update avatar initial & display name live
+                const name = updates.full_name;
+                if (name) {
+                    document.getElementById('display-name').textContent  = name;
+                    document.getElementById('avatar-initial').textContent = name[0].toUpperCase();
+                }
+                showAlert('✅ Profile updated successfully!', 'success');
+            }
+
+            btn.disabled = false; btn.textContent = '💾 Save Changes';
+        }
 
         async function logout() {
-            await sbClient.auth.signOut();
-            window.location.href = 'index.html';
+            if (confirm('Are you sure you want to logout?')) {
+                await sbClient.auth.signOut();
+                window.location.href = 'index.html';
+            }
         }
 
         loadProfile();
