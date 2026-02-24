@@ -139,9 +139,10 @@ body {
     <div class="stars-container" id="stars-bg-global"></div>
 
     <header id="main-header" class="fixed w-full top-0 left-0 bg-gray-900/80 backdrop-blur-md shadow-2xl flex items-center justify-between p-3 sm:p-4 z-40 border-b border-cyan-500/30">
-        <div class="flex-none">
-            <button id="toggle-btn" aria-label="Toggle menu" class="text-2xl text-cyan-400 hover:text-cyan-300">☰</button>
-        </div>
+        <!-- Hamburger button inside your header -->
+<div class="flex-none">
+    <button id="toggle-btn-brands" aria-label="Toggle menu" class="text-2xl text-cyan-400 hover:text-cyan-300">☰</button>
+</div>
         
         <div class="flex-none">
             <a href="cart.html" class="text-cyan-400 hover:text-cyan-300">
@@ -277,45 +278,58 @@ body {
             }
         }
 
-        // ==================== NAVBAR TOGGLE ====================
-        const toggleBtn = document.getElementById('toggle-btn');
-        const navbar = document.getElementById('main-navbar');
-        let menuVisible = false;
+        const toggleBtn = document.getElementById('toggle-btn-brands'); 
+    const navbar = document.getElementById('main-navbar-index'); // Matches your <nav> ID above
+    
+    let menuVisible = false;
 
-        toggleBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            menuVisible = !menuVisible;
-            navbar.classList.toggle('translate-x-0', menuVisible);
-            navbar.classList.toggle('-translate-x-full', !menuVisible);
-        });
-
-        document.addEventListener('click', (e) => {
-            if (menuVisible && !navbar.contains(e.target) && e.target !== toggleBtn) {
-                menuVisible = false;
-                navbar.classList.add('-translate-x-full');
-                navbar.classList.remove('translate-x-0');
-            }
-        });
-
-        // ==================== CART COUNT ====================
-        function updateCartCount() {
-            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-            const count = cart.length;
-            document.getElementById('cart-count').textContent = count;
-            document.getElementById('cart-count-nav').textContent = count;
+    // 2. Function to open/close menu
+    function toggleMenu() {
+        menuVisible = !menuVisible;
+        
+        // This slides the menu in and out
+        if(menuVisible) {
+            navbar.classList.remove('-translate-x-full');
+            navbar.classList.add('translate-x-0');
+        } else {
+            navbar.classList.add('-translate-x-full');
+            navbar.classList.remove('translate-x-0');
         }
+    }
 
-        // ==================== INITIALIZE ====================
-        window.addEventListener('load', () => {
-            createStars();
-            populateBrands();
-            updateCartCount();
+    // 3. Attach the click event to the hamburger button
+    if (toggleBtn) {
+        toggleBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Stops the click from immediately triggering the document click below
+            toggleMenu();
         });
+    }
 
-        window.addEventListener('resize', createStars);
-        window.addEventListener('storage', (e) => {
-            if (e.key === 'cart') updateCartCount();
-        });
+    // 4. Close menu when clicking ANYWHERE outside of it
+    document.addEventListener('click', (e) => {
+        if (menuVisible && !navbar.contains(e.target) && e.target !== toggleBtn) {
+            toggleMenu();
+        }
+    });
+
+    // ====================================
+    // CART COUNT LOGIC (Keep this if you have it)
+    // ====================================
+    function updateCartCount() {
+        const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+        const count = cart.length;
+        
+        const headerCount = document.getElementById('cart-count');
+        const navCount = document.getElementById('cart-count-nav');
+        
+        if(headerCount) headerCount.textContent = count;
+        if(navCount) navCount.textContent = count;
+    }
+    
+    window.addEventListener('load', updateCartCount);
+    window.addEventListener('storage', (e) => {
+        if (e.key === 'cart') updateCartCount();
+    });
     </script>
 </body>
 </html>
