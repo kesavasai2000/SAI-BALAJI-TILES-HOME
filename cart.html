@@ -18,179 +18,185 @@
     .star { position: absolute; background: white; border-radius: 50%; animation: twinkle 4s infinite ease-in-out; }
     @keyframes twinkle { 0%,100%{opacity:.2;transform:scale(.8)} 50%{opacity:.9;transform:scale(1.2)} }
 
-    main { padding-top: 5.25rem; max-width: 1100px; margin: 0 auto; }
+    main { padding-top: 5.5rem; max-width: 1100px; margin: 0 auto; padding-bottom: 2rem; }
 
-    .card { background: var(--card); border: 1px solid rgba(148,163,184,0.08); border-radius: 12px; padding: 1rem; box-shadow: 0 10px 30px rgba(2,6,23,0.6); }
+    .card { background: var(--card); border: 1px solid rgba(148,163,184,0.08); border-radius: 12px; padding: 1.5rem; box-shadow: 0 10px 30px rgba(2,6,23,0.6); }
 
-    .cart-grid { display: flex; gap: 1rem; align-items: center; justify-content: space-between; padding: 0.75rem; border-radius: 10px; border-bottom: 1px solid rgba(255,255,255,0.04); }
-    .cart-thumb { width: 84px; height: 84px; object-fit: cover; border-radius: 8px; border: 2px solid rgba(148,163,184,0.1); flex-shrink: 0; }
+    /* --- FIXED CART ITEM LAYOUT --- */
+    .cart-grid { display: flex; align-items: center; justify-content: space-between; padding: 1rem 0; border-bottom: 1px solid rgba(255,255,255,0.08); gap: 1rem; }
+    .cart-grid:last-child { border-bottom: none; }
+    
+    .cart-item-main { display: flex; align-items: center; gap: 1rem; flex: 1; min-width: 0; }
+    .cart-thumb { width: 90px; height: 90px; object-fit: cover; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); flex-shrink: 0; }
+    .cart-item-info { min-width: 0; }
+    .cart-item-title { font-weight: 600; color: #a5b4fc; font-size: 1.1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 0.2rem; }
+    .cart-item-price { color: #94a3b8; font-size: 0.85rem; }
+    .cart-item-price span { color: #22d3ee; font-weight: 600; }
+    
+    .cart-item-actions { display: flex; align-items: center; gap: 1.5rem; flex-shrink: 0; }
+    .qty-wrapper { display: flex; align-items: center; gap: 0.5rem; }
+    .price-total { text-align: right; min-width: 80px; }
 
-    .btn-primary { background: var(--accent); color: #071126; padding: 0.6rem 1rem; border-radius: 10px; font-weight: 600; border: 0; cursor: pointer; font-family: 'Poppins',sans-serif; transition: .2s; }
-    .btn-primary:hover { opacity: .85; }
-    .btn-primary:disabled { opacity: .5; cursor: not-allowed; }
-    .btn-ghost { background: transparent; color: #c7d2fe; padding: .45rem .8rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; font-family: 'Poppins',sans-serif; transition: .2s; }
-    .btn-ghost:hover { background: rgba(255,255,255,0.05); }
+    .btn-primary { background: var(--accent); color: #071126; padding: 0.8rem 1.5rem; border-radius: 10px; font-weight: 700; border: 0; cursor: pointer; transition: 0.2s; text-align: center; }
+    .btn-primary:hover { opacity: 0.85; transform: translateY(-1px); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    
+    .btn-ghost { background: transparent; color: #c7d2fe; padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.15); cursor: pointer; transition: 0.2s; font-size: 0.9rem; }
+    .btn-ghost:hover { background: rgba(255,255,255,0.1); }
 
-    .qty-input { width: 52px; text-align: center; padding: 6px 8px; border-radius: 8px; background: #111827; color: #fff; border: 1px solid rgba(148,163,184,0.1); font-family: 'Poppins',sans-serif; }
+    .qty-input { width: 50px; text-align: center; padding: 6px; border-radius: 8px; background: rgba(0,0,0,0.5); color: #fff; border: 1px solid rgba(255,255,255,0.2); outline: none; }
     .muted { color: #94a3b8; }
-    .price { color: #22d3ee; font-weight: 600; }
+    .price { color: #22d3ee; font-weight: 700; }
 
-    /* Sync banner — shows when cart is being restored */
-    #sync-banner {
-        display: none; text-align: center; padding: 10px 16px;
-        background: rgba(6,182,212,0.12); border: 1px solid rgba(34,211,238,0.25);
-        border-radius: 10px; margin-bottom: 16px; font-size: 13px; color: #22d3ee;
-    }
+    /* Sync banner */
+    #sync-banner { display: none; text-align: center; padding: 10px; background: rgba(6,182,212,0.15); border: 1px solid rgba(34,211,238,0.3); border-radius: 8px; margin-bottom: 20px; font-size: 14px; color: #22d3ee; font-weight: 600; }
     #sync-banner.show { display: block; }
 
-    #checkout-modal { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.65); backdrop-filter: blur(6px); z-index: 60; padding: 1rem; }
-    .modal { width: 100%; max-width: 880px; border-radius: 12px; overflow: hidden; background: linear-gradient(180deg,rgba(17,24,39,.97),rgba(15,23,42,.97)); border: 1px solid rgba(148,163,184,0.08); }
-    .modal-header { padding: 1rem 1.25rem; border-bottom: 1px solid rgba(148,163,184,0.06); display: flex; align-items: center; justify-content: space-between; }
-    .modal-body { padding: 1rem 1.25rem; max-height: 60vh; overflow: auto; }
-
-    #site-snackbar { position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%) translateY(20px); background: rgba(15,23,42,.96); color: #e6f9ff; padding: .6rem 1.2rem; border-radius: 10px; box-shadow: 0 10px 30px rgba(2,6,23,.6); opacity: 0; pointer-events: none; transition: transform .25s,opacity .25s; z-index: 99999; }
-    #site-snackbar.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-    #site-snackbar.success { background: rgba(2,113,103,.95); color: #e6fff9; }
-    #site-snackbar.error { background: rgba(127,29,29,.95); color: #fff3f3; }
-
+    /* Modal & Snackbar styling kept same */
+    #checkout-modal { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index: 60; padding: 1rem; }
+    .modal { width: 100%; max-width: 600px; border-radius: 16px; background: rgba(17,24,39,1); border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
+    .modal-header { padding: 1.25rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-between; }
+    .modal-body { padding: 1.5rem; max-height: 75vh; overflow-y: auto; }
+    #site-snackbar { position: fixed; left: 50%; bottom: 30px; transform: translate(-50%, 20px); background: rgba(20,20,20,0.95); color: #fff; padding: 0.8rem 1.5rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); opacity: 0; pointer-events: none; transition: 0.3s; z-index: 99999; text-align: center; white-space: nowrap; }
+    #site-snackbar.show { opacity: 1; transform: translate(-50%, 0); }
+    #site-snackbar.success { border-color: #10b981; color: #10b981; }
+    #site-snackbar.error { border-color: #ef4444; color: #ef4444; }
     .hidden { display: none !important; }
 
-    @media (max-width:640px) {
-      .cart-grid { flex-direction: column; align-items: flex-start; }
-      .cart-thumb { width: 100%; height: 160px; }
-      main { padding-top: 4.5rem; }
+    /* --- MOBILE RESPONSIVE FIXES --- */
+    @media (max-width: 640px) {
+      .cart-grid { flex-direction: column; align-items: stretch; gap: 1rem; padding: 1.25rem 0; }
+      .cart-item-main { flex-direction: column; align-items: stretch; gap: 0.8rem; }
+      .cart-thumb { width: 100%; height: 180px; } /* Full width image on mobile */
+      .cart-item-title { white-space: normal; font-size: 1.2rem; line-height: 1.3; } /* Allow text to wrap */
+      .cart-item-actions { justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 1rem; margin-top: 0.5rem; }
+      .price-total { text-align: right; }
+      
+      #cart-controls { flex-direction: column; gap: 1rem; }
+      .cart-controls-top { display: flex; justify-content: space-between; width: 100%; align-items: center; }
+      #checkout-btn { width: 100%; font-size: 1.1rem; padding: 1rem; }
     }
-    /* FORCE HEADER TO BE PERMANENTLY TRANSPARENT ON ALL PAGES */
-#main-header, header {
-    background-color: transparent !important;
-    background: transparent !important;
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-    border-bottom: none !important;
-    box-shadow: none !important;
-}
-
-/* PREVENT HEADER.JS FROM PUSHING THE BACKGROUND DOWN */
-body {
-    background-position: top center !important;
-}
   </style>
 </head>
 <body>
   <div id="stars-bg-global" class="stars-container"></div>
 
-  <header class="fixed w-full top-0 left-0 bg-black/60 backdrop-blur-md border-b border-white/10 flex items-center justify-between px-4 sm:px-6 py-4 z-50">
-    <a href="index.html" class="text-cyan-400 font-bold text-base sm:text-lg tracking-wide">SAI BALAJI TILES</a>
-    <div class="flex items-center gap-4">
-      <a href="index.html" class="text-sm text-gray-400 hover:text-white transition">← Continue Shopping</a>
-      <a href="user-profile.html" id="header-profile-link" class="hidden text-cyan-400 text-sm hover:text-cyan-300">👤 My Profile</a>
+  <!-- FIXED HEADER FOR MOBILE -->
+  <header class="fixed w-full top-0 left-0 bg-black/80 backdrop-blur-md border-b border-white/10 flex items-center justify-between px-4 sm:px-6 py-3 z-50">
+    <a href="index.html" class="text-cyan-400 font-bold text-sm sm:text-lg tracking-wide whitespace-nowrap">SAI BALAJI</a>
+    <div class="flex items-center gap-3 sm:gap-5 ml-auto">
+      <a href="index.html" class="text-xs sm:text-sm text-gray-300 hover:text-white transition whitespace-nowrap">← Shop</a>
+      <a href="user-profile.html" id="header-profile-link" class="hidden text-cyan-400 text-xs sm:text-sm hover:text-cyan-300 whitespace-nowrap border border-cyan-500/50 px-3 py-1 rounded-full">👤 Profile</a>
     </div>
   </header>
 
   <main>
-    <section class="py-8 max-w-5xl mx-auto px-4">
-      <h1 class="text-2xl sm:text-3xl font-bold text-cyan-400 mb-6 text-center">Your Shopping Cart</h1>
+    <section class="py-4 max-w-5xl mx-auto px-4">
+      <h1 class="text-3xl font-bold text-white mb-6 text-center drop-shadow-md">Your Shopping Cart</h1>
 
-      <!-- Shown while restoring cart from cloud -->
       <div id="sync-banner" class="show">⏳ Syncing with your account...</div>
 
-      <div class="grid gap-6">
-        <div class="card p-4">
-          <div id="cart-items-container" class="space-y-2"></div>
+      <div class="grid gap-8 lg:grid-cols-3">
+        <!-- Cart Items Column -->
+        <div class="card lg:col-span-2 flex flex-col h-full">
+          <div id="cart-items-container" class="flex-grow"></div>
 
-          <div id="cart-empty-message" class="text-center muted py-10 hidden">
-            <div class="text-5xl mb-4">🛒</div>
-            <p class="text-lg mb-2">Your cart is empty</p>
-            <a href="brands.html" class="text-cyan-300 underline text-sm">Browse our tile collection</a>
+          <div id="cart-empty-message" class="text-center muted py-12 hidden">
+            <div class="text-6xl mb-4 opacity-50">🛒</div>
+            <p class="text-xl mb-4 text-white">Your cart is empty</p>
+            <a href="brands.html" class="btn-primary inline-block">Browse Tile Collection</a>
           </div>
 
-          <div id="cart-controls" class="mt-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-            <div class="flex items-center gap-3">
-              <button id="clear-cart-btn" class="btn-ghost">Clear Cart</button>
-              <div class="ml-2 muted text-sm">Subtotal: <span id="cart-subtotal" class="price">₹0</span></div>
+          <!-- Bottom Controls -->
+          <div id="cart-controls" class="mt-6 pt-4 border-t border-white/10">
+            <div class="cart-controls-top mb-4 hidden sm:flex">
+                <button id="clear-cart-btn" class="btn-ghost text-red-400 border-red-400/30 hover:bg-red-400/10">Clear Cart</button>
+                <div class="text-lg text-white">Subtotal: <span id="cart-subtotal" class="price text-xl ml-2">₹0</span></div>
             </div>
-            <div class="flex items-center gap-3 ml-auto">
-              <button id="checkout-btn" class="btn-primary" disabled>Proceed to Checkout</button>
+            <!-- Mobile version of controls -->
+            <div class="flex justify-between items-center sm:hidden mb-4 w-full">
+                <button id="clear-cart-btn-mobile" class="text-red-400 text-sm underline">Clear Cart</button>
+                <div class="text-white">Total: <span id="cart-subtotal-mobile" class="price text-lg">₹0</span></div>
             </div>
+            
+            <button id="checkout-btn" class="btn-primary w-full text-lg py-3 shadow-lg shadow-cyan-500/20" disabled>Proceed to Checkout →</button>
           </div>
         </div>
 
-        <aside class="card p-4">
-          <h3 class="font-semibold text-indigo-300 mb-3">Order Summary</h3>
-          <div class="flex justify-between mb-2"><span class="muted text-sm">Items</span><span id="summary-items-count">0</span></div>
-          <div class="flex justify-between mb-2"><span class="muted text-sm">Subtotal</span><span id="summary-subtotal" class="price">₹0</span></div>
-          <div class="flex justify-between mb-4"><span class="muted text-sm">Delivery</span><span class="muted text-sm">Calculated at checkout</span></div>
-          <div class="flex justify-between items-center font-bold text-lg"><span>Total</span><span id="summary-total" class="price">₹0</span></div>
+        <!-- Order Summary Column -->
+        <aside class="card h-fit sticky top-24">
+          <h3 class="font-bold text-xl text-white mb-6 border-b border-white/10 pb-3">Order Summary</h3>
+          <div class="space-y-4 mb-6">
+              <div class="flex justify-between text-gray-300"><span>Total Items</span><span id="summary-items-count" class="font-semibold text-white">0</span></div>
+              <div class="flex justify-between text-gray-300"><span>Item Subtotal</span><span id="summary-subtotal" class="price">₹0</span></div>
+              <div class="flex justify-between text-gray-300"><span>Delivery Est.</span><span class="text-sm italic opacity-70">Calculated later</span></div>
+          </div>
+          <div class="flex justify-between items-center font-bold text-2xl text-white border-t border-white/10 pt-4">
+              <span>Total</span><span id="summary-total" class="text-cyan-400">₹0</span>
+          </div>
         </aside>
       </div>
     </section>
   </main>
 
   <!-- Checkout Modal -->
-  <div id="checkout-modal" class="hidden" role="dialog" aria-modal="true">
+  <div id="checkout-modal" class="hidden" role="dialog">
     <div class="modal">
       <div class="modal-header">
-        <h2 class="text-lg font-bold text-cyan-400">Checkout</h2>
-        <button id="close-checkout-modal" class="text-gray-400 hover:text-white text-xl">✕</button>
+        <h2 class="text-xl font-bold text-white">Checkout Details</h2>
+        <button id="close-checkout-modal" class="text-gray-400 hover:text-white text-2xl leading-none">&times;</button>
       </div>
       <div class="modal-body">
 
-        <div id="checkout-step-1" class="mb-4">
-          <h3 class="font-semibold text-indigo-300 mb-3">Step 1 — Review Your Items</h3>
-          <div id="modal-cart-items-summary" class="space-y-2 mb-4"></div>
-          <div class="flex justify-end"><button id="next-to-step-2" class="btn-primary">Next →</button></div>
-        </div>
-
-        <div id="checkout-step-2" class="hidden mb-4">
-          <h3 class="font-semibold text-indigo-300 mb-3">Step 2 — Your Details</h3>
+        <div id="checkout-step-1" class="mb-2">
+          <h3 class="font-semibold text-cyan-400 mb-4">Step 1 — Verify Your Details</h3>
+          <p class="text-sm text-gray-400 mb-4">We pulled these from your profile. Update them if needed.</p>
           <form id="checkoutForm">
-            <div class="mb-3">
-              <label class="muted text-xs block mb-1">Full Name <span class="text-red-400">*</span></label>
-              <input id="customerName" required class="w-full p-2 rounded-md bg-gray-100 text-gray-900" placeholder="Your name">
+            <div class="mb-4">
+              <label class="text-gray-300 text-sm block mb-1">Full Name <span class="text-red-400">*</span></label>
+              <input id="customerName" required class="w-full p-3 rounded-lg bg-black/50 border border-white/20 text-white focus:border-cyan-400 outline-none transition" placeholder="Your name">
             </div>
-            <div class="mb-3">
-              <label class="muted text-xs block mb-1">Phone <span class="text-red-400">*</span></label>
-              <input id="customerPhone" required class="w-full p-2 rounded-md bg-gray-100 text-gray-900" placeholder="+91 98765 43210">
+            <div class="mb-4">
+              <label class="text-gray-300 text-sm block mb-1">Phone Number <span class="text-red-400">*</span></label>
+              <input id="customerPhone" required class="w-full p-3 rounded-lg bg-black/50 border border-white/20 text-white focus:border-cyan-400 outline-none transition" placeholder="+91 98765 43210">
             </div>
-            <div class="mb-3">
-              <label class="muted text-xs block mb-1">Address <span class="text-red-400">*</span></label>
-              <textarea id="customerAddress" rows="2" required class="w-full p-2 rounded-md bg-gray-100 text-gray-900" placeholder="Delivery address"></textarea>
+            <div class="mb-6">
+              <label class="text-gray-300 text-sm block mb-1">Delivery Address <span class="text-red-400">*</span></label>
+              <textarea id="customerAddress" rows="3" required class="w-full p-3 rounded-lg bg-black/50 border border-white/20 text-white focus:border-cyan-400 outline-none transition resize-none" placeholder="House No, Street, City..."></textarea>
             </div>
-            <div class="flex justify-between mt-3">
-              <button type="button" id="back-to-step-1" class="btn-ghost">← Back</button>
-              <button type="button" id="next-to-step-3" class="btn-primary">Next →</button>
+            <div class="flex justify-end">
+              <button type="button" id="next-to-step-2" class="btn-primary w-full sm:w-auto">Next Step →</button>
             </div>
           </form>
         </div>
 
-        <div id="checkout-step-3" class="hidden">
-          <h3 class="font-semibold text-indigo-300 mb-2">Step 3 — Upload Measurement Photo</h3>
-          <p class="muted text-sm mb-3">Upload a photo/sketch with measurements (required).</p>
-          <input type="hidden" role="uploadcare-uploader" id="measurementPhotoUploadcare" data-images-only="true" data-clearable="true">
-          <div id="uploadcareFeedback" class="muted text-xs mt-2 mb-4"></div>
-          <div class="flex justify-between">
-            <button id="back-to-step-2" class="btn-ghost">← Back</button>
-            <button id="submitOrderBtn" class="btn-primary">
-              <span class="btn-text">Submit Order</span>
-              <span class="btn-loader hidden">Submitting...</span>
+        <div id="checkout-step-2" class="hidden">
+          <h3 class="font-semibold text-cyan-400 mb-4">Step 2 — Measurement Upload</h3>
+          <p class="text-gray-300 text-sm mb-4">Please upload a photo of your room sketch or measurements so we can verify the quantity required.</p>
+          
+          <div class="bg-black/30 p-4 rounded-lg border border-white/10 mb-6 text-center">
+              <input type="hidden" role="uploadcare-uploader" id="measurementPhotoUploadcare" data-images-only="true">
+              <div id="uploadcareFeedback" class="text-cyan-400 text-sm mt-3 font-semibold"></div>
+          </div>
+
+          <div class="flex justify-between gap-4">
+            <button id="back-to-step-1" class="btn-ghost flex-1">← Back</button>
+            <button id="submitOrderBtn" class="btn-primary flex-1">
+              <span class="btn-text">Place Order</span>
+              <span class="btn-loader hidden">Processing...</span>
             </button>
           </div>
         </div>
 
-        <div id="modal-status" class="mt-3 muted text-sm"></div>
+        <div id="modal-status" class="mt-4 text-center text-sm font-semibold"></div>
       </div>
     </div>
   </div>
 
   <div id="site-snackbar" role="status">Message</div>
 
-  <footer class="py-6 text-center muted text-sm">© 2025 Sai Balaji Tiles. All Rights Reserved.</footer>
-
   <script src="https://ucarecdn.com/libs/widget/3.x/uploadcare.full.min.js" charset="utf-8"></script>
-  <script>
-    window.UPLOADCARE_PUBLIC_KEY = '301133731b1569c08cb1';
-    window.UPLOADCARE_IMAGES_ONLY = true;
-  </script>
+  <script>window.UPLOADCARE_PUBLIC_KEY = '301133731b1569c08cb1'; window.UPLOADCARE_IMAGES_ONLY = true;</script>
   <script src="header.js"></script>
 
   <script>
@@ -199,12 +205,11 @@ body {
 
     // ============================================================
     // 🚀 SUPABASE CONFIGURATION
-    // PASTE YOUR URL AND KEY HERE
+    // PASTE YOUR URL AND KEY HERE BEFORE SAVING
     // ============================================================
-    const supabaseUrl = 'https://jjseffkbreruegudlmnd.supabase.co';
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impqc2VmZmticmVydWVndWRsbW5kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxOTMwMTEsImV4cCI6MjA4MTc2OTAxMX0.xrCWARm6FbW-U98Qs13mMvlCeBiQWgmD73qverF7Brk';
-
-    const sbClient = supabase.createClient(supabaseUrl, supabaseKey);
+    const SUPABASE_URL = 'YOUR_SUPABASE_URL_HERE';
+    const SUPABASE_KEY = 'YOUR_SUPABASE_ANON_KEY_HERE';
+    const sbClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     let currentUserId = null;
 
@@ -226,7 +231,7 @@ body {
     createStars();
 
     // ============================================================
-    // HELPERS
+    // HELPERS & SYNC LOGIC
     // ============================================================
     const priceLookup = { polished: 85, ceramic: 45, glazed: 110 };
     function fmt(v) { return '₹' + Number(v).toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 2 }); }
@@ -236,8 +241,8 @@ body {
         const raw = JSON.parse(localStorage.getItem('cart') || '[]');
         if (!Array.isArray(raw)) return [];
         return raw.map(it => {
-          const q     = (it.quantity && Number(it.quantity) > 0) ? Number(it.quantity) : 1;
-          let   price = (it.price && !isNaN(Number(it.price))) ? Number(it.price) : 0;
+          const q = (it.quantity && Number(it.quantity) > 0) ? Number(it.quantity) : 1;
+          let price = (it.price && !isNaN(Number(it.price))) ? Number(it.price) : 0;
           if (!price && it.id && priceLookup[it.id]) price = priceLookup[it.id];
           return { id: it.id || null, name: it.name || 'Unknown Tile', image: it.image || '', quantity: q, price };
         });
@@ -251,8 +256,7 @@ body {
 
     async function saveToSupabase(cart) {
       if (!currentUserId) return;
-      const { error } = await sbClient.from('profiles').update({ cart }).eq('id', currentUserId);
-      if (error) console.warn('Cart save error:', error.message);
+      await sbClient.from('profiles').update({ cart }).eq('id', currentUserId);
     }
 
     function saveCart(cart) {
@@ -261,41 +265,30 @@ body {
       renderCart();
     }
 
-    // ============================================================
-    // RESTORE CART & AUTO-FILL PROFILE DETAILS
-    // ============================================================
     async function initCartFromCloud() {
       const { data: { session } } = await sbClient.auth.getSession();
       const banner = document.getElementById('sync-banner');
 
       if (session) {
         currentUserId = session.user.id;
-
-        // Show profile link
         const profileLink = document.getElementById('header-profile-link');
         if (profileLink) profileLink.classList.remove('hidden');
 
         // Fetch Cart AND Profile Data (Phone/Address)
-        const { data, error } = await sbClient
-          .from('profiles')
-          .select('cart, full_name, phone, address')
-          .eq('id', currentUserId)
-          .single();
+        const { data, error } = await sbClient.from('profiles').select('cart, full_name, phone, address').eq('id', currentUserId).single();
 
         if (!error && data) {
-          
-          // --- 1. AUTO FILL FORM DATA ---
+          // AUTO FILL FORM
           if (data.full_name) document.getElementById('customerName').value = data.full_name;
           if (data.phone) document.getElementById('customerPhone').value = data.phone;
           if (data.address) document.getElementById('customerAddress').value = data.address;
 
-          // --- 2. RESTORE CART DATA ---
+          // RESTORE CART
           if (Array.isArray(data.cart) && data.cart.length > 0) {
             saveLocalCart(data.cart);
             banner.textContent = '✅ Synced with your account';
             setTimeout(() => { banner.classList.remove('show'); }, 2500);
           } else {
-            // Push local cart to empty cloud
             const local = loadLocalCart();
             if (local.length > 0) {
               await saveToSupabase(local);
@@ -309,17 +302,17 @@ body {
       } else {
         banner.classList.remove('show');
       }
-
       renderCart();
     }
 
     // ============================================================
-    // RENDER
+    // RENDER UI (UPDATED FOR MOBILE LAYOUT)
     // ============================================================
     const itemsContainer  = document.getElementById('cart-items-container');
     const emptyMsg        = document.getElementById('cart-empty-message');
     const checkoutBtn     = document.getElementById('checkout-btn');
     const subtotalEl      = document.getElementById('cart-subtotal');
+    const subtotalMobile  = document.getElementById('cart-subtotal-mobile');
     const summaryItems    = document.getElementById('summary-items-count');
     const summarySubtotal = document.getElementById('summary-subtotal');
     const summaryTotal    = document.getElementById('summary-total');
@@ -332,7 +325,7 @@ body {
         emptyMsg.classList.remove('hidden');
         itemsContainer.classList.add('hidden');
         checkoutBtn.disabled = true;
-        [subtotalEl, summarySubtotal, summaryTotal].forEach(el => el.textContent = fmt(0));
+        [subtotalEl, subtotalMobile, summarySubtotal, summaryTotal].forEach(el => { if(el) el.textContent = fmt(0); });
         summaryItems.textContent = '0';
         return;
       }
@@ -344,23 +337,25 @@ body {
       cart.forEach((item, idx) => {
         const row = document.createElement('div');
         row.className = 'cart-grid';
+        
+        // NEW HTML STRUCTURE FOR PERFECT MOBILE ALIGNMENT
         row.innerHTML = `
-          <div style="display:flex;gap:1rem;align-items:center;flex:1;min-width:0">
-            <img class="cart-thumb" src="${esc(item.image)}" alt="${esc(item.name)}" loading="lazy" onerror="this.src='images/placeholder.jpg'">
-            <div style="min-width:0">
-              <div class="font-semibold text-indigo-300 truncate">${esc(item.name)}</div>
-              <div class="muted text-sm">Unit price: <span class="price">${fmt(item.price)}</span></div>
+          <div class="cart-item-main">
+            <img class="cart-thumb" src="${esc(item.image)}" alt="${esc(item.name)}" onerror="this.src='images/placeholder.jpg'">
+            <div class="cart-item-info">
+              <div class="cart-item-title">${esc(item.name)}</div>
+              <div class="cart-item-price">Unit price: <span>${fmt(item.price)}</span></div>
             </div>
           </div>
-          <div style="display:flex;align-items:center;gap:.6rem;flex-shrink:0">
-            <div style="display:flex;align-items:center;gap:.4rem">
+          <div class="cart-item-actions">
+            <div class="qty-wrapper">
               <button class="btn-ghost qty-decr" data-idx="${idx}">−</button>
-              <input class="qty-input" type="number" min="1" value="${item.quantity}" data-idx="${idx}">
+              <input class="qty-input" type="number" min="1" value="${item.quantity}" data-idx="${idx}" readonly>
               <button class="btn-ghost qty-incr" data-idx="${idx}">+</button>
             </div>
-            <div style="min-width:90px;text-align:right">
-              <div class="price">${fmt(item.price * item.quantity)}</div>
-              <button class="btn-ghost remove-btn text-xs mt-1" data-idx="${idx}" style="color:#f87171;border-color:rgba(248,113,113,.2)">Remove</button>
+            <div class="price-total">
+              <div class="price text-lg">${fmt(item.price * item.quantity)}</div>
+              <button class="text-red-400 hover:text-red-300 text-xs mt-1 underline remove-btn" data-idx="${idx}">Remove</button>
             </div>
           </div>
         `;
@@ -375,23 +370,18 @@ body {
       let sub = 0, count = 0;
       cart.forEach(it => { sub += it.price * it.quantity; count += it.quantity; });
       sub = Math.round((sub + Number.EPSILON) * 100) / 100;
-      subtotalEl.textContent    = fmt(sub);
+      
+      if(subtotalEl) subtotalEl.textContent = fmt(sub);
+      if(subtotalMobile) subtotalMobile.textContent = fmt(sub);
       summaryItems.textContent  = String(count);
       summarySubtotal.textContent = fmt(sub);
       summaryTotal.textContent  = fmt(sub);
     }
 
     function attachListeners() {
-      itemsContainer.querySelectorAll('.qty-decr').forEach(btn =>
-        btn.addEventListener('click', () => changeQty(+btn.dataset.idx, -1)));
-      itemsContainer.querySelectorAll('.qty-incr').forEach(btn =>
-        btn.addEventListener('click', () => changeQty(+btn.dataset.idx, +1)));
-      itemsContainer.querySelectorAll('.qty-input').forEach(input => {
-        input.addEventListener('change', () => setQty(+input.dataset.idx, +input.value));
-        input.addEventListener('keydown', e => { if (e.key === 'Enter') input.blur(); });
-      });
-      itemsContainer.querySelectorAll('.remove-btn').forEach(btn =>
-        btn.addEventListener('click', () => removeItem(+btn.dataset.idx)));
+      itemsContainer.querySelectorAll('.qty-decr').forEach(btn => btn.addEventListener('click', () => changeQty(+btn.dataset.idx, -1)));
+      itemsContainer.querySelectorAll('.qty-incr').forEach(btn => btn.addEventListener('click', () => changeQty(+btn.dataset.idx, +1)));
+      itemsContainer.querySelectorAll('.remove-btn').forEach(btn => btn.addEventListener('click', () => removeItem(+btn.dataset.idx)));
     }
 
     function changeQty(idx, delta) {
@@ -400,12 +390,7 @@ body {
       cart[idx].quantity = Math.max(1, cart[idx].quantity + delta);
       saveCart(cart);
     }
-    function setQty(idx, val) {
-      const cart = loadLocalCart();
-      if (!cart[idx]) return;
-      cart[idx].quantity = Math.max(1, val || 1);
-      saveCart(cart);
-    }
+
     function removeItem(idx) {
       const cart = loadLocalCart();
       const name = cart[idx]?.name || 'Item';
@@ -414,6 +399,7 @@ body {
       saveCart(cart);
       showSnackbar(`${name} removed.`, 'success');
     }
+
     function clearCart() {
       if (!confirm('Clear the entire cart?')) return;
       localStorage.removeItem('cart');
@@ -422,6 +408,9 @@ body {
       renderCart();
       showSnackbar('Cart cleared.', 'success');
     }
+    
+    document.getElementById('clear-cart-btn').addEventListener('click', clearCart);
+    document.getElementById('clear-cart-btn-mobile').addEventListener('click', clearCart);
 
     // ============================================================
     // SNACKBAR
@@ -439,58 +428,36 @@ body {
     // CHECKOUT MODAL
     // ============================================================
     const checkoutModal = document.getElementById('checkout-modal');
-    const modalSummary  = document.getElementById('modal-cart-items-summary');
     const modalStatus   = document.getElementById('modal-status');
 
-    const steps = ['checkout-step-1','checkout-step-2','checkout-step-3'];
-    function showStep(i) { steps.forEach((id,idx) => { document.getElementById(id)?.classList.toggle('hidden', idx !== i); }); }
-
-    function populateModalSummary() {
-      const cart = loadLocalCart();
-      modalSummary.innerHTML = '';
-      const nextBtn = document.getElementById('next-to-step-2');
-      if (!cart.length) {
-        modalSummary.innerHTML = '<p class="text-gray-400 p-2">Cart is empty.</p>';
-        if (nextBtn) nextBtn.disabled = true;
-        return;
-      }
-      if (nextBtn) nextBtn.disabled = false;
-      cart.forEach(item => {
-        const d = document.createElement('div');
-        d.className = 'flex items-center gap-3 text-sm p-2 bg-gray-700/50 rounded';
-        d.innerHTML = `<img src="${esc(item.image)}" alt="${esc(item.name)}" class="w-12 h-12 object-cover rounded border border-gray-600 flex-shrink-0"><span class="flex-grow text-gray-300 truncate">${esc(item.name)}</span><span class="text-cyan-400 font-semibold flex-shrink-0">×${item.quantity}</span>`;
-        modalSummary.appendChild(d);
-      });
+    function showStep(i) {
+      ['checkout-step-1','checkout-step-2'].forEach((id,idx) => { 
+          document.getElementById(id)?.classList.toggle('hidden', idx !== i); 
+      }); 
     }
 
     function openModal() {
       if (!loadLocalCart().length) { showSnackbar('Cart is empty.', 'error'); return; }
-      populateModalSummary(); showStep(0);
+      showStep(0);
       checkoutModal.classList.remove('hidden');
       modalStatus.textContent = '';
     }
-    function closeModal() {
-      checkoutModal.classList.add('hidden');
-      // Document NOT resetting form here so user doesn't lose pre-filled info
-    }
+    function closeModal() { checkoutModal.classList.add('hidden'); }
 
     document.getElementById('checkout-btn').addEventListener('click', openModal);
     document.getElementById('close-checkout-modal')?.addEventListener('click', closeModal);
-    document.getElementById('next-to-step-2')?.addEventListener('click', () => showStep(1));
     document.getElementById('back-to-step-1')?.addEventListener('click', () => showStep(0));
-    document.getElementById('back-to-step-2')?.addEventListener('click', () => showStep(1));
-    document.getElementById('next-to-step-3')?.addEventListener('click', () => {
+    document.getElementById('next-to-step-2')?.addEventListener('click', () => {
       const n = document.getElementById('customerName').value.trim();
       const p = document.getElementById('customerPhone').value.trim();
       const a = document.getElementById('customerAddress').value.trim();
-      if (!n || !p || !a) { modalStatus.textContent = 'Please fill in all required fields.'; modalStatus.className = 'mt-3 text-red-400 text-sm'; return; }
-      modalStatus.textContent = ''; showStep(2);
+      if (!n || !p || !a) { modalStatus.textContent = 'Please fill all required fields first.'; modalStatus.className = 'mt-4 text-red-400 text-sm'; return; }
+      modalStatus.textContent = ''; showStep(1);
     });
-    document.getElementById('clear-cart-btn').addEventListener('click', clearCart);
-    checkoutModal.addEventListener('click', e => { if (e.target === checkoutModal) closeModal(); });
-    document.addEventListener('keydown', e => { if (e.key === 'Escape' && !checkoutModal.classList.contains('hidden')) closeModal(); });
 
-    // Uploadcare
+    checkoutModal.addEventListener('click', e => { if (e.target === checkoutModal) closeModal(); });
+
+    // Uploadcare & Submit
     let ucWidget = null;
     const ucInput = document.getElementById('measurementPhotoUploadcare');
     if (window.uploadcare && ucInput) {
@@ -498,9 +465,9 @@ body {
         ucWidget = uploadcare.Widget(ucInput);
         ucWidget.onChange(file => {
           const fb = document.getElementById('uploadcareFeedback');
-          if (!file) { if (fb) { fb.textContent = 'No file selected.'; fb.className = 'muted text-xs mt-2 mb-4'; } return; }
-          if (fb) fb.textContent = 'Uploading...';
-          file.done(info => { if (fb) { fb.textContent = `✅ ${info.name || info.uuid}`; fb.className = 'text-green-400 text-xs mt-2 mb-4'; } });
+          if (!file) { if (fb) fb.textContent = ''; return; }
+          if (fb) fb.textContent = 'Uploading image...';
+          file.done(info => { if (fb) fb.textContent = `✅ Image uploaded successfully!`; });
         });
       } catch (e) {}
     }
@@ -510,13 +477,12 @@ body {
       submitBtn.addEventListener('click', async ev => {
         ev.preventDefault();
         const uploaded = (ucWidget && ucWidget.value()) || (ucInput && ucInput.value);
-        if (!uploaded) { modalStatus.textContent = 'Please upload a measurement photo.'; modalStatus.className = 'mt-3 text-red-400 text-sm'; return; }
+        if (!uploaded) { modalStatus.textContent = '⚠️ Upload measurement photo to proceed.'; modalStatus.className = 'mt-4 text-red-400 text-sm'; return; }
 
         const cart = loadLocalCart();
         const name = document.getElementById('customerName').value.trim();
         const phone = document.getElementById('customerPhone').value.trim();
         const addr = document.getElementById('customerAddress').value.trim();
-        if (!name || !phone || !addr) { modalStatus.textContent = 'Please fill in your details.'; modalStatus.className = 'mt-3 text-red-400 text-sm'; return; }
 
         const payload = new FormData();
         payload.append('name', name); payload.append('phone', phone); payload.append('address', addr);
@@ -526,24 +492,22 @@ body {
         const txt = submitBtn.querySelector('.btn-text');
         const loader = submitBtn.querySelector('.btn-loader');
         if (txt) txt.classList.add('hidden'); if (loader) loader.classList.remove('hidden');
-        submitBtn.disabled = true; modalStatus.textContent = 'Submitting...'; modalStatus.className = 'mt-3 muted text-sm';
+        submitBtn.disabled = true; modalStatus.textContent = 'Sending to server...'; modalStatus.className = 'mt-4 text-cyan-400 text-sm';
 
         try {
           const res = await fetch('https://formspree.io/f/movwvnvq', { method: 'POST', body: payload, headers: { Accept: 'application/json' } });
           if (res.ok) {
-            modalStatus.textContent = '✅ Order submitted! We will contact you soon.'; modalStatus.className = 'mt-3 text-green-400 text-sm';
+            modalStatus.textContent = '✅ Order successfully placed! We will contact you shortly.'; modalStatus.className = 'mt-4 text-green-400 font-bold text-base';
             localStorage.removeItem('cart');
             if (currentUserId) await saveToSupabase([]);
             if (window.headerShared?.updateCartCount) window.headerShared.updateCartCount();
-            renderCart(); showSnackbar('Order submitted!', 'success');
-            setTimeout(closeModal, 2500);
+            renderCart(); showSnackbar('Order placed!', 'success');
+            setTimeout(closeModal, 3000);
           } else {
-            const d = await res.json().catch(() => null);
-            modalStatus.textContent = d?.error || 'Submission failed.'; modalStatus.className = 'mt-3 text-red-400 text-sm';
-            showSnackbar('Submission failed.', 'error');
+            throw new Error('Formspree rejected the request');
           }
         } catch (err) {
-          modalStatus.textContent = 'Network error. Try again.'; modalStatus.className = 'mt-3 text-red-400 text-sm';
+          modalStatus.textContent = '❌ Network error. Please try again.'; modalStatus.className = 'mt-4 text-red-400 text-sm font-bold';
         } finally {
           if (txt) txt.classList.remove('hidden'); if (loader) loader.classList.add('hidden');
           submitBtn.disabled = false;
@@ -553,9 +517,6 @@ body {
 
     function esc(str) { return String(str || '').replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s])); }
 
-    // ============================================================
-    // BOOT
-    // ============================================================
     initCartFromCloud();
     window.addEventListener('storage', e => { if (e.key === 'cart') renderCart(); });
 
