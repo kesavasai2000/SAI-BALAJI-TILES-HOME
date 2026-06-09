@@ -5,7 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Sai Balaji Tiles</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
+    <!--
+        ✅ WHY WE REMOVED: <script src="supabase-js"></script>
+        We no longer use Supabase for authentication.
+        Our own server.js handles login/signup using PostgreSQL + JWT.
+        Keeping Supabase here would mean two auth systems = confusion + bugs.
+    -->
+
     <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -72,16 +79,6 @@
     .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(6,182,212,0.3); }
     .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
-    .google-btn {
-        display: flex; align-items: center; justify-content: center;
-        width: 100%; background-color: #fff; color: #333; border: none;
-        border-radius: 30px; padding: 11px 20px; font-size: 14px;
-        font-weight: 600; cursor: pointer; transition: 0.2s;
-        gap: 10px; margin-top: 13px; font-family: 'Poppins', sans-serif;
-    }
-    .google-btn:hover { background-color: #f0f0f0; transform: translateY(-1px); }
-    .google-btn img { width: 18px; height: 18px; }
-
     .divider { text-align: center; margin: 16px 0; position: relative; }
     .divider::before { content: ''; position: absolute; left: 0; top: 50%; width: 100%; height: 1px; background: rgba(255,255,255,0.08); }
     .divider span { background: #111; padding: 0 10px; position: relative; color: #555; font-size: 11px; }
@@ -104,20 +101,15 @@
         color: #444; margin: 16px 0 10px; padding-bottom: 6px;
         border-bottom: 1px solid rgba(255,255,255,0.06);
     }
-    /* FORCE HEADER TO BE PERMANENTLY TRANSPARENT ON ALL PAGES */
-#main-header, header {
-    background-color: transparent !important;
-    background: transparent !important;
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-    border-bottom: none !important;
-    box-shadow: none !important;
-}
-
-/* PREVENT HEADER.JS FROM PUSHING THE BACKGROUND DOWN */
-body {
-    background-position: top center !important;
-}
+    #main-header, header {
+        background-color: transparent !important;
+        background: transparent !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        border-bottom: none !important;
+        box-shadow: none !important;
+    }
+    body { background-position: top center !important; }
     </style>
 </head>
 <body>
@@ -139,6 +131,13 @@ body {
             <div id="authAlert" class="alert"></div>
 
             <!-- LOGIN FORM -->
+            <!--
+                WHY onsubmit="handleLogin(event)"?
+                When the user clicks "Sign In", the browser normally tries to
+                reload the page (default form behavior). We intercept that with
+                handleLogin(event) and call our own backend instead.
+                event.preventDefault() inside the function stops the page reload.
+            -->
             <form id="loginForm" class="auth-form active" onsubmit="handleLogin(event)">
                 <div class="form-group">
                     <label>Email Address</label>
@@ -152,11 +151,6 @@ body {
                     <a onclick="showForgotPassword()">Forgot Password?</a>
                 </div>
                 <button type="submit" class="submit-btn" id="loginBtn">Sign In</button>
-                <div class="divider"><span>OR</span></div>
-                <button type="button" class="google-btn" onclick="googleSignIn()">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google">
-                    Sign in with Google
-                </button>
             </form>
 
             <!-- SIGNUP FORM -->
@@ -196,14 +190,25 @@ body {
 
                 <button type="submit" class="submit-btn" id="signupBtn">Create Account</button>
             </form>
+
         </div>
     </div>
-    <script>
-        const supabaseUrl = 'https://jjseffkbreruegudlmnd.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impqc2VmZmticmVydWVndWRsbW5kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxOTMwMTEsImV4cCI6MjA4MTc2OTAxMX0.xrCWARm6FbW-U98Qs13mMvlCeBiQWgmD73qverF7Brk';
-        const sbClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-        // Stars
+    <script>
+
+        // ============================================================
+        // 🔧 CONFIGURATION
+        // WHY: We define our backend URL in one place.
+        // If your server port changes, you only change it here — not
+        // scattered across 10 different fetch() calls.
+        // In production, this becomes your real domain e.g. https://yourdomain.com
+        // ============================================================
+        const API_URL = 'http://localhost:5000';
+
+
+        // ============================================================
+        // ⭐ STARS BACKGROUND (visual only, unchanged)
+        // ============================================================
         function createStars() {
             const c = document.getElementById('stars-bg-global');
             c.innerHTML = '';
@@ -219,7 +224,10 @@ body {
         createStars();
         window.addEventListener('resize', createStars);
 
-        // Tab switch
+
+        // ============================================================
+        // 🔀 TAB SWITCHING (Login ↔ Signup, visual only, unchanged)
+        // ============================================================
         function switchTab(tab, btn) {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             if(btn) btn.classList.add('active');
@@ -244,6 +252,10 @@ body {
             document.querySelector('.auth-subtitle').textContent = 'Sign in to access your account';
         }
 
+
+        // ============================================================
+        // 🔔 ALERT HELPERS (show/hide error or success messages)
+        // ============================================================
         function goBack() { document.referrer ? window.history.back() : (window.location.href = 'index.html'); }
         function showAlert(msg, type) {
             const el = document.getElementById('authAlert');
@@ -252,178 +264,255 @@ body {
         }
         function hideAlert() { document.getElementById('authAlert').classList.remove('show'); }
 
-        // ==========================================
-        // LOGIN
-        // ==========================================
-        async function handleLogin(e) {
-            e.preventDefault();
-            const email = document.getElementById('loginEmail').value.trim();
-            const password = document.getElementById('loginPassword').value;
-            const btn = document.getElementById('loginBtn');
 
+        // ============================================================
+        // 🔑 LOGIN FUNCTION
+        //
+        // WHAT HAPPENS STEP BY STEP:
+        // 1. User clicks "Sign In"
+        // 2. We grab the email & password from the input fields
+        // 3. We send them to our server at POST /login using fetch()
+        // 4. Server checks the database, compares bcrypt password
+        // 5. If correct → server returns a JWT token + user info
+        // 6. We save that token in localStorage (browser storage)
+        // 7. We redirect the user based on their role
+        //
+        // WHY localStorage?
+        // localStorage is a simple key-value store in the browser.
+        // It persists even when you close the tab. So the user stays
+        // logged in. We store the token there and send it with every
+        // future API request to prove "I am logged in".
+        // ============================================================
+        async function handleLogin(e) {
+            e.preventDefault(); // Stop browser from reloading the page
+
+            const email    = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            const btn      = document.getElementById('loginBtn');
+
+            // Basic email format check before even hitting the server
             if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-                showAlert('❌ Please enter a valid email address', 'error'); return;
+                showAlert('❌ Please enter a valid email address', 'error');
+                return;
             }
-            btn.disabled = true; btn.textContent = 'Signing In...';
-            
+
+            // Disable button to prevent double-clicking while waiting for server
+            btn.disabled = true;
+            btn.textContent = 'Signing In...';
+
             try {
-                const { data, error } = await sbClient.auth.signInWithPassword({ email, password });
-                if (error) throw error;
-                
+                // 📞 MAKE THE API CALL to our own server
+                const response = await fetch(`${API_URL}/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                        // WHY this header? We're sending JSON data.
+                        // Without it, the server doesn't know the format
+                        // and can't parse req.body properly.
+                    },
+                    body: JSON.stringify({ email, password })
+                    // WHY JSON.stringify? fetch() can only send text.
+                    // JSON.stringify converts { email, password } object
+                    // into a text string: '{"email":"...","password":"..."}'
+                });
+
+                // Parse the JSON response from server
+                const data = await response.json();
+
+                if (!response.ok) {
+                    // Server returned an error (400, 401, 500 etc.)
+                    // We display the message our server sends back
+                    throw new Error(data.message || 'Login failed');
+                }
+
+                // ✅ LOGIN SUCCESSFUL
+                // data.token  → the JWT token
+                // data.user   → { id, name, email, role }
+
+                // Save token in localStorage
+                // WHY? Every future protected API call needs this token.
+                // We'll send it in the Authorization header like:
+                // Authorization: Bearer <token>
+                localStorage.setItem('token', data.token);
+
+                // Save user info too (so other pages can show name, role etc.)
+                localStorage.setItem('user', JSON.stringify(data.user));
+
                 showAlert('✅ Login successful! Redirecting...', 'success');
-                
-                // Route user and sync their exact cart
-                await checkRoleAndRedirect(data.user.id);
+
+                // Redirect based on role after short delay
+                setTimeout(() => redirectByRole(data.user.role), 1000);
+
             } catch (err) {
-                let msg = err.message;
-                if (msg.includes('Invalid login credentials') || msg.includes('invalid_credentials'))
-                    msg = '❌ Wrong email or password. Please check and try again.';
-                else if (msg.includes('Email not confirmed'))
-                    msg = '📧 Email not verified. Please contact support.';
-                else if (msg.includes('Too many requests'))
-                    msg = '⏳ Too many attempts. Please wait a moment.';
-                
-                showAlert(msg, 'error');
-                btn.disabled = false; btn.textContent = 'Sign In';
+                showAlert(`❌ ${err.message}`, 'error');
+                btn.disabled = false;
+                btn.textContent = 'Sign In';
             }
         }
 
-        // ==========================================
-        // SIGNUP
-        // ==========================================
+
+        // ============================================================
+        // 📝 SIGNUP FUNCTION
+        //
+        // WHAT HAPPENS STEP BY STEP:
+        // 1. User fills name, email, password, phone, address
+        // 2. We validate (passwords match, email valid etc.)
+        // 3. We send everything to POST /signup on our server
+        // 4. Server hashes the password with bcrypt, saves to PostgreSQL
+        // 5. Server returns the newly created user
+        // 6. We auto-switch to login tab so user can sign in
+        //
+        // WHY don't we auto-login after signup?
+        // Our /signup route doesn't return a token yet — it just
+        // creates the account. We'll add auto-login in Phase 2
+        // by also calling /login right after signup succeeds.
+        // ============================================================
         async function handleSignup(e) {
             e.preventDefault();
+
             const name     = document.getElementById('signupName').value.trim();
             const email    = document.getElementById('signupEmail').value.trim();
             const password = document.getElementById('signupPassword').value;
             const confirm  = document.getElementById('signupConfirmPassword').value;
-            const phone    = document.getElementById('signupPhone') ? document.getElementById('signupPhone').value.trim() : null;
-            const address  = document.getElementById('signupAddress') ? document.getElementById('signupAddress').value.trim() : null;
-            const btn = document.getElementById('signupBtn');
+            const phone    = document.getElementById('signupPhone').value.trim();
+            const address  = document.getElementById('signupAddress').value.trim();
+            const btn      = document.getElementById('signupBtn');
 
+            // --- CLIENT-SIDE VALIDATION ---
+            // WHY validate here AND in the server?
+            // Client-side: instant feedback, better UX, no server round-trip
+            // Server-side: security (never trust the browser alone)
+            // Both together = best practice
             if (!name) { showAlert('❌ Please enter your full name.', 'error'); return; }
             if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showAlert('❌ Please enter a valid email.', 'error'); return; }
             if (password.length < 6) { showAlert('❌ Password must be at least 6 characters.', 'error'); return; }
             if (password !== confirm) { showAlert('❌ Passwords do not match.', 'error'); return; }
 
-            btn.disabled = true; btn.textContent = 'Creating Account...';
-            
-            try {
-                const { data, error } = await sbClient.auth.signUp({
-                    email, password, options: { data: { full_name: name } }
-                });
-                if (error) throw error;
+            btn.disabled = true;
+            btn.textContent = 'Creating Account...';
 
-                // Auto sign-in
-                const { data: loginData, error: loginErr } = await sbClient.auth.signInWithPassword({ email, password });
-                
-                if (loginErr || !loginData.session) {
-                    await sbClient.from('profiles').upsert([{
-                        id: data.user.id,
-                        full_name: name, email: email,
-                        phone: phone, address: address,
-                        role: 'user', cart: [] // Force empty cart for new users
-                    }]);
-                    showAlert('✅ Account created! Please log in.', 'success');
-                    btn.disabled = false; btn.textContent = 'Create Account';
-                    switchTabToLogin(); 
-                    return;
+            try {
+                // 📞 CALL POST /signup on our server
+                const response = await fetch(`${API_URL}/signup`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, password, phone, address })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || 'Signup failed');
                 }
 
-                // Save full profile
-                await sbClient.from('profiles').upsert([{
-                    id: loginData.user.id,
-                    full_name: name, email: email,
-                    phone: phone, address: address,
-                    role: 'user', cart: [] // Force empty cart for new users
-                }]);
+                // ✅ ACCOUNT CREATED
+                showAlert('🎉 Account created! Please sign in.', 'success');
 
-                // Wipe browser cart clean for the new user
-                localStorage.setItem('cart', '[]');
+                // Wait 1.5s then switch to login tab
+                setTimeout(() => {
+                    switchTabToLogin();
+                    hideAlert();
+                }, 1500);
 
-                showAlert('🎉 Welcome to Sai Balaji Tiles!', 'success');
-                setTimeout(() => { window.location.href = 'index.html'; }, 1200);
             } catch (err) {
                 let msg = err.message;
-                if (msg.includes('already registered') || msg.includes('User already registered')) {
+                // Make common error messages more user-friendly
+                if (msg.includes('duplicate key') || msg.includes('already exists')) {
                     msg = '⚠️ This email is already registered. Please login instead.';
                     setTimeout(() => switchTabToLogin(), 2000);
                 }
-                showAlert(msg, 'error');
-                btn.disabled = false; btn.textContent = 'Create Account';
+                showAlert(`❌ ${msg}`, 'error');
+                btn.disabled = false;
+                btn.textContent = 'Create Account';
             }
         }
 
-        async function googleSignIn() {
-            const { error } = await sbClient.auth.signInWithOAuth({
-                provider: 'google', options: { redirectTo: window.location.origin + '/index.html' }
-            });
-            if (error) showAlert(error.message, 'error');
+
+        // ============================================================
+        // 🔀 ROLE-BASED REDIRECT
+        //
+        // WHY do we need this?
+        // Different users should land on different pages after login:
+        //   admin   → admin dashboard (full control)
+        //   worker  → worker dashboard (limited view)
+        //   loader  → loader dashboard (delivery tasks)
+        //   user    → main shop (index.html)
+        //
+        // The role is stored in YOUR PostgreSQL database (users table).
+        // Your server returns it in data.user.role after login.
+        // We use it here to decide where to send the user.
+        //
+        // ⚠️ NOTE: Right now your users table might not have a 'role'
+        // column. We'll add that to the DB in Phase 3.
+        // For now, everyone goes to index.html.
+        // ============================================================
+        function redirectByRole(role) {
+            if (role === 'admin')        window.location.href = 'admin-dashboard.html';
+            else if (role === 'worker')  window.location.href = 'worker-dashboard.html';
+            else if (role === 'loader')  window.location.href = 'loader-dashboard.html';
+            else                         window.location.href = 'index.html';
         }
 
-        // ==========================================
-        // REDIRECT & STRICT CART SYNC
-        // ==========================================
-        async function checkRoleAndRedirect(userId) {
-            const { data, error } = await sbClient
-                .from('profiles')
-                .select('role, cart')
-                .eq('id', userId)
-                .single();
 
-            if (error || !data) {
-                console.warn('Profile not found, defaulting to user.');
-                window.location.href = 'index.html';
+        // ============================================================
+        // 🔒 FORGOT PASSWORD
+        //
+        // NOTE: This requires a password reset email system.
+        // That needs either: your own email server (nodemailer)
+        // or a third-party service (SendGrid, Resend etc.)
+        // We'll build this properly in Phase 4.
+        // For now, it just shows an informational message.
+        // ============================================================
+        function showForgotPassword() {
+            const email = document.getElementById('loginEmail').value.trim();
+            if (!email) {
+                showAlert('📧 Please enter your email above first, then click Forgot Password.', 'error');
                 return;
             }
+            showAlert('📧 Password reset is coming soon. Please contact support for now.', 'error');
+        }
 
-            // --- STRICT CART SYNC ---
-            // If the user has a cart in the database, put it in the browser
-            if (data.cart && data.cart.length > 0) {
-                localStorage.setItem('cart', JSON.stringify(data.cart));
-            } else {
-                // If the user's database cart is EMPTY, force the browser cart to be empty!
-                localStorage.setItem('cart', '[]');
+
+        // ============================================================
+        // 🔁 AUTO-REDIRECT IF ALREADY LOGGED IN
+        //
+        // WHY? If the user already logged in and their token is saved
+        // in localStorage, there's no point showing the login page again.
+        // We check if a valid token exists and redirect immediately.
+        //
+        // HOW we check: We call our protected /profile route.
+        // If the token is valid → server returns 200 → redirect
+        // If the token is expired or missing → server returns 401/403 → stay on page
+        // ============================================================
+        (async function autoRedirectIfLoggedIn() {
+            const token = localStorage.getItem('token');
+            if (!token) return; // No token saved, stay on login page
+
+            try {
+                const response = await fetch(`${API_URL}/profile`, {
+                    headers: {
+                        // WHY "Bearer"? It's a standard convention.
+                        // "Bearer" means "the person carrying this token has permission"
+                        // Server's authenticateToken middleware reads this exact format.
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    // Token is valid → user is already logged in
+                    const user = JSON.parse(localStorage.getItem('user') || '{}');
+                    redirectByRole(user.role);
+                } else {
+                    // Token expired or invalid → clear it and show login page fresh
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                }
+            } catch (err) {
+                // Server unreachable — just stay on page silently
+                console.warn('Auto-login check failed:', err.message);
             }
-
-            const role = data.role;
-            setTimeout(() => {
-                if (role === 'admin') window.location.href = 'admin-dashboard.html';
-                else if (role === 'worker') window.location.href = 'worker-dashboard.html';
-                else if (role === 'loader') window.location.href = 'loader-dashboard.html';
-                else window.location.href = 'index.html'; 
-            }, 500);
-        }
-
-        async function createGoogleProfile() {
-            const { data: { user } } = await sbClient.auth.getUser();
-            if (user) {
-                await sbClient.from('profiles').upsert([{
-                    id: user.id, full_name: user.user_metadata.full_name || 'Customer',
-                    role: 'user', email: user.email, cart: []
-                }]);
-                
-                // Clear browser cart for new Google user
-                localStorage.setItem('cart', '[]');
-                window.location.href = 'index.html';
-            }
-        }
-
-        async function showForgotPassword() {
-            const email = document.getElementById('loginEmail').value.trim();
-            if (!email) { showAlert('📧 Please enter your email above first.', 'error'); return; }
-            const { error } = await sbClient.auth.resetPasswordForEmail(email, {
-                redirectTo: window.location.origin + '/auth.html'
-            });
-            if (error) showAlert(error.message, 'error');
-            else showAlert('✅ Password reset email sent! Check your inbox.', 'success');
-        }
-
-        // Auto-redirect if already logged in
-        (async () => {
-            const { data } = await sbClient.auth.getSession();
-            if (data.session) checkRoleAndRedirect(data.session.user.id);
         })();
+
     </script>
 
 </body>
