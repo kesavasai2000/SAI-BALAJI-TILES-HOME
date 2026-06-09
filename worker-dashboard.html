@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Worker Dashboard - Sai Balaji Tiles</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-    <style>
+        <style>
     * { box-sizing: border-box; }
     
     /* DARK UNIVERSE BACKGROUND */
@@ -130,45 +129,47 @@ body {
 
     <script>
         // ==========================================
-        // 🚀 PASTE YOUR KEYS HERE
+        // BACKEND CONFIG
         // ==========================================
-        const supabaseUrl = 'https://jjseffkbreruegudlmnd.supabase.co'; 
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impqc2VmZmticmVydWVndWRsbW5kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxOTMwMTEsImV4cCI6MjA4MTc2OTAxMX0.xrCWARm6FbW-U98Qs13mMvlCeBiQWgmD73qverF7Brk';
+        const API_URL = 'http://localhost:5000';
 
-        const sbClient = supabase.createClient(supabaseUrl, supabaseKey);
+        function getAuthHeaders() {
+            const token = localStorage.getItem('token');
+            return { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` };
+        }
 
         // --- AUTH CHECK ---
-        async function checkAuth() {
-            const { data: { session } } = await sbClient.auth.getSession();
-            if (!session) window.location.href = 'auth.html';
+        // Worker dashboard: only allow users with role 'worker'
+        function checkAuth() {
+            const token = localStorage.getItem('token');
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            if (!token) { window.location.href = 'auth.html'; return; }
+            if (user.role !== 'worker') {
+                alert('Access denied. Workers only.');
+                window.location.href = 'index.html';
+            }
         }
         checkAuth();
 
-        // --- NEW FUNCTION: LOAD PRODUCTS FROM DATABASE ---
+        // --- LOAD PRODUCTS FROM OUR BACKEND ---
+        // WHY GET /products?
+        // The worker needs to pick a tile from a dropdown.
+        // We fetch the product list from our own PostgreSQL via server.js.
         async function loadProducts() {
-            // 1. Fetch products from Supabase
-            const { data: products, error } = await sbClient
-                .from('products')
-                .select('*');
-
-            if (error) {
-                console.error('Error loading products:', error);
-                return;
-            }
-
-            // 2. Find the dropdown menu
-            const select = document.getElementById('tileSelect');
-            select.innerHTML = '<option value="">-- Select a Tile --</option>'; // Clear loading message
-
-            // 3. Loop through products and create options
-            products.forEach(product => {
-                const option = document.createElement('option');
-                // We save the Name as the value
-                option.value = product.name; 
-                // We show Name + Stock count to the worker
-                option.textContent = `${product.brand} - ${product.name} (Stock: ${product.stock})`;
-                select.appendChild(option);
-            });
+            try {
+                const res = await fetch(`${API_URL}/products`, { headers: getAuthHeaders() });
+                const products = await res.json();
+                const select = document.getElementById('tileSelect');
+                select.innerHTML = '<option value="">-- Select a Tile --</option>';
+                if(Array.isArray(products)) {
+                    products.forEach(p => {
+                        const opt = document.createElement('option');
+                        opt.value = p.name;
+                        opt.textContent = `${p.brand} - ${p.name} (Stock: ${p.stock})`;
+                        select.appendChild(opt);
+                    });
+                }
+            } catch(e) { console.error('Products load failed:', e); }
         }
 
         function goToStep2() {
@@ -187,9 +188,11 @@ body {
         }
 
         async function submitOrder() {
-            const { data: { user } } = await sbClient.auth.getUser();
+            // WHY get user from localStorage?
+            // The worker_id comes from the logged-in user's JWT (stored in localStorage).
+            // We don't need to call the server just to get the user ID.
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
             const selectedTile = document.getElementById('tileSelect').value;
-
             if (!selectedTile) return alert("Please select a tile");
 
             const orderData = {
@@ -205,18 +208,22 @@ body {
                 worker_id: user.id
             };
 
-            const { error } = await sbClient.from('orders').insert([orderData]);
-
-            if (error) {
-                alert("Error submitting: " + error.message);
-            } else {
+            try {
+                const res = await fetch(`${API_URL}/orders`, {
+                    method: 'POST',
+                    headers: getAuthHeaders(),
+                    body: JSON.stringify(orderData)
+                });
+                const data = await res.json();
+                if(!res.ok) throw new Error(data.message);
                 alert("✅ Order Sent to Loader Successfully!");
                 location.reload();
-            }
+            } catch(e) { alert("Error submitting: " + e.message); }
         }
 
-        async function logout() {
-            await sbClient.auth.signOut();
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
             window.location.href = 'auth.html';
         }
     </script>

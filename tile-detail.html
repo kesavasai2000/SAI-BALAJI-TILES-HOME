@@ -263,20 +263,17 @@ body {
     <div id="site-snackbar-message">Message</div>
   </div>
 
-  <!-- 1. Include Supabase SDK -->
-  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-
+  <!-- Auth: JWT via localStorage -->
+  
   <!-- 2. Include Header JS (for stars/navbar) -->
   <script src="header.js"></script>
 
   <script>
-    // ==========================================
-    // 🚀 PASTE YOUR SUPABASE KEYS HERE
-    // ==========================================
-    const supabaseUrl = 'https://jjseffkbreruegudlmnd.supabase.co';
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impqc2VmZmticmVydWVndWRsbW5kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxOTMwMTEsImV4cCI6MjA4MTc2OTAxMX0.xrCWARm6FbW-U98Qs13mMvlCeBiQWgmD73qverF7Brk';
-
-    const sbClient = supabase.createClient(supabaseUrl, supabaseKey);
+    const API_URL = 'http://localhost:5000'; // Backend config
+    function getAuthHeaders() {
+        const token = localStorage.getItem('token');
+        return { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` };
+    }
 
     document.addEventListener('DOMContentLoaded', () => {
       // --- 1. SETUP TILE DATA ---
@@ -389,17 +386,14 @@ body {
       // --- 3. SMART ADD TO CART LOGIC ---
       const addBtn = document.getElementById('add-to-cart-btn');
       if (addBtn) {
-        addBtn.addEventListener('click', async () => {
-
-          // A. CHECK LOGIN STATUS
-          const { data: { session } } = await sbClient.auth.getSession();
-
-          if (!session) {
-            // If not logged in, ask to login
+        addBtn.addEventListener('click', () => {
+          // A. CHECK LOGIN STATUS via JWT token
+          const token = localStorage.getItem('token');
+          if (!token) {
             if (confirm("Please login to add items to your cart. Go to Login page?")) {
               window.location.href = 'auth.html';
             }
-            return; // Stop here
+            return;
           }
 
           // B. PREPARE ITEM
@@ -424,15 +418,9 @@ body {
             cart.push(item);
           }
           localStorage.setItem('cart', JSON.stringify(cart));
+          // Phase 3: sync cart to backend POST /cart
 
-          // D. SYNC TO DATABASE (So they see it next time they login)
-          const user = session.user;
-          await sbClient
-            .from('profiles')
-            .update({ cart: cart })
-            .eq('id', user.id);
-
-          // E. UI FEEDBACK
+          // D. UI FEEDBACK
           if (window.headerShared && typeof window.headerShared.updateCartCount === 'function') {
             window.headerShared.updateCartCount();
           }
@@ -463,18 +451,8 @@ body {
 
       window.showSnackbar = showSnackbar;
 
-      // Restore cart from cloud on page load
-      async function restoreCartFromCloud() {
-        const { data: { session } } = await sbClient.auth.getSession();
-        if (!session) return;
-        const { data } = await sbClient.from('profiles').select('cart').eq('id', session.user.id).single();
-        if (data && Array.isArray(data.cart) && data.cart.length > 0) {
-          localStorage.setItem('cart', JSON.stringify(data.cart));
-          if (window.headerShared && window.headerShared.updateCartCount) {
-            window.headerShared.updateCartCount();
-          }
-        }
-      }
+      // Cart restore from cloud — Phase 3
+      function restoreCartFromCloud() { /* localStorage cart is live */ }
       restoreCartFromCloud();
     });
   </script>

@@ -256,3 +256,88 @@ app.listen(5000, () => {
   console.log('✅ Server started on port 5000');
   console.log('📡 Visit: http://localhost:5000');
 });
+
+
+// ============================================================
+// 📦 PRODUCTS ROUTES
+//
+// WHY two routes (GET + POST)?
+// GET /products → everyone (workers, loaders, public) needs to SEE products
+// POST /products → only admins should be able to ADD products
+// The authenticateToken middleware protects both.
+// ============================================================
+app.get('/products', authenticateToken, async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM products ORDER BY name');
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to fetch products ❌' });
+  }
+});
+
+app.post('/products', authenticateToken, async (req, res) => {
+  try {
+    if (req.user.role !== 'admin') return res.status(403).json({ message: 'Admins only ❌' });
+    const { name, brand, stock } = req.body;
+    const result = await pool.query(
+      'INSERT INTO products (name, brand, stock) VALUES ($1, $2, $3) RETURNING *',
+      [name, brand, stock]
+    );
+    res.json(result.rows[0]);
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to add product ❌' });
+  }
+});
+
+
+// ============================================================
+// 📋 ORDERS ROUTES
+//
+// GET /orders             → all orders (admin)
+// GET /orders?status=X    → filtered by status (loader: processing only)
+// POST /orders            → create new order (worker)
+// PATCH /orders/:id       → update status (loader: mark delivered)
+// ============================================================
+app.get('/orders', authenticateToken, async (req, res) => {
+  try {
+    const { status } = req.query;
+    let query = 'SELECT * FROM orders ORDER BY created_at DESC';
+    let params = [];
+    if (status) {
+      query = 'SELECT * FROM orders WHERE status = $1 ORDER BY created_at DESC';
+      params = [status];
+    }
+    const result = await pool.query(query, params);
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to fetch orders ❌' });
+  }
+});
+
+app.post('/orders', authenticateToken, async (req, res) => {
+  try {
+    const { customer_name, customer_phone, customer_address, items, status, worker_id } = req.body;
+    const result = await pool.query(
+      `INSERT INTO orders (customer_name, customer_phone, customer_address, items, status, worker_id)
+       VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
+      [customer_name, customer_phone, customer_address, JSON.stringify(items), status || 'processing', worker_id]
+    );
+    res.json(result.rows[0]);
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to create order ❌' });
+  }
+});
+
+app.patch('/orders/:id', authenticateToken, async (req, res) => {
+  try {
+    const { status } = req.body;
+    const result = await pool.query(
+      'UPDATE orders SET status = $1 WHERE id = $2 RETURNING *',
+      [status, req.params.id]
+    );
+    if (result.rows.length === 0) return res.status(404).json({ message: 'Order not found ❌' });
+    res.json(result.rows[0]);
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to update order ❌' });
+  }
+});

@@ -8,7 +8,7 @@
     <meta name="google-site-verification" content="ZQLn7KVBoOxxBbQ8mNfiDD5pYIzqlDtZR7Rxwc9OcpE" />
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    
     <style>
         /* 1. BASE */
         html,
@@ -677,17 +677,25 @@
 
     </div><!-- end #page-container -->
 
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    
     <script src="header.js"></script>
 
     <script>
         // ==========================================
-        // 1. SUPABASE CONFIG
+        // 1. BACKEND CONFIG
+        // WHY: Central place for our server URL.
+        // All fetch() calls use this so we only change it in one place.
         // ==========================================
-        const supabaseUrl = 'https://jjseffkbreruegudlmnd.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impqc2VmZmticmVydWVndWRsbW5kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxOTMwMTEsImV4cCI6MjA4MTc2OTAxMX0.xrCWARm6FbW-U98Qs13mMvlCeBiQWgmD73qverF7Brk';
+        const API_URL = 'http://localhost:5000';
 
-        const sbClient = supabase.createClient(supabaseUrl, supabaseKey);
+        // One-time cleanup: remove old Supabase tokens from any user's browser
+        // WHY: Users who visited before may have stale Supabase tokens saved.
+        // This silently clears them so the refresh-token errors stop for everyone.
+        (function cleanupSupabase() {
+            Object.keys(localStorage)
+                .filter(k => k.includes('supabase') || k.startsWith('sb-'))
+                .forEach(k => localStorage.removeItem(k));
+        })();
 
         // ==========================================
         // 2. SPLASH SCREEN
@@ -721,51 +729,47 @@
         // ==========================================
         // 3. AUTH — Show/hide login vs profile
         // ==========================================
-        async function checkUserLogin() {
-            const { data: { session } } = await sbClient.auth.getSession();
+        // WHY this function?
+        // When the page loads, we check localStorage for a saved JWT token.
+        // If found → user is logged in → show their name/avatar in the header.
+        // No server call needed here — the user's name is stored locally too.
+        function checkUserLogin() {
+            const token = localStorage.getItem('token');
+            const userStr = localStorage.getItem('user');
+            if (!token || !userStr) return; // Not logged in — show default Login button
 
-            if (session) {
-                const user = session.user;
+            const user = JSON.parse(userStr);
+            const firstName = (user.name || user.email || 'Account').split(' ')[0];
 
-                // Get name from profiles table
-                let name = '';
-                const { data: profile } = await sbClient
-                    .from('profiles').select('full_name').eq('id', user.id).single();
-                if (profile && profile.full_name) name = profile.full_name;
-                else name = user.user_metadata?.full_name || user.email || 'Account';
+            // Header: hide Login button, show avatar + "Hi, Name"
+            const loggedOutBtn = document.getElementById('auth-logged-out');
+            if (loggedOutBtn) loggedOutBtn.style.display = 'none';
 
-                const firstName = name.split(' ')[0];
+            const loggedIn = document.getElementById('auth-logged-in');
+            if (loggedIn) {
+                loggedIn.style.display = 'flex';
+                document.getElementById('header-avatar').textContent = firstName[0].toUpperCase();
+                document.getElementById('header-username').textContent = 'Hi, ' + firstName;
+            }
 
-                // Header: hide Login, show avatar + "Hi, Name"
-                const loggedOutBtn = document.getElementById('auth-logged-out');
-                if (loggedOutBtn) loggedOutBtn.style.display = 'none';
-                
-                const loggedIn = document.getElementById('auth-logged-in');
-                if (loggedIn) {
-                    loggedIn.style.display = 'flex';
-                    document.getElementById('header-avatar').textContent = firstName[0].toUpperCase();
-                    document.getElementById('header-username').textContent = 'Hi, ' + firstName;
-                }
-
-                // Sidebar: change "Login / Sign Up" → "My Profile"
-                const navLink = document.getElementById('nav-auth-link');
-                if (navLink) {
-                    navLink.href = 'user-profile.html';
-                    navLink.textContent = '👤 My Profile';
-                }
+            // Sidebar: change "Login / Sign Up" → "My Profile"
+            const navLink = document.getElementById('nav-auth-link');
+            if (navLink) {
+                navLink.href = 'user-profile.html';
+                navLink.textContent = '👤 My Profile';
             }
         }
 
-        // --- NEW: FIX FOR CART MIXING ON LOGOUT ---
-        async function logoutUser() {
+        // WHY logoutUser?
+        // Clears the token + user info from localStorage (logs out locally).
+        // No server call needed — JWT is stateless.
+        // We also clear the cart so the next user on the same device
+        // doesn't see the previous person's cart items.
+        function logoutUser() {
             if(confirm('Are you sure you want to logout?')) {
-                // 1. Clear the cart from the browser memory
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
                 localStorage.removeItem('cart');
-                
-                // 2. Sign out of Supabase
-                await sbClient.auth.signOut();
-                
-                // 3. Reload the page to reset the UI
                 window.location.reload();
             }
         }
@@ -878,31 +882,16 @@
         window.addEventListener('resize', createStarsGlobal);
 
         // ==========================================
-        // 7. SYNC CART FROM DATABASE
+        // 7. CART COUNT (localStorage only for now)
+        // WHY no cloud sync yet?
+        // Cart sync to your own backend (POST /cart) is Phase 3.
+        // For now, cart lives in localStorage — works fine for single device.
         // ==========================================
-        async function syncCartFromDatabase() {
-            const { data: { session } } = await sbClient.auth.getSession();
-            if (session) {
-                const { data } = await sbClient
-                    .from('profiles').select('cart').eq('id', session.user.id).single();
-                
-                const cloudCart = (data && Array.isArray(data.cart)) ? data.cart : [];
-                const localCart = JSON.parse(localStorage.getItem('cart') || '[]');
-
-                if (cloudCart.length > 0) {
-                    // Cloud has items → restore to localStorage
-                    localStorage.setItem('cart', JSON.stringify(cloudCart));
-                } else if (localCart.length > 0) {
-                    // Cloud empty, local has items → push local to cloud
-                    await sbClient.from('profiles').update({ cart: localCart }).eq('id', session.user.id);
-                }
-
-                // Update cart count badge in header
-                const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-                document.querySelectorAll('#cart-count-header, #cart-count-index').forEach(el => {
-                    el.textContent = cart.length;
-                });
-            }
+        function syncCartFromDatabase() {
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            document.querySelectorAll('#cart-count-header, #cart-count-index').forEach(el => {
+                el.textContent = cart.length;
+            });
         }
         window.addEventListener('load', syncCartFromDatabase);
     </script>

@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Loader Dashboard - Sai Balaji Tiles</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-    <style>
+        <style>
     * { box-sizing: border-box; }
     
     /* DARK UNIVERSE BACKGROUND */
@@ -96,84 +95,83 @@ body {
 
     <script>
         // ==========================================
-        // 🚀 PASTE YOUR SUPABASE KEYS HERE
+        // BACKEND CONFIG
         // ==========================================
-        const supabaseUrl = 'https://jjseffkbreruegudlmnd.supabase.co'; 
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impqc2VmZmticmVydWVndWRsbW5kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxOTMwMTEsImV4cCI6MjA4MTc2OTAxMX0.xrCWARm6FbW-U98Qs13mMvlCeBiQWgmD73qverF7Brk';
+        const API_URL = 'http://localhost:5000';
 
-        
-        // FIX: Renamed to sbClient
-        const sbClient = supabase.createClient(supabaseUrl, supabaseKey);
+        function getAuthHeaders() {
+            const token = localStorage.getItem('token');
+            return { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` };
+        }
 
-        // Check Auth
-        async function checkAuth() {
-            const { data: { session } } = await sbClient.auth.getSession();
-            if (!session) window.location.href = 'auth.html';
+        // Auth check — loader role only
+        function checkAuth() {
+            const token = localStorage.getItem('token');
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            if (!token) { window.location.href = 'auth.html'; return; }
+            if (user.role !== 'loader') {
+                alert('Access denied. Loaders only.');
+                window.location.href = 'index.html';
+            }
         }
         checkAuth();
 
-        // Load Orders where status is 'processing'
+        // Load pending orders from our backend
+        // WHY GET /orders?status=processing?
+        // We only want orders that need dispatching.
+        // The server filters by status in PostgreSQL — much faster than fetching all and filtering in browser.
         async function loadPendingOrders() {
-            const { data: orders, error } = await sbClient
-                .from('orders')
-                .select('*')
-                .eq('status', 'processing')
-                .order('created_at', { ascending: false });
-
             const list = document.getElementById('orders-list');
-            list.innerHTML = '';
-
-            if (error) return alert("Error loading orders");
-
-            if (orders.length === 0) {
-                list.innerHTML = '<p>No orders pending dispatch.</p>';
-                return;
-            }
-
-            orders.forEach(order => {
-                // Extract item details from the JSON column
-                const item = order.items[0]; 
-
-                const div = document.createElement('div');
-                div.className = 'order-card';
-                div.innerHTML = `
-                    <h3>👤 ${order.customer_name}</h3>
-                    <p>📞 ${order.customer_phone}</p>
-                    <p>📍 ${order.customer_address}</p>
-                    <hr style="border:0; border-top:1px dashed #ccc; margin:10px 0;">
-                    <p><strong>Tile:</strong> ${item.tile}</p>
-                    <p><strong>Quantity:</strong> ${item.qty} Boxes</p>
-                    <p><strong>Notes:</strong> ${item.measurements}</p>
-                    <br>
-                    <button class="btn-load" onclick="markLoaded(${order.id})">✅ Mark Loaded & Shipped</button>
-                `;
-                list.appendChild(div);
-            });
+            list.innerHTML = '<p>Loading pending orders...</p>';
+            try {
+                const res = await fetch(`${API_URL}/orders?status=processing`, { headers: getAuthHeaders() });
+                const orders = await res.json();
+                list.innerHTML = '';
+                if (!Array.isArray(orders) || orders.length === 0) {
+                    list.innerHTML = '<p>No orders pending dispatch.</p>'; return;
+                }
+                orders.forEach(order => {
+                    const item = Array.isArray(order.items) ? order.items[0] : {};
+                    const div = document.createElement('div');
+                    div.className = 'order-card';
+                    div.innerHTML = `
+                        <h3>👤 ${order.customer_name}</h3>
+                        <p>📞 ${order.customer_phone}</p>
+                        <p>📍 ${order.customer_address}</p>
+                        <hr style="border:0; border-top:1px dashed #ccc; margin:10px 0;">
+                        <p><strong>Tile:</strong> ${item.tile || '-'}</p>
+                        <p><strong>Quantity:</strong> ${item.qty || '-'} Boxes</p>
+                        <p><strong>Notes:</strong> ${item.measurements || '-'}</p>
+                        <br>
+                        <button class="btn-load" onclick="markLoaded(${order.id})">✅ Mark Loaded & Shipped</button>
+                    `;
+                    list.appendChild(div);
+                });
+            } catch(e) { list.innerHTML = '<p>Error loading orders.</p>'; }
         }
 
-        // Update status to 'delivered'
+        // Mark order as delivered via PATCH /orders/:id
         async function markLoaded(orderId) {
             if(confirm("Confirm: Is this order loaded on the vehicle?")) {
-                const { error } = await sbClient
-                    .from('orders')
-                    .update({ status: 'delivered' })
-                    .eq('id', orderId);
-
-                if (!error) {
+                try {
+                    const res = await fetch(`${API_URL}/orders/${orderId}`, {
+                        method: 'PATCH',
+                        headers: getAuthHeaders(),
+                        body: JSON.stringify({ status: 'delivered' })
+                    });
+                    if(!res.ok) throw new Error('Update failed');
                     alert("Order Dispatched!");
-                    loadPendingOrders(); // Refresh list
-                } else {
-                    alert("Error: " + error.message);
-                }
+                    loadPendingOrders();
+                } catch(e) { alert("Error: " + e.message); }
             }
         }
 
-        async function logout() {
-            await sbClient.auth.signOut();
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
             window.location.href = 'auth.html';
         }
 
-        // Load on startup
         loadPendingOrders();
     </script>
 </body>

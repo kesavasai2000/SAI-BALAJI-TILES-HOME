@@ -6,8 +6,7 @@
   <title>Your Cart - Sai Balaji Tiles</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-  <style>
+    <style>
     :root { --accent: #22d3ee; --card: rgba(17,24,39,0.65); }
     html, body {
         font-family: 'Poppins', sans-serif;
@@ -204,13 +203,11 @@
     'use strict';
 
     // ============================================================
-    // 🚀 SUPABASE CONFIGURATION
-    // PASTE YOUR URL AND KEY HERE BEFORE SAVING
+    // BACKEND CONFIG
+    // WHY: Cart uses localStorage only for now.
+    // Cloud cart sync to our backend comes in Phase 3.
     // ============================================================
-    const SUPABASE_URL = 'YOUR_SUPABASE_URL_HERE';
-    const SUPABASE_KEY = 'YOUR_SUPABASE_ANON_KEY_HERE';
-    const sbClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
+    const API_URL = 'http://localhost:5000';
     let currentUserId = null;
 
     // ============================================================
@@ -254,54 +251,33 @@
       if (window.headerShared?.updateCartCount) window.headerShared.updateCartCount();
     }
 
-    async function saveToSupabase(cart) {
-      if (!currentUserId) return;
-      await sbClient.from('profiles').update({ cart }).eq('id', currentUserId);
-    }
+    // Cloud cart save — Phase 3 will POST to /cart on our backend
+    function saveCartCloud(cart) { /* Phase 3: POST /cart */ }
 
     function saveCart(cart) {
       saveLocalCart(cart);
-      saveToSupabase(cart);
       renderCart();
     }
 
-    async function initCartFromCloud() {
-      const { data: { session } } = await sbClient.auth.getSession();
+    // WHY initCartFromCloud?
+    // If user is logged in, auto-fill their name/phone/address in the checkout form.
+    // Cart data comes from localStorage — cloud sync is Phase 3.
+    function initCartFromCloud() {
       const banner = document.getElementById('sync-banner');
+      const token = localStorage.getItem('token');
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
 
-      if (session) {
-        currentUserId = session.user.id;
+      if (token && user.id) {
+        currentUserId = user.id;
         const profileLink = document.getElementById('header-profile-link');
         if (profileLink) profileLink.classList.remove('hidden');
 
-        // Fetch Cart AND Profile Data (Phone/Address)
-        const { data, error } = await sbClient.from('profiles').select('cart, full_name, phone, address').eq('id', currentUserId).single();
-
-        if (!error && data) {
-          // AUTO FILL FORM
-          if (data.full_name) document.getElementById('customerName').value = data.full_name;
-          if (data.phone) document.getElementById('customerPhone').value = data.phone;
-          if (data.address) document.getElementById('customerAddress').value = data.address;
-
-          // RESTORE CART
-          if (Array.isArray(data.cart) && data.cart.length > 0) {
-            saveLocalCart(data.cart);
-            banner.textContent = '✅ Synced with your account';
-            setTimeout(() => { banner.classList.remove('show'); }, 2500);
-          } else {
-            const local = loadLocalCart();
-            if (local.length > 0) {
-              await saveToSupabase(local);
-              banner.textContent = '✅ Cart saved to cloud';
-              setTimeout(() => { banner.classList.remove('show'); }, 2000);
-            } else {
-              banner.classList.remove('show');
-            }
-          }
-        }
-      } else {
-        banner.classList.remove('show');
+        // Auto-fill checkout form with saved user info
+        if (user.name)    { const el = document.getElementById('customerName');    if(el) el.value = user.name; }
+        if (user.phone)   { const el = document.getElementById('customerPhone');   if(el) el.value = user.phone; }
+        if (user.address) { const el = document.getElementById('customerAddress'); if(el) el.value = user.address; }
       }
+      if (banner) banner.classList.remove('show');
       renderCart();
     }
 
@@ -403,7 +379,7 @@
     function clearCart() {
       if (!confirm('Clear the entire cart?')) return;
       localStorage.removeItem('cart');
-      if (currentUserId) saveToSupabase([]);
+      if (currentUserId) saveCartCloud([]);
       if (window.headerShared?.updateCartCount) window.headerShared.updateCartCount();
       renderCart();
       showSnackbar('Cart cleared.', 'success');
@@ -499,7 +475,7 @@
           if (res.ok) {
             modalStatus.textContent = '✅ Order successfully placed! We will contact you shortly.'; modalStatus.className = 'mt-4 text-green-400 font-bold text-base';
             localStorage.removeItem('cart');
-            if (currentUserId) await saveToSupabase([]);
+            if (currentUserId) saveCartCloud([]);
             if (window.headerShared?.updateCartCount) window.headerShared.updateCartCount();
             renderCart(); showSnackbar('Order placed!', 'success');
             setTimeout(closeModal, 3000);

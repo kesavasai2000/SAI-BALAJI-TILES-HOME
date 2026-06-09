@@ -6,8 +6,7 @@
     <title>My Profile - Sai Balaji Tiles</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-    <style>
+        <style>
         html, body { height: 100%; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
         body {
             background-color: #000000;
@@ -171,9 +170,11 @@ body {
     </div>
 
     <script>
-        const supabaseUrl = 'https://jjseffkbreruegudlmnd.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impqc2VmZmticmVydWVndWRsbW5kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxOTMwMTEsImV4cCI6MjA4MTc2OTAxMX0.xrCWARm6FbW-U98Qs13mMvlCeBiQWgmD73qverF7Brk';
-        const sbClient = supabase.createClient(supabaseUrl, supabaseKey);
+        const API_URL = 'http://localhost:5000';
+        function getAuthHeaders() {
+            const token = localStorage.getItem('token');
+            return { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` };
+        }
 
         // Stars
         function createStars() {
@@ -197,80 +198,75 @@ body {
         }
 
         // Load profile
+        // WHY fetch from /profile?
+        // /profile is a protected route — it verifies the JWT and returns user info.
+        // We also need the phone/address which we'll fetch from a new GET /user/profile route.
+        // For now, we load what we have from localStorage (instant, no spinner needed for basics).
         async function loadProfile() {
-            const { data: { session } } = await sbClient.auth.getSession();
-            if (!session) { window.location.href = 'auth.html'; return; }
+            const token = localStorage.getItem('token');
+            const userStr = localStorage.getItem('user');
+            if (!token || !userStr) { window.location.href = 'auth.html'; return; }
 
-            const user = session.user;
+            const user = JSON.parse(userStr);
 
-            // Fetch from profiles table
-            const { data, error } = await sbClient
-                .from('profiles').select('*').eq('id', user.id).single();
-
-            // Hide loading, show content
+            // Hide loading, show content immediately with localStorage data
             document.getElementById('loading-state').style.display = 'none';
             document.getElementById('profile-content').style.display = 'block';
 
-            // Populate fields
-            const fullName = data?.full_name || user.user_metadata?.full_name || '';
-            const email    = user.email || '';
-            const phone    = data?.phone || '';
-            const address  = data?.address || '';
-            const role     = data?.role || 'user';
+            document.getElementById('full_name').value     = user.name || '';
+            document.getElementById('email_display').value = user.email || '';
+            document.getElementById('phone').value         = user.phone || '';
+            document.getElementById('address').value       = user.address || '';
 
-            document.getElementById('full_name').value    = fullName;
-            document.getElementById('email_display').value = email;
-            document.getElementById('phone').value        = phone;
-            document.getElementById('address').value      = address;
-
-            // Avatar initial
-            const initial = fullName ? fullName[0].toUpperCase() : email[0].toUpperCase();
+            const initial = (user.name || user.email || '?')[0].toUpperCase();
             document.getElementById('avatar-initial').textContent = initial;
+            document.getElementById('display-name').textContent   = user.name || 'Customer';
+            document.getElementById('display-email').textContent  = user.email || '';
 
-            // Display name & email
-            document.getElementById('display-name').textContent  = fullName || 'Customer';
-            document.getElementById('display-email').textContent = email;
-
-            // Role badge
             const roleMap = { admin: '👑 Admin', worker: '👷 Worker', loader: '📦 Loader', user: '👤 Customer' };
-            document.getElementById('role-badge').textContent = roleMap[role] || '👤 Customer';
+            document.getElementById('role-badge').textContent = roleMap[user.role] || '👤 Customer';
+
+            // Also fetch latest data from server in background (phone/address may have been updated)
+            try {
+                const res = await fetch(`${API_URL}/profile`, { headers: getAuthHeaders() });
+                if (res.ok) {
+                    // Server confirmed token is valid — user is still logged in
+                    // Full profile sync (phone/address) will be added in Phase 3
+                }
+            } catch(e) { /* server unreachable, local data is shown */ }
         }
 
         // Save profile
+        // WHY PATCH /user/profile?
+        // We'll add this route to server.js in Phase 3.
+        // For now, we update localStorage so changes are visible immediately.
         async function saveProfile(e) {
             e.preventDefault();
-            const { data: { user } } = await sbClient.auth.getUser();
             const btn = document.getElementById('save-btn');
-
             btn.disabled = true; btn.textContent = 'Saving...';
 
-            const updates = {
-                id: user.id,
-                full_name: document.getElementById('full_name').value,
-                phone: document.getElementById('phone').value,
-                address: document.getElementById('address').value
-            };
+            const name    = document.getElementById('full_name').value;
+            const phone   = document.getElementById('phone').value;
+            const address = document.getElementById('address').value;
 
-            const { error } = await sbClient.from('profiles').upsert(updates);
+            // Update localStorage immediately for instant UI feedback
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            user.name = name; user.phone = phone; user.address = address;
+            localStorage.setItem('user', JSON.stringify(user));
 
-            if (error) {
-                showAlert('❌ Error: ' + error.message, 'error');
-            } else {
-                // Update avatar initial & display name live
-                const name = updates.full_name;
-                if (name) {
-                    document.getElementById('display-name').textContent  = name;
-                    document.getElementById('avatar-initial').textContent = name[0].toUpperCase();
-                }
-                showAlert('✅ Profile updated successfully!', 'success');
+            // Update avatar & display name live
+            if (name) {
+                document.getElementById('display-name').textContent   = name;
+                document.getElementById('avatar-initial').textContent = name[0].toUpperCase();
             }
-
+            showAlert('✅ Profile updated! (Full server save coming in Phase 3)', 'success');
             btn.disabled = false; btn.textContent = '💾 Save Changes';
         }
 
-        async function logout() {
-            localStorage.removeItem('cart'); 
-            await sbClient.auth.signOut();
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            localStorage.removeItem('cart');
             window.location.href = 'index.html';
         }
 

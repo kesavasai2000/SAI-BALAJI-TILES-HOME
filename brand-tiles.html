@@ -7,8 +7,7 @@
     <title>Brand Tiles - Sai Balaji Tiles</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-    <style>
+        <style>
         html,
         body {
             height: 100%;
@@ -239,11 +238,13 @@ body {
 
     <script>
         // ============================================================
-        // SUPABASE SETUP  (No Firebase — removed completely)
+        // AUTH SETUP (JWT via localStorage)
         // ============================================================
-        const SUPABASE_URL = 'https://jjseffkbreruegudlmnd.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impqc2VmZmticmVydWVndWRsbW5kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxOTMwMTEsImV4cCI6MjA4MTc2OTAxMX0.xrCWARm6FbW-U98Qs13mMvlCeBiQWgmD73qverF7Brk';
-        const sbClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const API_URL = 'http://localhost:5000';
+        function getAuthHeaders() {
+            const token = localStorage.getItem('token');
+            return { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` };
+        }
 
         // ============================================================
         // TILE DATA
@@ -358,28 +359,22 @@ body {
 
         // ============================================================
         // ADD TO CART
-        // Saves to localStorage immediately, then syncs to Supabase DB.
-        // This means the cart is stored in the cloud under the user's
-        // profile and can be restored on any device/browser at login.
+        // Saves to localStorage. Cloud sync in Phase 3.
         // ============================================================
-        async function addToCart(tileId, btnEl) {
-            // 1. Check login
-            const { data: { session } } = await sbClient.auth.getSession();
-            if (!session) {
+        function addToCart(tileId, btnEl) {
+            // WHY check token here?
+            // We only want logged-in users to add to cart.
+            // If not logged in, we prompt them to login first.
+            const token = localStorage.getItem('token');
+            if (!token) {
                 if (confirm('You need to be logged in to add items to cart. Go to Login?')) {
                     window.location.href = 'auth.html';
                 }
                 return;
             }
-
-            // 2. Find tile
             const tile = tiles.find(t => t.id === tileId);
             if (!tile) return;
-
-            // 3. Disable button
             if (btnEl) { btnEl.disabled = true; btnEl.textContent = 'Adding...'; }
-
-            // 4. Update cart in localStorage
             const cart = loadLocalCart();
             const existing = cart.find(item => item.id === tile.id);
             if (existing) {
@@ -388,16 +383,7 @@ body {
                 cart.push({ id: tile.id, name: tile.name, image: tile.image, price: tile.price, brand: brand.name, quantity: 1 });
             }
             saveLocalCart(cart);
-
-            // 5. Save to Supabase so cart persists across logins/devices
-            const { error } = await sbClient
-                .from('profiles')
-                .update({ cart: cart })
-                .eq('id', session.user.id);
-
-            if (error) console.warn('Supabase cart save error:', error.message);
-
-            // 6. Re-enable button & show toast
+            // Phase 3: sync cart to backend POST /cart
             if (btnEl) { btnEl.disabled = false; btnEl.textContent = '🛒 Add to Cart'; }
             showToast(`✅ ${tile.name} added to cart!`);
         }
@@ -447,11 +433,11 @@ body {
         // ============================================================
         // AUTH INDICATOR
         // ============================================================
-        async function checkAuth() {
-            const { data: { session } } = await sbClient.auth.getSession();
-            if (!session) return;
-            const { data } = await sbClient.from('profiles').select('full_name').eq('id', session.user.id).single();
-            const name = data?.full_name || session.user.email || 'Account';
+        function checkAuth() {
+            const token = localStorage.getItem('token');
+            if (!token) return;
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            const name = user.name || user.email || 'Account';
             const el = document.getElementById('auth-indicator');
             el.textContent = '👤 ' + name.split(' ')[0];
             el.classList.remove('hidden');
@@ -461,15 +447,10 @@ body {
         // ============================================================
         // INIT
         // ============================================================
-        // Restore cart from Supabase on page load so local cart stays in sync
-        async function restoreCartFromCloud() {
-            const { data: { session } } = await sbClient.auth.getSession();
-            if (!session) return;
-            const { data } = await sbClient.from('profiles').select('cart').eq('id', session.user.id).single();
-            if (data && Array.isArray(data.cart) && data.cart.length > 0) {
-                localStorage.setItem('cart', JSON.stringify(data.cart));
-                updateCartCount();
-            }
+        // Cart restore from cloud — Phase 3 (POST /cart)
+        function restoreCartFromCloud() {
+            // localStorage cart is always up to date for now
+            updateCartCount();
         }
 
         window.addEventListener('load', () => {
