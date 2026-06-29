@@ -6,10 +6,12 @@ const express = require("express");
 
 // Import Database Pool
 const pool = require("./config/db");
-
+const cookieParser = require("cookie-parser");
 // Create Express Application
 const app = express();
 app.use(express.json());
+app.use(cookieParser());
+const tileRoutes = require("./routes/tileRoutes");
 // Read PORT from .env
 const PORT = process.env.PORT || 5000;
 const authRoutes = require("./routes/authRoutes");
@@ -33,6 +35,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
+app.use("/api/tiles", tileRoutes);
 // Start Server
 app.listen(PORT, async () => {
     console.log(`🚀 Server running on http://localhost:${PORT}`);
