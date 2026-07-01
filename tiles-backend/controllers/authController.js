@@ -14,7 +14,7 @@ const testAuth = (req, res) => {
 };
 
 // Signup API
-const signup = async (req, res) => {
+const signup = async (req, res, next) => {
 
     try {
 
@@ -30,12 +30,9 @@ const existingUser =
     await findUserByEmail(email);
 
 if (existingUser) {
-
-    return res.status(409).json({
-        success: false,
-        message: "Email already registered."
-    });
-
+    const error = new Error("Email already registered.");
+    error.status = 409;
+    throw error;
 }
 
         // Hash Password
@@ -63,19 +60,14 @@ res.status(201).json({
 
     } catch (error) {
 
-        console.error(error);
-
-        res.status(500).json({
-            success: false,
-            message: "Internal Server Error"
-        });
+        next(error);
 
     }
 
 };
 
 // Login API
-const login = async (req, res) => {
+const login = async (req, res, next) => {
 
     try {
 
@@ -85,11 +77,10 @@ const login = async (req, res) => {
         const user = await findUserByEmail(email);
 
         if (!user) {
-            return res.status(401).json({
-                success: false,
-                message: "Invalid Email or Password"
-            });
-        }
+    const error = new Error("Invalid Email or Password");
+    error.status = 401;
+    throw error;
+}
 
         // Compare Password
         const isPasswordCorrect = await bcrypt.compare(
@@ -98,11 +89,10 @@ const login = async (req, res) => {
         );
 
         if (!isPasswordCorrect) {
-            return res.status(401).json({
-                success: false,
-                message: "Invalid Email or Password"
-            });
-        }
+    const error = new Error("Invalid Email or Password");
+    error.status = 401;
+    throw error;
+}
 
         // Remove Password
         const {
@@ -138,12 +128,8 @@ res.status(200).json({
 
     } catch (error) {
 
-        console.error(error);
+        next(error);
 
-        res.status(500).json({
-            success: false,
-            message: "Internal Server Error"
-        });
 
     }
 

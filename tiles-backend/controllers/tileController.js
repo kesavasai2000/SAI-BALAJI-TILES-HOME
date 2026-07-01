@@ -1,8 +1,53 @@
 const pool = require("../config/db");
+const cloudinary = require("../config/cloudinary");
+const streamifier = require("streamifier");
 
-const addTile = async (req, res) => {
+const addTile = async (req, res, next) => {
 
     try {
+        if (!req.file) {
+    const error = new Error("Tile image is required.");
+    error.status = 400;
+    throw error;
+}
+const uploadImage = () => {
+
+    return new Promise((resolve, reject) => {
+
+        const stream = cloudinary.uploader.upload_stream(
+
+            {
+                folder: "tiles"
+            },
+
+            (error, result) => {
+
+                if (error) {
+
+                    return reject(error);
+
+                }
+
+                resolve({
+    url: result.secure_url,
+    publicId: result.public_id
+});
+
+            }
+
+        );
+
+        streamifier
+            .createReadStream(req.file.buffer)
+            .pipe(stream);
+
+    });
+
+};
+const uploadResult = await uploadImage();
+
+const imageUrl = uploadResult.url;
+const imagePublicId = uploadResult.publicId;
 
         const {
             tile_name,
@@ -11,37 +56,50 @@ const addTile = async (req, res) => {
             size,
             price,
             stock,
-            image_url,
             description
         } = req.body;
+        if (
+    !tile_name ||
+    !brand ||
+    !category ||
+    !size ||
+    !price ||
+    !stock
+) {
+    const error = new Error("All fields are required.");
+    error.status = 400;
+    throw error;
+}
 
         const query = `
             INSERT INTO tiles
             (
-                tile_name,
-                brand,
-                category,
-                size,
-                price,
-                stock,
-                image_url,
-                description
-            )
+    tile_name,
+    brand,
+    category,
+    size,
+    price,
+    stock,
+    image_url,
+    image_public_id,
+    description
+)
             VALUES
-            ($1,$2,$3,$4,$5,$6,$7,$8)
+($1,$2,$3,$4,$5,$6,$7,$8,$9)
             RETURNING *;
         `;
 
         const values = [
-            tile_name,
-            brand,
-            category,
-            size,
-            price,
-            stock,
-            image_url,
-            description
-        ];
+    tile_name,
+    brand,
+    category,
+    size,
+    price,
+    stock,
+    imageUrl,
+    imagePublicId,
+    description
+];
 
         const result = await pool.query(query, values);
 
@@ -59,29 +117,24 @@ const addTile = async (req, res) => {
 
     catch(error){
 
-        console.log(error);
+        next(error);
 
-        res.status(500).json({
-
-            success:false,
-
-            message:"Internal Server Error"
-
-        });
+        
 
     }
 
 };
 
-const getAllTiles = async (req, res) => {
+const getAllTiles = async (req, res, next) => {
     const {
-    page = 1,
-    limit = 10,
     search,
     brand,
     category,
     sort
 } = req.query;
+
+const page = Number(req.query.page) || 1;
+const limit = Number(req.query.limit) || 10;
 
 const offset = (page - 1) * limit;
 
@@ -97,7 +150,7 @@ let values = [];
 
 if (search) {
     values.push(`%${search}%`);
-    query += ` tile_name ILIKE $1 $${values.length}`;
+    query += ` AND tile_name ILIKE $${values.length}`;
 }
 
 if (brand) {
@@ -140,7 +193,7 @@ WHERE 1=1
 let countValues = [];
 if (search) {
     countValues.push(`%${search}%`);
-    countQuery += ` AND tile_name ILIKE ... $${countValues.length}`;
+    countQuery += ` AND tile_name ILIKE $${countValues.length}`;
 }
 if (brand) {
     countValues.push(brand);
@@ -169,18 +222,13 @@ const result = await pool.query(query, values);
 
     } catch (error) {
 
-        console.error(error);
-
-        return res.status(500).json({
-            success: false,
-            message: "Internal Server Error"
-        });
+        next(error);
 
     }
 
 };
 
-const getTileById = async (req, res) => {
+const getTileById = async (req, res, next) => {
 
     const { id } = req.params;
 
@@ -194,13 +242,10 @@ const getTileById = async (req, res) => {
         const result = await pool.query(query, [id]);
 
         if (result.rows.length === 0) {
-
-            return res.status(404).json({
-                success: false,
-                message: "Tile not found"
-            });
-
-        }
+    const error = new Error("Tile not found");
+    error.status = 404;
+    throw error;
+}
 
         return res.status(200).json({
             success: true,
@@ -209,87 +254,160 @@ const getTileById = async (req, res) => {
 
     } catch (error) {
 
-        console.error(error);
-
-        return res.status(500).json({
-            success: false,
-            message: "Internal Server Error"
-        });
+        next(error);
 
     }
 
 };
 
-const updateTile = async (req, res) => {
+const updateTile = async (req, res, next) => {
 
     const { id } = req.params;
 
-    const {
-        tile_name,
-        brand,
-        category,
-        size,
-        price,
-        stock,
-        image_url,
-        description
-    } = req.body;
-
     try {
+
+        let imageUrl = null;
+let imagePublicId = null;
+
+if (req.file) {
+
+            const uploadImage = () => {
+
+                return new Promise((resolve, reject) => {
+
+                    const stream = cloudinary.uploader.upload_stream(
+
+                        {
+                            folder: "tiles"
+                        },
+
+                        (error, result) => {
+
+                            if (error) {
+                                return reject(error);
+                            }
+
+                            resolve({
+    url: result.secure_url,
+    publicId: result.public_id
+});
+
+                        }
+
+                    );
+
+                    streamifier
+                        .createReadStream(req.file.buffer)
+                        .pipe(stream);
+
+                });
+
+            };
+
+            const uploadResult = await uploadImage();
+
+imageUrl = uploadResult.url;
+imagePublicId = uploadResult.publicId;
+
+        }
+
+        // If no new image is uploaded, keep the old image
+       
+
+const existingTile = await pool.query(
+    "SELECT image_url, image_public_id FROM tiles WHERE id = $1",
+    [id]
+);
+
+if (existingTile.rows.length === 0) {
+    const error = new Error("Tile not found");
+    error.status = 404;
+    throw error;
+}
+
+if (!req.file) {
+
+    imageUrl = existingTile.rows[0].image_url;
+    imagePublicId = existingTile.rows[0].image_public_id;
+
+} else {
+
+    if (existingTile.rows[0].image_public_id) {
+
+    console.log("Deleting:", existingTile.rows[0].image_public_id);
+
+    const deleteResult = await cloudinary.uploader.destroy(
+        existingTile.rows[0].image_public_id
+    );
+
+    console.log("Cloudinary Delete Result:", deleteResult);
+
+}
+
+}
+
+        const {
+            tile_name,
+            brand,
+            category,
+            size,
+            price,
+            stock,
+            description
+        } = req.body;
+
         const query = `
-    UPDATE tiles
-    SET
-        tile_name = $1,
-        brand = $2,
-        category = $3,
-        size = $4,
-        price = $5,
-        stock = $6,
-        image_url = $7,
-        description = $8
-    WHERE id = $9
-    RETURNING *;
-`;
-const values = [
+            UPDATE tiles
+            SET
+                tile_name = $1,
+                brand = $2,
+                category = $3,
+                size = $4,
+                price = $5,
+                stock = $6,
+                image_url = $7,
+image_public_id = $8,
+description = $9
+WHERE id = $10
+            RETURNING *;
+        `;
+
+        const values = [
     tile_name,
     brand,
     category,
     size,
     price,
     stock,
-    image_url,
+    imageUrl,
+    imagePublicId,
     description,
     id
 ];
-const result = await pool.query(query, values);
-if (result.rows.length === 0) {
 
-    return res.status(404).json({
-        success: false,
-        message: "Tile not found"
-    });
+        const result = await pool.query(query, values);
 
+        if (result.rows.length === 0) {
+    const error = new Error("Tile not found");
+    error.status = 404;
+    throw error;
 }
-return res.status(200).json({
-    success: true,
-    message: "Tile updated successfully",
-    tile: result.rows[0]
-});
+
+        return res.status(200).json({
+            success: true,
+            message: "Tile updated successfully",
+            tile: result.rows[0]
+        });
 
     } catch (error) {
 
-        console.error(error);
-
-        return res.status(500).json({
-            success: false,
-            message: "Internal Server Error"
-        });
+        next(error);
 
     }
 
 };
 
-const deleteTile = async (req, res) => {
+const deleteTile = async (req, res, next) => {
 
     const { id } = req.params;
 
@@ -304,12 +422,9 @@ const deleteTile = async (req, res) => {
         const result = await pool.query(query, [id]);
 
 if (result.rows.length === 0) {
-
-    return res.status(404).json({
-        success: false,
-        message: "Tile not found"
-    });
-
+    const error = new Error("Tile not found");
+    error.status = 404;
+    throw error;
 }
 
 return res.status(200).json({
@@ -320,18 +435,13 @@ return res.status(200).json({
 
     } catch (error) {
 
-        console.error(error);
-
-        return res.status(500).json({
-            success: false,
-            message: "Internal Server Error"
-        });
+        next(error);
 
     }
 
 };
 
-const searchTiles = async (req, res) => {
+const searchTiles = async (req, res, next) => {
 
     const { search } = req.query;
 
@@ -363,18 +473,13 @@ return res.status(200).json({
 
     } catch (error) {
 
-        console.error(error);
-
-        return res.status(500).json({
-            success: false,
-            message: "Internal Server Error"
-        });
+        next(error);
 
     }
 
 };
 
-const filterTiles = async (req, res) => {
+const filterTiles = async (req, res, next) => {
 
     const { brand, category } = req.query;
 
@@ -414,18 +519,13 @@ const filterTiles = async (req, res) => {
 
     } catch (error) {
 
-        console.error(error);
-
-        return res.status(500).json({
-            success: false,
-            message: "Internal Server Error"
-        });
+        next(error);
 
     }
 
 };
 
-const sortTiles = async (req, res) => {
+const sortTiles = async (req, res, next) => {
 
     const { sort } = req.query;
 
@@ -468,12 +568,7 @@ const sortTiles = async (req, res) => {
    }
     catch(error){
 
-        console.error(error);
-
-        return res.status(500).json({
-            success: false,
-            message: "Internal Server Error"
-        });
+        next(error);
 
     }
 

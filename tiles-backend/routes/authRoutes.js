@@ -2,7 +2,8 @@ const authorizeRole = require("../middleware/authorizeRole");
 const authenticateUser = require("../middleware/authMiddleware");
 const { getProfile } = require("../controllers/profileController");
 const {
-    validateSignup
+    validateSignup,
+    validateLogin
 } = require("../middleware/validationMiddleware");
 const express = require("express");
 
@@ -24,7 +25,7 @@ router.get("/test", testAuth);
 router.post("/signup", validateSignup, signup);
 
 // Login API
-router.post("/login", login);
+router.post("/login", validateLogin, login);
 
 // Profile API
 router.get("/profile", authenticateUser, getProfile);

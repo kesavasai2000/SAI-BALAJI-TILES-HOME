@@ -1,5 +1,5 @@
 const express = require("express");
-
+const upload = require("../middleware/upload");
 const router = express.Router();
 
 const {
@@ -17,10 +17,17 @@ const authenticateUser = require("../middleware/authMiddleware");
 
 const authorizeRole = require("../middleware/authorizeRole");
 
+const {
+    validateAddTile,
+    validateUpdateTile
+} = require("../middleware/validationMiddleware");
+
 router.post(
     "/",
     authenticateUser,
     authorizeRole("admin"),
+    upload.single("image"),
+    validateAddTile,
     addTile
 );
 router.get(
@@ -43,6 +50,8 @@ router.put(
     "/:id",
     authenticateUser,
     authorizeRole("admin"),
+    upload.single("image"),
+    validateUpdateTile,
     updateTile
 );
 

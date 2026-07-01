@@ -1,6 +1,7 @@
 // Load environment variables
 require("dotenv").config();
-
+const orderRoutes = require("./routes/orderRoutes");
+const errorHandler = require("./middleware/errorHandler");
 // Import Express
 const express = require("express");
 
@@ -15,6 +16,7 @@ const tileRoutes = require("./routes/tileRoutes");
 // Read PORT from .env
 const PORT = process.env.PORT || 5000;
 const authRoutes = require("./routes/authRoutes");
+const cartRoutes = require("./routes/cartRoutes");
 // Test Database Connection
 async function connectDatabase() {
     try {
@@ -36,6 +38,9 @@ app.get("/", (req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/tiles", tileRoutes);
+app.use("/api/cart", cartRoutes);
+app.use("/api/orders", orderRoutes);
+app.use(errorHandler);
 // Start Server
 app.listen(PORT, async () => {
     console.log(`🚀 Server running on http://localhost:${PORT}`);
